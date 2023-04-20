@@ -1,0 +1,1 @@
+chrome.storage.sync.get(["uname"],function(e){if(!(e.uname==null&&e.uname==null)){var n=document.createElement("script");n.src=chrome.runtime.getURL("src/content-script/ChangeCollabName/ChangeCollabName-append.js"),n.setAttribute("id",e.uname),(document.head||document.documentElement).appendChild(n)}});
