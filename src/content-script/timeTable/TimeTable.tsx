@@ -3,51 +3,56 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import './App.css'
-
+import { Lecture, ShapedLecture} from '../../type'
 const HeadHeight = 30;
 const TableHeight = 45;
 const TableWidth = 80;
+const colorlist = ["#eff9cc", "#dee8f6", "#ffe9e9", "#ffedda", "#dcf2e9", "#dceef2", "#fff8cc", "#ffe9e9"];
+interface LectureList {
+  [key: string]: Lecture;
+}
 const RenderTableDay = () => {
-  const [lectureList, setLectureList] = useState<any>(null);
+  const [lectureList, setLectureList] = useState<LectureList>({});
   const [isLectureListLoaded, setIsLectureListLoaded] = useState(false);
-  const [shapedLectureList, setShapedLectureList] = useState<any>(null);
+  const [shapedLectureList, setShapedLectureList] = useState<ShapedLecture[][]>([]);
   const [logoURL, setLogoURL] = useState<string>("");
+  
   const loadTimeTable = () => {
-    setLogoURL(chrome.runtime.getURL("src/assets/HeXA_logo.png"));
+    setLogoURL(chrome.runtime.getURL("public/assets/HeXA_logo.png"));
     window.chrome.storage.sync.get(['lectureInfo'], (res) => {
       if (res.lectureInfo == undefined && res.lectureInfo == null) {
         alert("블랙보드에 접속하여 강좌정보를 가져오세요!(현재 접속중일경우 새로고침(F5))");
       }
-      else {
-        var resLecturelist = JSON.parse(res.lectureInfo);
-        setLectureList(resLecturelist);
-        if (!resLecturelist || (Object.keys(resLecturelist).length === 0 && Object.getPrototypeOf(resLecturelist) === Object.prototype)) {
-          alert("블랙보드에 접속하여 강좌정보를 가져오세요!(현재 접속중일경우 새로고침(F5))");
-        }
-        var colorlist = ["#eff9cc", "#dee8f6", "#ffe9e9", "#ffedda", "#dcf2e9", "#dceef2", "#fff8cc", "#ffe9e9"]
-        var l: any[] = [[], [], [], [], []];
-        let key: string;
-        var i = 0;
-        for (key in resLecturelist) {
-          let item: any = resLecturelist[key];
-          i += 1;
-          for (var c = 0; c < 3; c++) {
-            if (item["timeplace" + c]) {
-              let newItem: any = {};
-              newItem["name"] = item["name"];
-              newItem["professor"] = item["professor"];
-              newItem["time"] = item["time"];
-              newItem["link"] = item["link"];
-              newItem["color"] = colorlist[i];
-              newItem["timeplace"] = item["timeplace" + c];
-              l[item["timeplace" + c].day].push(newItem);
-
+      var resLecturelist:LectureList = JSON.parse(res.lectureInfo);
+      setLectureList(resLecturelist);
+      if (!resLecturelist || (Object.keys(resLecturelist).length === 0 && Object.getPrototypeOf(resLecturelist) === Object.prototype)) {
+        alert("블랙보드에 접속하여 강좌정보를 가져오세요!(현재 접속중일경우 새로고침(F5))");
+      }
+      var l: ShapedLecture[][] = [[], [], [], [], []];
+      var key: string;
+      var i = 0;
+      
+      for (key in resLecturelist) {
+        var item:any = resLecturelist[key];
+        i += 1;
+        for (var c = 0; c < 3; c++) {
+          if (item["timeplace" + c]) {
+            var newItem:ShapedLecture = {
+              "name": item["name"],
+              "professor": item["professor"],
+              "time": item["time"],
+              "link": item["link"],
+              "color": colorlist[i],
+              "timeplace": item["timeplace" + c]
             }
+            l[item["timeplace" + c].day].push(newItem);
+
           }
         }
-        setShapedLectureList(l)
-        setIsLectureListLoaded(true);
       }
+      setShapedLectureList(l)
+      setIsLectureListLoaded(true);
+
     })
   }
 
@@ -90,10 +95,10 @@ const RenderTableDay = () => {
               style={{
                 width: "20px", height: HeadHeight,
               }}>
-                <img src={logoURL} 
+              <img src={logoURL}
                 style={{
                   width: "20px", height: "20px",
-                }}/>
+                }} />
             </div>
             {[...Array(12)].map((x, j) => {
               return (<div id="lectureGrid"
@@ -134,23 +139,8 @@ const RenderTableDay = () => {
   )
 }
 const TimeTable = () => {
-  const parentRef: any = useRef(null);
-  const isParentLoaded = useRef(parentRef.current !== null);
-  const [parentTop, setParentTop] = useState<number>(0);
-  const [parentLeft, setParentLeft] = useState<number>(0);
-  const [parentHeight, setParentHeight] = useState<number>(0);
-
-
   return (
-    <div ref={(el: any) => {
-      const parentTop: number = el?.getBoundingClientRect().top - 140; //35*4 = 140 
-      const parentLeft: any = el?.getBoundingClientRect().left;
-      const parentHeight: any = el?.getBoundingClientRect().height;
-      setParentTop(parentTop);
-      setParentLeft(parentLeft);
-      setParentHeight(parentHeight);
-    }}
-      id="parent"
+    <div id="parent"
       style={{
         height: "440px",
         width: "100%",

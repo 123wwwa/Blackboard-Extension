@@ -8,7 +8,7 @@ This project uses [Vite](https://vitejs.dev/) and [crxjs](https://crxjs.dev/vite
 
 ### Clone repository
 ```sh
-git clone git@github.com:yosevu/react-content-script.git
+git clone https://github.com/123wwwa/Blackboard-Extension.git
 ```
 
 ### Install dependencies

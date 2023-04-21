@@ -3,11 +3,11 @@
         var proxied = window.gradeAssignment.init;
         window.gradeAssignment.init = function() {
             // var fileUrl = "https://blackboard.unist.ac.kr"+JSON.parse(arguments[1]).downloadUrl
-            var downloadBtns =  document.querySelectorAll('a[href*="webapps/assignment/download?"]')
+            var downloadBtns =  document.querySelectorAll('a[href*="webapps/assignment/download?"]');
             var fileUrl = [];
             downloadBtns.forEach(item => {
-                let fileName = item.parentElement.parentElement.textContent.trim();
-                let fileURL = item.href;
+                var fileName = item.parentElement.parentElement.textContent.trim();
+                var fileURL = item.href;
                 fileUrl.push({"fileName":fileName, "fileURL": fileURL});
             }); // push fileURL to array
             var storage = {};
@@ -30,20 +30,22 @@
                     h3 = item.textContent.replace(" ", "_");
                 }
                 if(item.tagName == 'P') {
-                    p = item.textContent
-                    temp[h3] = p
+                    p = item.textContent;
+                    temp[h3] = p;
                 }
                 if(item.tagName == 'UL'){
-                    var filelist = []
+                    var filelist = [];
                     Array.from(item.childNodes).forEach(child =>{
                         if(child.nodeType == 1) {
-                            filelist.push(child.children[0].href);
+                            var fileURL = child.children[0].href;
+                            var fileName = child.children[0].textContent.trim();
+                            filelist.push({"fileName":fileName, "fileURL": fileURL});
                         }
                     })
-                    temp[h3] = filelist;
+                    temp[h3] = [...new Set(filelist)];
                 }
             })
-            storage[temp.Name.replace(" ", "_")] = temp;
+            storage[temp.content_id+"-"+temp.course_id] = temp;
             localStorage.setItem('fileInfo', JSON.stringify(storage));
             proxied.apply(this, [].slice.call(arguments));
         }

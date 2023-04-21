@@ -1,7 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import './main.css'
-import App from './App'
+import TimeTable from './TimeTable';
 
 // const body = document.querySelector('body')
 
@@ -38,12 +37,12 @@ const waitForElm = () => {
   });
 }
 waitForElm().then(() => {
-  const container:any = document.getElementById('column2');
+  const container = document.getElementById('column2') as HTMLElement;
   const root:any = createRoot(container!);
 
   root.render(
     <React.StrictMode>
-      <App />
+      <TimeTable />
     </React.StrictMode>
   )
 })

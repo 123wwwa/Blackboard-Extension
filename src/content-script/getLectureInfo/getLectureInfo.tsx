@@ -70,13 +70,11 @@ const getLectureElement = () =>{
                     }
                 }
             }
-            console.log(lecturelist);
             window.chrome.storage.sync.set({ 'lectureInfo': JSON.stringify(lecturelist) }, () =>{});
         });
 }
 waitForElm().then((elm) => {
     window.chrome.storage.sync.get(['lectureInfo'], function(res) {
-        console.log(res.lectureInfo);
         if (res.lectureInfo == undefined && res.lectureInfo == null) {
             getLectureElement();
         } else {
