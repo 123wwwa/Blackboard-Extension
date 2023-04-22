@@ -1,7 +1,9 @@
 export { }
 export interface Assignment {
+    course_code?: string
     content_id: string
     course_id: string
+    engName?: string
     last_update: string
     url: string
     fileUrl: FileUrl[]
@@ -9,7 +11,10 @@ export interface Assignment {
     totalscore: string
     Name: string
     Due_Date: string
-    Assignment_Files: FileUrl[]
+    Assignment_Files: FileUrl[] 
+}
+export interface AssignmentList {
+    [key: string]: Assignment
 }
 export interface FileUrl {
     fileName: string
@@ -21,10 +26,14 @@ export interface Lecture {
     id: string
     time: string
     professor: string
-    timeplace0: Timeplace
+    timeplace0?: Timeplace
     timeplace1?: Timeplace
     timeplace2?: Timeplace
     timeplace3?: Timeplace
+    assignment: Assignment[] 
+}
+export interface LectureList {
+    [key: string]: Lecture
 }
 export interface ShapedLecture{
     name: string

@@ -1,6 +1,7 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 
+// todo: update lecture info when new lecture is added or deleted
 const waitForElm = () => {
     return new Promise(resolve => {
         if (document.querySelector('div[id*="22_1termCourses"]')) {
@@ -35,7 +36,7 @@ const getLectureElement = () =>{
             lecturelist[AllaTag[i].text.split(":")[0].split("_")[1]] = temp;
         }
     }
-    fetch(window.chrome.runtime.getURL('src/assets/lectureInfo.json'))
+    fetch(window.chrome.runtime.getURL('public/assets/lectureInfo.json'))
         .then((resp) => resp.json())
         .then(function(jsonData) {
             for (var key in lecturelist) {
@@ -56,7 +57,6 @@ const getLectureElement = () =>{
                     }
                 }
             }
-            console.log(lecturelist);
             window.chrome.storage.sync.set({ 'lectureInfo': JSON.stringify(lecturelist) }, function() {
 
             });
@@ -65,7 +65,6 @@ const getLectureElement = () =>{
 }
 waitForElm().then((elm) => {
     window.chrome.storage.sync.get(['lectureInfo'], function(res) {
-        console.log(res.lectureInfo);
         if (res.lectureInfo == undefined && res.lectureInfo == null) {
             getLectureElement();
         } else {
