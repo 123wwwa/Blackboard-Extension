@@ -8,18 +8,26 @@ import TextInput from "./TextInput";
 
 function DatePicker() {
 	const [currentDate, setCurrentDate] = React.useState<Date>(new Date());
-  console.log(currentDate)
+	console.log(currentDate);
 
 	return (
-			<DatePickerComp
-				locale={ko}
-        showTimeSelect
-        selected={currentDate}
-				dateFormat={"yyyy.MM.dd HH:mm"}
-        minDate={new Date()}
-				onChange={(date: Date) => setCurrentDate(date)}
-        customInput={<TextInput icon={<img src={chrome.runtime.getURL("public/icons/icon-calendar.png")} />}/>}
-			/>
+		<DatePickerComp
+			locale={ko}
+			showTimeSelect
+			selected={currentDate}
+			dateFormat={"yyyy.MM.dd HH:mm"}
+			minDate={new Date()}
+			onChange={(date: Date) => setCurrentDate(date)}
+			customInput={
+				<TextInput
+					icon={
+						<img
+							src={chrome.runtime.getURL("public/icons/icon-calendar.png")}
+						/>
+					}
+				/>
+			}
+		/>
 	);
 }
 

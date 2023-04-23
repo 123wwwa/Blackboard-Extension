@@ -16,7 +16,7 @@ const styles = {
 		bottom: "30px",
 		fontSize: "16px",
 		fontFamily: "Pretendard-Regular",
-		zIndex: 9999
+		zIndex: 9999,
 	}),
 };
 

@@ -8,6 +8,7 @@ import styled from "@emotion/styled";
 import { useState } from "react";
 import { ChromePicker } from "react-color";
 import { css } from "@emotion/react";
+import SketchPicker from "react-color/lib/components/sketch/Sketch";
 
 type Props = {
 	show: boolean;
@@ -109,7 +110,7 @@ function TodoContainer({ show, setShow }: Props) {
 								})}
 								onClick={() => setShowColorPicker(false)}
 							></div>
-							<ChromePicker
+							<SketchPicker
 								color={color}
 								onChange={(color) => setColor(color.hex)}
 							/>

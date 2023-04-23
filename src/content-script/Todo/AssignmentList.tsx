@@ -1,16 +1,12 @@
 import { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { AppDispatch, store } from '../../features/store'
+import { AppDispatch } from '../../features/store'
 import { useDispatch } from 'react-redux'
 import { selectLectureList, updateLectureAssignment } from '../../features/lecture_reducer'
 import { useSelector } from 'react-redux'
-import { Assignment } from "type";
+import { Assignment, AssignmentList } from "type";
 
-interface AssignmentList {
-	[key: string]: Assignment;
-}
-
-const AssignmentList = () => {
+const AssignmentList = () => {  
     const dispatch:AppDispatch = useDispatch();
     const [assignmentList, setAssignmentList] = useLocalStorage<AssignmentList>('fileInfo', {});
     const lectureList = useSelector(selectLectureList);
