@@ -7,21 +7,24 @@ import { css } from "@emotion/react";
 import { Assignment, FileUrl } from "../../type";
 import TodoButton from "./TodoButton";
 import TodoContainer from "./TodoContainer";
+import AssignmentList from "./AssignmentList";
+
+const styles = {
+	Wrapper: css({
+		position: "fixed",
+		right: "30px",
+		bottom: "30px",
+		fontSize: "16px",
+		fontFamily: "Pretendard-Regular",
+		zIndex: 9999
+	}),
+};
 
 function Todo() {
 	const [showMainArea, setShowMainArea] = useState<boolean>(false);
 
 	return (
-		<div
-			css={css({
-				zIndex: 10,
-				position: "fixed",
-				right: "30px",
-				bottom: "30px",
-				fontSize: "16px",
-				fontFamily: "Pretendard-Regular",
-			})}
-		>
+		<div css={styles.Wrapper}>
 			<TodoContainer show={showMainArea} setShow={setShowMainArea} />
 			<TodoButton setShow={setShowMainArea} />
 		</div>

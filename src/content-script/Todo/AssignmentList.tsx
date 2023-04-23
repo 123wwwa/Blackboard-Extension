@@ -44,3 +44,5 @@ const AssignmentList = () => {
         </div>
     )
 }
+
+export default AssignmentList;

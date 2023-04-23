@@ -8,7 +8,7 @@ const colorlist = ["#eff9cc", "#dee8f6", "#ffe9e9", "#ffedda", "#dcf2e9", "#dcee
 interface LectureList {
     [key: string]: Lecture;
 }
-export interface InitialState{
+export interface InitialState {
     lectureSlice: LectureList;
     shapedLectureList: ShapedLecture[][];
     isLectureLoaded: boolean;

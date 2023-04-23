@@ -4,14 +4,17 @@ import TodoCard from "./TodoCard";
 import ActionIcon from "./common/ActionIcon";
 import TextInput from "./common/TextInput";
 import DatePicker from "./common/DatePicker";
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
+import { useState } from "react";
+import { ChromePicker } from "react-color";
+import { css } from "@emotion/react";
 
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Container = styled.div<{ show: boolean; }>`
+const Container = styled.div<{ show: boolean }>`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -24,9 +27,9 @@ const Container = styled.div<{ show: boolean; }>`
 	transition: opacity 300ms linear, visibility 0s linear 300ms;
 	box-sizing: border-box;
 	box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.14);
-	opacity: ${props => (props.show ? 1 : 0)};
-	visibility: ${props => (props.show ? "visible" : "hidden")};
-	${props => props.show && "transition-delay: 0s;"}
+	opacity: ${(props) => (props.show ? 1 : 0)};
+	visibility: ${(props) => (props.show ? "visible" : "hidden")};
+	${(props) => props.show && "transition-delay: 0s;"}
 
 	header {
 		display: flex;
@@ -66,6 +69,9 @@ const Container = styled.div<{ show: boolean; }>`
 `;
 
 function TodoContainer({ show, setShow }: Props) {
+	const [showColorPicker, setShowColorPicker] = useState(false);
+	const [color, setColor] = useState("#E5E5E5");
+
 	return (
 		<Container show={show}>
 			<header>
@@ -91,9 +97,28 @@ function TodoContainer({ show, setShow }: Props) {
 			</article>
 			<footer>
 				<div className="menus">
+					{showColorPicker && (
+						<div css={css({ position: "absolute", zIndex: 10 })}>
+							<div
+								css={css({
+									position: "fixed",
+									left: 0,
+									right: 0,
+									top: 0,
+									bottom: 0,
+								})}
+								onClick={() => setShowColorPicker(false)}
+							></div>
+							<ChromePicker
+								color={color}
+								onChange={(color) => setColor(color.hex)}
+							/>
+						</div>
+					)}
 					<ActionIcon
 						size="24px"
 						icon={chrome.runtime.getURL("public/icons/icon-palette.png")}
+						onClick={() => setShowColorPicker((show) => !show)}
 					/>
 					<TextInput placeholder="새 일정 이름 입력" />
 					<DatePicker />
