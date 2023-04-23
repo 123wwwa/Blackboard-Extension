@@ -31,7 +31,7 @@ const Container = styled.div<{ show: boolean }>`
 	box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.14);
 	opacity: ${(props) => (props.show ? 1 : 0)};
 	display: ${(props) => (props.show ? "flex" : "none")};
-	${(props) => props.show && "transition-delay: 0s;"}
+	${(props) => props.show && "transition-delay: 0s;"};
 
 	header {
 		display: flex;
