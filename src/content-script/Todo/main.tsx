@@ -2,6 +2,8 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import Todo from "./Todo";
 import { ThemeProvider } from "@emotion/react";
+import { Provider } from "react-redux";
+import { store } from "../../features/store";
 import { theme } from "./styles/theme";
 import GlobalStyle from "./global";
 
@@ -34,8 +36,10 @@ waitForElm().then(() => {
 	root.render(
 		<React.StrictMode>
 			<ThemeProvider theme={theme}>
-				<GlobalStyle />
-				<Todo />
+				<Provider store={store}>
+					<GlobalStyle />
+					<Todo />
+				</Provider>
 			</ThemeProvider>
 		</React.StrictMode>
 	);

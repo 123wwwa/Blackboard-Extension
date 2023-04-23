@@ -17,6 +17,7 @@
             temp.content_id = new URL(document.URL).searchParams.get('content_id');
             temp.course_id = new URL(document.URL).searchParams.get('course_id');
             temp.last_update = new Date().toLocaleString();
+
             var content_info = `content_id=${temp.content_id}&course_id=${temp.arrcourse_id}`;
             temp.url = `https://blackboard.unist.ac.kr/webapps/assignment/uploadAssignment?${content_info}`;
             temp.fileUrl = [...new Set(fileUrl)]; // replace duplicate keys : https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array

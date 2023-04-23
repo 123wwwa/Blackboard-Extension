@@ -14,9 +14,11 @@
     "@emotion/styled": "^11.10.6",
     "@reduxjs/toolkit": "^1.9.5",
     "emotion-normalize": "^11.0.1",
+    "@types/react-redux": "^7.1.25",
     "react": "^18.2.0",
     "react-datepicker": "^4.11.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
     "url": "^0.11.0",
     "usehooks-ts": "^2.9.1",
     "web-vitals": "^3.0.3"

@@ -1,7 +1,7 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 import logo from './logo.svg'
-
+import { Lecture, LectureList } from '../../type';
 const waitForElm = () => {
     return new Promise(resolve => {
         if (document.querySelector('div[id*="22_1termCourses"]')) {
@@ -25,31 +25,39 @@ const waitForElm = () => {
 const getLectureElement = () =>{
     var AllaTag = document.getElementsByTagName('a');
     var lectureDiv = document.querySelector('ul[class*="portletList-img courseListing coursefakeclass"]')
-    var lecturelist:any = {};
+    var lecturelist:LectureList = {};
     for (var i = 0; i < AllaTag.length; i += 1) {
         const item = AllaTag[i] as HTMLElement;
         const itemparent = item.parentElement as HTMLElement;
         const itemparentparent = itemparent.parentElement as HTMLElement;
         if (AllaTag[i].href.includes('/webapps/blackboard/execute/launcher') && !AllaTag[i].className.includes('button') &&  itemparentparent == lectureDiv) {
-            interface temp {
-                name: string;
-                link: string;
-                id: string;
-              };
               const urlObj: any= new URL(AllaTag[i].href);
-            //var temp = new Object();
-            var temp: temp = {
+            var lecture:Lecture = {
                 name: AllaTag[i].text, 
                 link: AllaTag[i].href, 
-                id: urlObj.searchParams.get('id')
+                id: urlObj.searchParams.get('id'),
+                assignment: [],
+                time : "",
+                professor: "",
             };
             // temp["name"] = AllaTag[i].text;
             // temp["link"] = AllaTag[i].href;
             // temp["id"] = (new URL(temp["link"])).searchParams.get('id')
-            lecturelist[AllaTag[i].text.split(":")[0].split("_")[1]] = temp;
+            lecturelist[AllaTag[i].text.split(":")[0].split("_")[1]] = lecture;
         }
     }
-    fetch(window.chrome.runtime.getURL('src/assets/lectureInfo.json'))
+    // var assignmentList= JSON.parse(localStorage.getItem("fileInfo") || "{}");
+    // for (var key in assignmentList) {
+    //     var assignment = assignmentList[key];
+    //     for(var key2 in lecturelist) {
+    //         var item2 = lecturelist[key2];
+    //         if (item2["id"] == assignment["id"]) {
+    //             lecturelist[key2]["assignment"].push(assignment);
+    //         }
+    //     }
+    // }
+    
+    fetch(window.chrome.runtime.getURL('public/assets/lectureInfo.json'))
         .then((resp) => resp.json())
         .then(function(jsonData) {
             for (var key in lecturelist) {
@@ -70,20 +78,13 @@ const getLectureElement = () =>{
                     }
                 }
             }
+            console.log(lecturelist);
             window.chrome.storage.sync.set({ 'lectureInfo': JSON.stringify(lecturelist) }, () =>{});
         });
 }
 waitForElm().then((elm) => {
     window.chrome.storage.sync.get(['lectureInfo'], function(res) {
-        if (res.lectureInfo == undefined && res.lectureInfo == null) {
-            getLectureElement();
-        } else {
-            var lecturelist = JSON.parse(res.lectureInfo);
-
-            if (!lecturelist || (Object.keys(lecturelist).length === 0 && Object.getPrototypeOf(lecturelist) === Object.prototype)) {
-                getLectureElement();
-            }
-        }
+        getLectureElement();
     });
 });
 export {}
