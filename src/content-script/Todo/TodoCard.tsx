@@ -66,7 +66,7 @@ function TodoCard({color, content, course_name, date, linkcode}: Todo) {
 
       <DueDateContainer>
         <DueDateText>{new Date(remainingTime).getDay()} Days</DueDateText>
-        <DueDateText>{remainingTime.getHours()}:{remainingTime.getMinutes()}:{remainingTime.getSeconds()}</DueDateText>
+        <DueDateText>{remainingTime.getHours().toString().padStart(2,'0')}:{remainingTime.getMinutes().toString().padStart(2,'0')}:{remainingTime.getSeconds().toString().padStart(2,'0')}</DueDateText>
       </DueDateContainer>
       
       <TrashIcon src={chrome.runtime.getURL("public/icons/icon-trash.png")} />
