@@ -96,18 +96,7 @@ function TodoContainer({ show, setShow }: Props) {
 				})
 
 				}
-				{/* <TodoCard color="#E5E5E5" />
-				<TodoCard color="#FECACA" />
-				<TodoCard color="#FDE68A" />
-				<TodoCard color="#A5F3FC" />
-				<TodoCard color="#E5E5E5" />
-				<TodoCard color="#FECACA" />
-				<TodoCard color="#FDE68A" />
-				<TodoCard color="#A5F3FC" />
-				<TodoCard color="#E5E5E5" />
-				<TodoCard color="#FECACA" />
-				<TodoCard color="#FDE68A" />
-				<TodoCard color="#A5F3FC" /> */}
+
 			</article>
 			<footer>
 				<div className="menus">

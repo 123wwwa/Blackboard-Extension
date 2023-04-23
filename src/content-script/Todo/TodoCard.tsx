@@ -58,7 +58,7 @@ function TodoCard({color, content, course_name, date, linkcode}: Todo) {
   const [remainingTime, setRemainingTime] = useState<Date>(new Date(0));
   useEffect(()=>{
     setInterval(()=>{
-      setRemainingTime(new Date(date-Date.now()))
+      setRemainingTime(new Date(date-(9 * 60 * 60 * 1000)-Date.now()))
     },1000)
   },[])
   return (
@@ -68,7 +68,7 @@ function TodoCard({color, content, course_name, date, linkcode}: Todo) {
     }}>
       <Content>
         <Title >{content}</Title>
-        <DateText>{new Date(date).toISOString().replace("T", " ").replace(/\..*/, '')}</DateText>
+        <DateText>{new Date(date+(3240 * 10000)).toISOString().replace("T", " ").replace(/\..*/, '')}</DateText>
       </Content>
 
       <DueDateContainer>
