@@ -11,6 +11,10 @@ const Container = styled.div<any>`
   padding: 15px 20px;
   background-color: ${props => props.color || '#F5F5F5'};
   border-radius: 10px;
+  &:hover {
+    filter: brightness(80%);
+    cursor: pointer;
+  }
 `;
 
 const Content = styled.div`
@@ -58,9 +62,12 @@ function TodoCard({color, content, course_name, date, linkcode}: Todo) {
     },1000)
   },[])
   return (
-    <Container color={color}>
+    <Container color={color}
+    onClick={()=>{
+      window.open(`https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/${linkcode}`, '_blank');
+    }}>
       <Content>
-        <Title>{content}</Title>
+        <Title >{content}</Title>
         <DateText>{new Date(date).toISOString().replace("T", " ").replace(/\..*/, '')}</DateText>
       </Content>
 
