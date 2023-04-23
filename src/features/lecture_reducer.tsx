@@ -51,7 +51,7 @@ export const reloadTodoList = (dispatch: AppDispatch) => {
 export const reloadLectureList = (dispatch: AppDispatch) => {
     window.chrome.storage.sync.get(['lectureInfo'], (res) => {
         if (res.lectureInfo == undefined && res.lectureInfo == null) {
-            alert("블랙보드에 접속하여 강좌정보를 가져오세요!(현재 접속중일경우 새로고침(F5))");
+            
         }
         var resLecturelist: LectureList = JSON.parse(res.lectureInfo);
         var assignmentList = JSON.parse(localStorage.getItem("fileInfo") || "{}")
@@ -66,7 +66,6 @@ export const reloadLectureList = (dispatch: AppDispatch) => {
         })
         dispatch(setLecutureList(resLecturelist));
         if (!resLecturelist || (Object.keys(resLecturelist).length === 0 && Object.getPrototypeOf(resLecturelist) === Object.prototype)) {
-            alert("블랙보드에 접속하여 강좌정보를 가져오세요!(현재 접속중일경우 새로고침(F5))");
         }
         var l: ShapedLecture[][] = [[], [], [], [], []];
         var key: string;

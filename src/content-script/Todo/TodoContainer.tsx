@@ -49,10 +49,21 @@ const Container = styled.div<{ show: boolean }>`
 		width: 100%;
 		height: 330px;
 		overflow: scroll;
+		overflow-x: hidden;
 		padding: 5px 14px;
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+		&::-webkit-slider-thumb {
+			background: #6c757d;
+    		border-radius: 8px;
+		}
+		&::-webkit-scrollbar {
+			width: 7px;
+    		height: 10px;
+    		background-color: white; 
+    		border-radius: 8px;
+		}
 	}
 
 	footer {
@@ -74,11 +85,10 @@ function TodoContainer({ show, setShow }: Props) {
 	const [showColorPicker, setShowColorPicker] = useState(false);
 	const [color, setColor] = useState("#E5E5E5");
 	const todoList = useSelector(selectTodoList);
-	console.log(todoList);
 	const dispatch = useDispatch()
-	useEffect(()=>{
+	useEffect(() => {
 		dispatch(reloadLectureList as any);
-	},[dispatch])
+	}, [dispatch])
 	//const [todoList, setTodoList] = useLocalStorage
 	return (
 		<Container show={show}>
@@ -92,7 +102,7 @@ function TodoContainer({ show, setShow }: Props) {
 			<article>
 				{todoList.map((todo) => {
 					return <TodoCard color={todo.color} content={todo.content} course_name={todo.course_name}
-					date={todo.date} linkcode={todo.linkcode} />
+						date={todo.date} linkcode={todo.linkcode} />
 				})
 
 				}

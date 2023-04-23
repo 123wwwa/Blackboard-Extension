@@ -113,7 +113,7 @@ const TimeTable = () => {
     <div id="parent"
       style={{
         height: "440px",
-        width: "200%",
+        width: "100%",
 
       }}>
       <Provider store={store}>
