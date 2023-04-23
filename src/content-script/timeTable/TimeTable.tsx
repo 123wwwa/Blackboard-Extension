@@ -49,6 +49,7 @@ const RenderTableDay = () => {
   }
   useEffect(() => {
     dispatch(reloadLectureList as any);
+
     setLogoURL(chrome.runtime.getURL("public/assets/HeXA_logo.png"));
   }, [dispatch])
   const dayList = ["월", "화", "수", "목", "금"];

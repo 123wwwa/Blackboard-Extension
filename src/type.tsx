@@ -15,7 +15,6 @@ export interface Assignment {
 }
 
 export interface Todo {
-  _id: string
   content: string
   course_name: string
   date: number

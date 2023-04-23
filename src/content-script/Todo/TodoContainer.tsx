@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 import { ChromePicker } from "react-color";
 import { css } from "@emotion/react";
 import SketchPicker from "react-color/lib/components/sketch/Sketch";
-import { useDispatch } from "react-redux";
-import { reloadTodoList } from "../../features/lecture_reducer";
+import { useDispatch, useSelector } from "react-redux";
+import { reloadLectureList, reloadTodoList, selectTodoList } from "../../features/lecture_reducer";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -73,10 +73,12 @@ const Container = styled.div<{ show: boolean }>`
 function TodoContainer({ show, setShow }: Props) {
 	const [showColorPicker, setShowColorPicker] = useState(false);
 	const [color, setColor] = useState("#E5E5E5");
+	const todoList = useSelector(selectTodoList);
+	console.log(todoList);
 	const dispatch = useDispatch()
 	useEffect(()=>{
-		dispatch(reloadTodoList as any);
-	})
+		dispatch(reloadLectureList as any);
+	},[dispatch])
 	//const [todoList, setTodoList] = useLocalStorage
 	return (
 		<Container show={show}>

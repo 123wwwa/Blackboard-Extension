@@ -45,34 +45,7 @@ export const lectureSlice = createSlice({
 export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList } = lectureSlice.actions;
 
 export const reloadTodoList = (dispatch: AppDispatch) => {
-    let todoList: Todo[] = [];
-    const fetchUrl = "https://blackboard.unist.ac.kr/webapps/calendar/calendarData/selectedCalendarEvents?start=" + Date.now() + "&end=2147483647000";
-    fetch(fetchUrl)
-        .then((response) => response.json())
-        .then(function (fetchData) {
-            console.log(fetchData);
-            for (var key in fetchData) {
-                var newStartString = fetchData[key]["start"];
-                var newDate = new Date(newStartString);
-                var assignName = fetchData[key]["title"];
-                var link = "";
-                if (fetchData[key]["calendarName"] !== "Personal") {
-                    assignName = fetchData[key]["calendarName"] + ": " + assignName;
-                    link = fetchData[key]["id"];
-                }
-                //const nanoid:string = uuid();
-                var todo: Todo = {
-                    _id: "nanoid",
-                    course_name: fetchData[key]["calendarName"],
-                    content: assignName,
-                    date: newDate.getTime(),
-                    color: fetchData[key]["color"][0],
-                    linkcode: link
-                };
-                todoList.push(todo);
-            }
-            dispatch(setTodoList(todoList));
-        })
+
 }
 
 export const reloadLectureList = (dispatch: AppDispatch) => {
@@ -91,7 +64,6 @@ export const reloadLectureList = (dispatch: AppDispatch) => {
                 }
             })
         })
-        console.log(resLecturelist);
         dispatch(setLecutureList(resLecturelist));
         if (!resLecturelist || (Object.keys(resLecturelist).length === 0 && Object.getPrototypeOf(resLecturelist) === Object.prototype)) {
             alert("블랙보드에 접속하여 강좌정보를 가져오세요!(현재 접속중일경우 새로고침(F5))");
@@ -118,6 +90,38 @@ export const reloadLectureList = (dispatch: AppDispatch) => {
             }
         }
         dispatch(setShapedLectureList(l));
+        let todoList: Todo[] = [];
+        const fetchUrl = "https://blackboard.unist.ac.kr/webapps/calendar/calendarData/selectedCalendarEvents?start=" + Date.now() + "&end=2147483647000";
+        fetch(fetchUrl)
+            .then((response) => response.json())
+            .then(function (fetchData) {
+                for (var key in fetchData) {
+                    let letureColor:string ="";
+                    Object.entries(resLecturelist).forEach(([key2, value]) => {
+                        var lecture:Lecture = value;
+                        if(lecture.engName == fetchData[key]["calendarName"]){
+                            letureColor = lecture.color;
+                        }
+                    })
+                    var newStartString = fetchData[key]["start"];
+                    var newDate = new Date(newStartString);
+                    var assignName = fetchData[key]["title"];
+                    var link = "";
+                    if (fetchData[key]["calendarName"] !== "Personal") {
+                        assignName = fetchData[key]["calendarName"] + ": " + assignName;
+                        link = fetchData[key]["id"];
+                    }
+                    var todo: Todo = {
+                        course_name: fetchData[key]["calendarName"],
+                        content: assignName,
+                        date: newDate.getTime(),
+                        color: letureColor,
+                        linkcode: link
+                    };
+                    todoList.push(todo);
+                }
+                dispatch(setTodoList(todoList));
+            })
     })
 }
 export const updateLectureAssignment = (AssignmentData: AssignmentList) => (dispatch: AppDispatch) => {
@@ -126,4 +130,5 @@ export const updateLectureAssignment = (AssignmentData: AssignmentList) => (disp
 export const selectLectureList = (state: RootState) => state.lectureSlice.lectureSlice;
 export const selectShapedLectureList = (state: RootState) => state.lectureSlice.shapedLectureList;
 export const selectIsLectureLoaded = (state: RootState) => state.lectureSlice.isLectureLoaded;
+export const selectTodoList = (state: RootState) => state.lectureSlice.todoList;
 export default lectureSlice.reducer;
