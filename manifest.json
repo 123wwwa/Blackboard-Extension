@@ -57,7 +57,8 @@
     {
       "resources": [
           "public/assets/lectureInfo.json",
-          "public/assets/HeXA_logo.png"
+          "public/assets/HeXA_logo.png",
+          "public/icons/*.png"
       ],
       "matches": ["<all_urls>"]
 

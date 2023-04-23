@@ -7,7 +7,12 @@ import manifest from './manifest.json'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxImportSource: "@emotion/react",
+      babel: {
+        plugins: ['@emotion/babel-plugin']
+      }
+    }),
     svgr({
       svgrOptions: {
         icon: true,
