@@ -13,6 +13,14 @@ export interface Assignment {
     Due_Date: string
     Assignment_Files: FileUrl[] 
 }
+
+export interface todo {
+  _id: string
+  content: string
+  date: number
+  color: string
+  linkcode: string
+}
 export interface AssignmentList {
     [key: string]: Assignment
 }

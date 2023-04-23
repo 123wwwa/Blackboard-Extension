@@ -4,7 +4,7 @@ import emotionNormalize from "emotion-normalize";
 const GlobalStyle = () => (
 	<Global
 		styles={{
-			// ...emotionNormalize,
+			...emotionNormalize,
             "*": {
                 boxSizing: "border-box",
             },

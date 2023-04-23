@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 import { AppDispatch, store } from '../../features/store'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector} from 'react-redux'
 import { selectLectureList, updateLectureAssignment } from '../../features/lecture_reducer'
-import { useSelector } from 'react-redux'
 import { Assignment } from "type";
 
 interface AssignmentList {

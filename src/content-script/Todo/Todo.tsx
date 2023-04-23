@@ -24,10 +24,12 @@ function Todo() {
 	const [showMainArea, setShowMainArea] = useState<boolean>(false);
 
 	return (
+        <div>
 		<div css={styles.Wrapper}>
 			<TodoContainer show={showMainArea} setShow={setShowMainArea} />
-			<TodoButton setShow={setShowMainArea} />
 		</div>
+        <TodoButton setShow={setShowMainArea} />
+        </div>
 	);
 }
 

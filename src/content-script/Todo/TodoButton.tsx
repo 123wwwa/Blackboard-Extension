@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useCallback } from "react";
-
+import { css } from "@emotion/react";
 type Props = {
 	setShow: Dispatch<SetStateAction<boolean>>;
 };
@@ -11,9 +11,19 @@ function TodoButton({ setShow }: Props) {
         
 		setShow((show) => !show);
 	}, []);
-
+	const styles = {
+		Wrapper: css({
+			position: "fixed",
+			right: "30px",
+			bottom: "0px",
+			fontSize: "16px",
+			fontFamily: "Pretendard-Regular",
+			zIndex: 10000
+		}),
+	};
 	return (
 		<button
+			css={styles.Wrapper}
 			onClick={() => {
 				console.log("clicked");
 				setShow((show) => !show);

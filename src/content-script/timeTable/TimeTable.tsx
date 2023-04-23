@@ -15,32 +15,36 @@ const RenderTableDay = () => {
   const dispatch: AppDispatch = useDispatch();
   const lectureList = useSelector(selectLectureList);
   const isLectureListLoaded = useSelector(selectIsLectureLoaded);
-  const shapedLectureList:any = useSelector<RootState>(selectShapedLectureList);
+  const shapedLectureList: any = useSelector<RootState>(selectShapedLectureList);
 
 
 
   const LectureDiv = (props: any) => {
-    const marginTop: number = (props.item["timeplace"].start - (9 * 12)) / 12 * (TableHeight + 2) + (HeadHeight + 3); // minus 9 hour to start from 9 
+    const marginTop: number = (props.item["timeplace"].start - (9 * 12)) / 12 * (TableHeight) + (HeadHeight); // minus 9 hour to start from 9 
     // add 2 to consider margin.
-    const height: number = (props.item["timeplace"].end - props.item["timeplace"].start) / 12 * (TableHeight + 2);
+    const height: number = (props.item["timeplace"].end - props.item["timeplace"].start) / 12 * (TableHeight);
     const place = props.item["timeplace"].place;
     const link = props.item["link"];
     return (
-      <div>
+      <div id="lectureDiv">
         <div
-          id="lectureDiv"
+          id="lectureContent"
           style={{
             backgroundColor: props.item["color"],
             marginTop: marginTop + 'px',
             height: height + 'px',
+            width: "100%",
           }}
           onClick={() => {
             window.open(link, "_blank");
           }}>
-          <span id="lectureName">{props.item["name"]}</span>
-          <span id="lecturePlace">{place}</span>
+          <div id="lectureText">
+            <span id="lectureName">{props.item["name"]}</span>
+            <span id="lecturePlace">{place}</span>
+          </div>
         </div>
       </div>
+
     )
   }
   useEffect(() => {
@@ -108,7 +112,7 @@ const TimeTable = () => {
     <div id="parent"
       style={{
         height: "440px",
-        width: "100%",
+        width: "200%",
 
       }}>
       <Provider store={store}>

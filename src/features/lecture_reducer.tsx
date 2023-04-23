@@ -1,8 +1,10 @@
 export {}
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
+//import { v4 as uuid } from 'uuid';
+
 import { createSlice } from "@reduxjs/toolkit";
-import { Lecture, ShapedLecture, AssignmentList, Assignment} from "type";
+import { Lecture, ShapedLecture, AssignmentList, Assignment, todo} from "type";
 import { AppDispatch, RootState} from "./store";
 const colorlist = ["#eff9cc", "#dee8f6", "#ffe9e9", "#ffedda", "#dcf2e9", "#dceef2", "#fff8cc", "#ffe9e9"];
 interface LectureList {
@@ -12,11 +14,13 @@ export interface InitialState {
     lectureSlice: LectureList;
     shapedLectureList: ShapedLecture[][];
     isLectureLoaded: boolean;
+    todoList: todo[];
 }
 let initialState: InitialState = {
     lectureSlice: {},
     shapedLectureList: [[], [], [], [], []],
-    isLectureLoaded: false
+    isLectureLoaded: false,
+    todoList: [], 
 }
 
 export const lectureSlice = createSlice({
@@ -32,12 +36,42 @@ export const lectureSlice = createSlice({
         },
         setLectureAssignment: (state, action) => {
             let assignmentList: AssignmentList = action.payload;
+        },
+        setTodoList: (state, action) => {
+            state.todoList = action.payload;
         }
     },
 });
-export const { setLecutureList, setShapedLectureList, setLectureAssignment } = lectureSlice.actions;
+export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList } = lectureSlice.actions;
 
-
+export const reloadTodoList = (dispatch: AppDispatch) => {
+    const fetchUrl = "https://blackboard.unist.ac.kr/webapps/calendar/calendarData/selectedCalendarEvents?start=" + Date.now() + "&end=2147483647000";
+        fetch(fetchUrl) 
+            .then((response) => response.json())
+            .then(function(fetchData) {
+                console.log(fetchData);
+                for(var key in fetchData) {
+                    var newStartString = fetchData[key]["start"];
+                    var newDate = new Date(newStartString);
+                    var assignName = fetchData[key]["title"];
+                    var link = "";
+                    if(fetchData[key]["calendarName"] !== "Personal") {
+                      assignName = fetchData[key]["calendarName"] + ": " + assignName;
+                      link = fetchData[key]["id"];
+                    }
+                    //const nanoid:string = uuid();
+                    var Todo = {
+                        _id : "nanoid",
+                        //course_id 
+                        //content_id
+                        content : assignName,
+                        date : newDate.getTime(),
+                        color: fetchData[key]["color"][0],
+                        linkcode: link
+                    };
+                }
+            })
+}
                 
 export const reloadLectureList =(dispatch:AppDispatch) => {
     window.chrome.storage.sync.get(['lectureInfo'], (res) => {

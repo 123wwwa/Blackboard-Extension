@@ -5,10 +5,12 @@ import ActionIcon from "./common/ActionIcon";
 import TextInput from "./common/TextInput";
 import DatePicker from "./common/DatePicker";
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChromePicker } from "react-color";
 import { css } from "@emotion/react";
-
+import { useLocalStorage } from "usehooks-ts";
+import { useDispatch, useSelector } from 'react-redux'
+import { reloadTodoList } from "../../features/lecture_reducer";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,7 +30,7 @@ const Container = styled.div<{ show: boolean }>`
 	box-sizing: border-box;
 	box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.14);
 	opacity: ${(props) => (props.show ? 1 : 0)};
-	visibility: ${(props) => (props.show ? "visible" : "hidden")};
+	display: ${(props) => (props.show ? "flex" : "none")};
 	${(props) => props.show && "transition-delay: 0s;"}
 
 	header {
@@ -71,7 +73,11 @@ const Container = styled.div<{ show: boolean }>`
 function TodoContainer({ show, setShow }: Props) {
 	const [showColorPicker, setShowColorPicker] = useState(false);
 	const [color, setColor] = useState("#E5E5E5");
-
+	const dispatch = useDispatch()
+	useEffect(()=>{
+		dispatch(reloadTodoList as any);
+	})
+	//const [todoList, setTodoList] = useLocalStorage
 	return (
 		<Container show={show}>
 			<header>

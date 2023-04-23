@@ -78,7 +78,6 @@ const getLectureElement = () =>{
                     }
                 }
             }
-            console.log(lecturelist);
             window.chrome.storage.sync.set({ 'lectureInfo': JSON.stringify(lecturelist) }, () =>{});
         });
 }

@@ -1,21 +1,39 @@
 #lectureDiv{
   position: absolute;
   width: 80px;
+  border: 1px solid transparent;
   font-family: 400 .8em "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size: 10px;
   font-weight: bold;
-  margin-left: 1px;
   text-align: center;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+}
+#lectureContent:hover{
+  filter: brightness(80%);
+  cursor: pointer;
+}
+#lectureContent{
+  z-index: 10;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-#lectureDiv:hover{
-  filter: brightness(80%);
+#lectureText{
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 #lectureGrid{
   border: 1px solid #ccc; 
+  box-sizing: border-box;
   background-color: #efede3;
   text-align: center;
   display: flex;
