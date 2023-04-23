@@ -11,7 +11,6 @@ const AssignmentList = () => {
     const dispatch:AppDispatch = useDispatch();
     const [assignmentList, setAssignmentList] = useLocalStorage<AssignmentList>('fileInfo', {});
     const lectureList = useSelector(selectLectureList);
-    console.log(lectureList);
     useEffect(()=>{
        updateLectureAssignment(assignmentList)(dispatch);
     },[dispatch, assignmentList])

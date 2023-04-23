@@ -24,8 +24,11 @@ const waitForElm = () => {
 
 const getLectureElement = () =>{
     var AllaTag = document.getElementsByTagName('a');
-    var lectureDiv = document.querySelector('ul[class*="portletList-img courseListing coursefakeclass"]')
+    var lectureDiv = document.querySelector('ul[class*="portletList-img courseListing coursefakeclass"]');
+    const colorlist:string[] = ["#eff9cc", "#dee8f6", "#ffe9e9", "#ffedda", "#dcf2e9", "#dceef2", "#fff8cc", "#ffe9e9"];
+
     var lecturelist:LectureList = {};
+    var j=0;
     for (var i = 0; i < AllaTag.length; i += 1) {
         const item = AllaTag[i] as HTMLElement;
         const itemparent = item.parentElement as HTMLElement;
@@ -34,6 +37,9 @@ const getLectureElement = () =>{
               const urlObj: any= new URL(AllaTag[i].href);
             var lecture:Lecture = {
                 name: AllaTag[i].text, 
+                isLecture: true,
+                color: colorlist[j%8],
+                engName: AllaTag[i].text.split(":")[1].trim(),
                 link: AllaTag[i].href, 
                 id: urlObj.searchParams.get('id'),
                 assignment: [],
@@ -43,7 +49,9 @@ const getLectureElement = () =>{
             // temp["name"] = AllaTag[i].text;
             // temp["link"] = AllaTag[i].href;
             // temp["id"] = (new URL(temp["link"])).searchParams.get('id')
-            lecturelist[AllaTag[i].text.split(":")[0].split("_")[1]] = lecture;
+            var lectureKey = AllaTag[i].text.split(":")[0].split("_")[1];
+            lecturelist[lectureKey] = lecture;
+            j++;
         }
     }
     // var assignmentList= JSON.parse(localStorage.getItem("fileInfo") || "{}");
@@ -62,7 +70,9 @@ const getLectureElement = () =>{
         .then(function(jsonData) {
             for (var key in lecturelist) {
                 if (jsonData[key] == undefined) {
-                    delete lecturelist[key];
+                    //delete lecturelist[key];
+                    lecturelist[key].isLecture = false;
+
                 } else {
                     lecturelist[key]["name"] = jsonData[key]["name"]
                     lecturelist[key]["time"] = jsonData[key]["time"]
@@ -78,6 +88,7 @@ const getLectureElement = () =>{
                     }
                 }
             }
+            console.log(lecturelist);
             window.chrome.storage.sync.set({ 'lectureInfo': JSON.stringify(lecturelist) }, () =>{});
         });
 }

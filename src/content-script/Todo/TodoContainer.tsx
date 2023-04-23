@@ -10,7 +10,7 @@ import { ChromePicker } from "react-color";
 import { css } from "@emotion/react";
 import SketchPicker from "react-color/lib/components/sketch/Sketch";
 import { useDispatch } from "react-redux";
-import { reloadTodoList } from "features/lecture_reducer";
+import { reloadTodoList } from "../../features/lecture_reducer";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;

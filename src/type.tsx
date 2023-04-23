@@ -14,9 +14,10 @@ export interface Assignment {
     Assignment_Files: FileUrl[] 
 }
 
-export interface todo {
+export interface Todo {
   _id: string
   content: string
+  course_name: string
   date: number
   color: string
   linkcode: string
@@ -30,10 +31,13 @@ export interface FileUrl {
 }
 export interface Lecture {
     name: string
+    engName: string
+    isLecture : boolean
     link: string
     id: string
-    time: string
-    professor: string
+    color : string
+    time?: string
+    professor?: string
     timeplace0?: Timeplace
     timeplace1?: Timeplace
     timeplace2?: Timeplace
