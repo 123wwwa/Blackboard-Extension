@@ -1,10 +1,9 @@
 export {}
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { Lecture, ShapedLecture, AssignmentList, Assignment} from "type";
 import { AppDispatch, RootState} from "./store";
-import { validateHeaderName } from "http";
 const colorlist = ["#eff9cc", "#dee8f6", "#ffe9e9", "#ffedda", "#dcf2e9", "#dceef2", "#fff8cc", "#ffe9e9"];
 interface LectureList {
     [key: string]: Lecture;
