@@ -1,10 +1,8 @@
 import styled from '@emotion/styled'
+import { useEffect, useState } from 'react';
+import {Todo} from 'type'
 
-type TodoCardProps = {
-  color?: string;
-};
-
-const Container = styled.div<TodoCardProps>`
+const Container = styled.div<any>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,17 +50,23 @@ const TrashIcon = styled.img`
   cursor: pointer;
 `;
 
-function TodoCard({ color }: TodoCardProps) {
+function TodoCard({color, content, course_name, date, linkcode}: Todo) {
+  const [remainingTime, setRemainingTime] = useState<Date>(new Date(0));
+  useEffect(()=>{
+    setInterval(()=>{
+      setRemainingTime(new Date(date-Date.now()))
+    },1000)
+  },[])
   return (
     <Container color={color}>
       <Content>
-        <Title>System Programming: Assignment 1</Title>
-        <DateText>2023-04-04 23:59</DateText>
+        <Title>{content}</Title>
+        <DateText>{new Date(date).toISOString().replace("T", " ").replace(/\..*/, '')}</DateText>
       </Content>
 
       <DueDateContainer>
-        <DueDateText>0 Days</DueDateText>
-        <DueDateText>04:05:07</DueDateText>
+        <DueDateText>{new Date(remainingTime).getDay()} Days</DueDateText>
+        <DueDateText>{remainingTime.getHours()}:{remainingTime.getMinutes()}:{remainingTime.getSeconds()}</DueDateText>
       </DueDateContainer>
       
       <TrashIcon src={chrome.runtime.getURL("public/icons/icon-trash.png")} />

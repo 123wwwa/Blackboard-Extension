@@ -31,7 +31,7 @@ const Container = styled.div<{ show: boolean }>`
 	box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.14);
 	opacity: ${(props) => (props.show ? 1 : 0)};
 	display: ${(props) => (props.show ? "flex" : "none")};
-	${(props) => props.show && "transition-delay: 0s;"}
+	${(props) => props.show && "transition-delay: 0s;"};
 
 	header {
 		display: flex;
@@ -90,7 +90,13 @@ function TodoContainer({ show, setShow }: Props) {
 				<TodoMenu setShow={setShow} />
 			</header>
 			<article>
-				<TodoCard color="#E5E5E5" />
+				{todoList.map((todo) => {
+					return <TodoCard color={todo.color} content={todo.content} course_name={todo.course_name}
+					date={todo.date} linkcode={todo.linkcode} />
+				})
+
+				}
+				{/* <TodoCard color="#E5E5E5" />
 				<TodoCard color="#FECACA" />
 				<TodoCard color="#FDE68A" />
 				<TodoCard color="#A5F3FC" />
@@ -101,7 +107,7 @@ function TodoContainer({ show, setShow }: Props) {
 				<TodoCard color="#E5E5E5" />
 				<TodoCard color="#FECACA" />
 				<TodoCard color="#FDE68A" />
-				<TodoCard color="#A5F3FC" />
+				<TodoCard color="#A5F3FC" /> */}
 			</article>
 			<footer>
 				<div className="menus">
