@@ -1,9 +1,12 @@
 import React, { ButtonHTMLAttributes } from "react";
 import styled from "@emotion/styled";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { useTheme } from "@emotion/react";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-	icon: string;
-	size: string;
+	icon: IconProp;
+	size?: string;
 };
 
 const Container = styled.button<{ size: string }>`
@@ -46,10 +49,12 @@ const Container = styled.button<{ size: string }>`
 	}
 `;
 
-function ActionIcon({ icon, size, ...props }: Props) {
+function ActionIcon({ icon, size = "16px", ...props }: Props) {
+	const theme = useTheme();
+
 	return (
 		<Container size={size} {...props}>
-			<img src={icon} alt={icon} />
+			<FontAwesomeIcon icon={icon} opacity="0.4" fontSize={size} />
 		</Container>
 	);
 }

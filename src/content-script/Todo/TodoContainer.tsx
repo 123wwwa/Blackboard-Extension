@@ -1,4 +1,4 @@
-import IconButton from "./common/IconButton";
+import ImageButton from "./common/ImageButton";
 import TodoMenu from "./TodoMenu";
 import TodoCard from "./TodoCard";
 import ActionIcon from "./common/ActionIcon";
@@ -11,6 +11,8 @@ import { css } from "@emotion/react";
 import SketchPicker from "react-color/lib/components/sketch/Sketch";
 import { useDispatch } from "react-redux";
 import { reloadTodoList } from "../../features/lecture_reducer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPalette, faPlus } from "@fortawesome/free-solid-svg-icons";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -73,15 +75,15 @@ const Container = styled.div<{ show: boolean }>`
 function TodoContainer({ show, setShow }: Props) {
 	const [showColorPicker, setShowColorPicker] = useState(false);
 	const [color, setColor] = useState("#E5E5E5");
-	const dispatch = useDispatch()
-	useEffect(()=>{
+	const dispatch = useDispatch();
+	useEffect(() => {
 		dispatch(reloadTodoList as any);
-	})
+	});
 	//const [todoList, setTodoList] = useLocalStorage
 	return (
 		<Container show={show}>
 			<header>
-				<IconButton
+				<ImageButton
 					title="구글 연동"
 					icon={chrome.runtime.getURL("public/icons/icon-google-calendar.png")}
 				/>
@@ -122,17 +124,13 @@ function TodoContainer({ show, setShow }: Props) {
 						</div>
 					)}
 					<ActionIcon
-						size="24px"
-						icon={chrome.runtime.getURL("public/icons/icon-palette.png")}
+						icon={faPalette}
 						onClick={() => setShowColorPicker((show) => !show)}
 					/>
 					<TextInput placeholder="새 일정 이름 입력" />
 					<DatePicker />
 				</div>
-				<ActionIcon
-					size="24px"
-					icon={chrome.runtime.getURL("public/icons/icon-plus.png")}
-				/>
+				<ActionIcon icon={faPlus} />
 			</footer>
 		</Container>
 	);
