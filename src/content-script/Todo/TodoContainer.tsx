@@ -1,21 +1,15 @@
 import ImageButton from "./common/ImageButton";
 import TodoMenu from "./TodoMenu";
-import TodoCard from "./TodoCard";
-import ActionIcon from "./common/ActionIcon";
-import TextInput from "./common/TextInput";
-import DatePicker from "./common/DatePicker";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import { ChromePicker } from "react-color";
-import { css } from "@emotion/react";
-import SketchPicker from "react-color/lib/components/sketch/Sketch";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	reloadLectureList,
 	reloadTodoList,
 	selectTodoList,
 } from "../../features/lecture_reducer";
-import { faPalette, faPlus } from "@fortawesome/free-solid-svg-icons";
+import TodoList from "./TodoList";
+import TodoFooter from "./TodoFooter";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,7 +19,7 @@ const Container = styled.div<{ show: boolean }>`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	width: 512px;
 	height: 431px;
 	background-color: #ffffff;
@@ -47,47 +41,36 @@ const Container = styled.div<{ show: boolean }>`
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-	}
 
-	article {
-		width: 100%;
-		height: 330px;
-		overflow: scroll;
-		overflow-x: hidden;
-		padding: 5px 14px;
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		&::-webkit-slider-thumb {
-			background: #6c757d;
-			border-radius: 8px;
-		}
-		&::-webkit-scrollbar {
-			width: 7px;
-			height: 10px;
-			background-color: white;
-			border-radius: 8px;
-		}
-	}
-
-	footer {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-		padding: 10px 14px;
-
-		.menus {
+		.box {
 			display: flex;
 			align-items: center;
-			gap: 5px;
+			gap: 33px;
+
+			.tabs {
+				display: flex;
+				align-items: center;
+				color: rgba(0, 0, 0, 0.5);
+				font-size: 14px;
+				gap: 23px;
+
+				p {
+					cursor: pointer;
+
+					&.active {
+						border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+					}
+				}
+			}
 		}
 	}
 `;
 
+const TodoTabs = ["과제", "다운로드"];
+
 function TodoContainer({ show, setShow }: Props) {
-	const [showColorPicker, setShowColorPicker] = useState(false);
 	const [color, setColor] = useState("#E5E5E5");
+	const [tab, setTab] = useState("과제");
 	const todoList = useSelector(selectTodoList);
 	const dispatch = useDispatch();
 	useEffect(() => {
@@ -97,54 +80,37 @@ function TodoContainer({ show, setShow }: Props) {
 	return (
 		<Container show={show}>
 			<header>
-				<ImageButton
-					title="구글 연동"
-					icon={chrome.runtime.getURL("public/icons/icon-google-calendar.png")}
-				/>
+				<div className="box">
+					<ImageButton
+						title="구글 연동"
+						icon={chrome.runtime.getURL(
+							"public/icons/icon-google-calendar.png"
+						)}
+					/>
+					<div className="tabs">
+						{TodoTabs.map((tabName) => (
+							<p
+								key={tabName}
+								className={`${tab === tabName ? "active" : ""}`}
+								onClick={() => setTab(tabName)}
+							>
+								{tabName}
+							</p>
+						))}
+					</div>
+				</div>
 				<TodoMenu setShow={setShow} />
 			</header>
-			<article>
-				{todoList.map((todo) => {
-					return (
-						<TodoCard
-							color={todo.color}
-							content={todo.content}
-							course_name={todo.course_name}
-							date={todo.date}
-							linkcode={todo.linkcode}
-						/>
-					);
-				})}
-			</article>
-			<footer>
-				<div className="menus">
-					{showColorPicker && (
-						<div css={css({ position: "absolute", zIndex: 10 })}>
-							<div
-								css={css({
-									position: "fixed",
-									left: 0,
-									right: 0,
-									top: 0,
-									bottom: 0,
-								})}
-								onClick={() => setShowColorPicker(false)}
-							></div>
-							<SketchPicker
-								color={color}
-								onChange={(color) => setColor(color.hex)}
-							/>
-						</div>
-					)}
-					<ActionIcon
-						icon={faPalette}
-						onClick={() => setShowColorPicker((show) => !show)}
-					/>
-					<TextInput placeholder="새 일정 이름 입력" />
-					<DatePicker />
-				</div>
-				<ActionIcon icon={faPlus} />
-			</footer>
+			{tab === "과제" ? (
+				// 과제 탭
+				<>
+					<TodoList todoList={todoList} />
+					<TodoFooter color={color} setColor={setColor} />
+				</>
+			) : (
+				// 다운로드 탭
+				<> </>
+			)}
 		</Container>
 	);
 }

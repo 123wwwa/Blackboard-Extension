@@ -13,7 +13,6 @@ export interface Assignment {
     Due_Date: string
     Assignment_Files: FileUrl[] 
 }
-
 export interface Todo {
   content: string
   course_name?: string
@@ -21,6 +20,7 @@ export interface Todo {
   color: string
   linkcode?: string
 }
+
 export interface AssignmentList {
     [key: string]: Assignment
 }
