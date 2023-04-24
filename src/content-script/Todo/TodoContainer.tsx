@@ -10,7 +10,11 @@ import { ChromePicker } from "react-color";
 import { css } from "@emotion/react";
 import SketchPicker from "react-color/lib/components/sketch/Sketch";
 import { useDispatch, useSelector } from "react-redux";
-import { reloadLectureList, reloadTodoList, selectTodoList } from "../../features/lecture_reducer";
+import {
+	reloadLectureList,
+	reloadTodoList,
+	selectTodoList,
+} from "../../features/lecture_reducer";
 import { faPalette, faPlus } from "@fortawesome/free-solid-svg-icons";
 type Props = {
 	show: boolean;
@@ -56,13 +60,13 @@ const Container = styled.div<{ show: boolean }>`
 		gap: 10px;
 		&::-webkit-slider-thumb {
 			background: #6c757d;
-    		border-radius: 8px;
+			border-radius: 8px;
 		}
 		&::-webkit-scrollbar {
 			width: 7px;
-    		height: 10px;
-    		background-color: white; 
-    		border-radius: 8px;
+			height: 10px;
+			background-color: white;
+			border-radius: 8px;
 		}
 	}
 
@@ -85,10 +89,10 @@ function TodoContainer({ show, setShow }: Props) {
 	const [showColorPicker, setShowColorPicker] = useState(false);
 	const [color, setColor] = useState("#E5E5E5");
 	const todoList = useSelector(selectTodoList);
-	const dispatch = useDispatch()
+	const dispatch = useDispatch();
 	useEffect(() => {
 		dispatch(reloadLectureList as any);
-	}, [dispatch])
+	}, [dispatch]);
 	//const [todoList, setTodoList] = useLocalStorage
 	return (
 		<Container show={show}>
@@ -101,12 +105,16 @@ function TodoContainer({ show, setShow }: Props) {
 			</header>
 			<article>
 				{todoList.map((todo) => {
-					return <TodoCard color={todo.color} content={todo.content} course_name={todo.course_name}
-						date={todo.date} linkcode={todo.linkcode} />
-				})
-
-				}
-
+					return (
+						<TodoCard
+							color={todo.color}
+							content={todo.content}
+							course_name={todo.course_name}
+							date={todo.date}
+							linkcode={todo.linkcode}
+						/>
+					);
+				})}
 			</article>
 			<footer>
 				<div className="menus">
