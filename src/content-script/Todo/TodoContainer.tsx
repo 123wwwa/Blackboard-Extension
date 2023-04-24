@@ -9,9 +9,8 @@ import { useEffect, useState } from "react";
 import { ChromePicker } from "react-color";
 import { css } from "@emotion/react";
 import SketchPicker from "react-color/lib/components/sketch/Sketch";
-import { useDispatch } from "react-redux";
-import { reloadTodoList } from "../../features/lecture_reducer";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDispatch, useSelector } from "react-redux";
+import { reloadLectureList, reloadTodoList, selectTodoList } from "../../features/lecture_reducer";
 import { faPalette, faPlus } from "@fortawesome/free-solid-svg-icons";
 type Props = {
 	show: boolean;
@@ -33,7 +32,6 @@ const Container = styled.div<{ show: boolean }>`
 	box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.14);
 	opacity: ${(props) => (props.show ? 1 : 0)};
 	display: ${(props) => (props.show ? "flex" : "none")};
-	${(props) => props.show && "transition-delay: 0s;"};
 
 	header {
 		display: flex;
@@ -51,10 +49,21 @@ const Container = styled.div<{ show: boolean }>`
 		width: 100%;
 		height: 330px;
 		overflow: scroll;
+		overflow-x: hidden;
 		padding: 5px 14px;
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+		&::-webkit-slider-thumb {
+			background: #6c757d;
+    		border-radius: 8px;
+		}
+		&::-webkit-scrollbar {
+			width: 7px;
+    		height: 10px;
+    		background-color: white; 
+    		border-radius: 8px;
+		}
 	}
 
 	footer {
@@ -75,10 +84,11 @@ const Container = styled.div<{ show: boolean }>`
 function TodoContainer({ show, setShow }: Props) {
 	const [showColorPicker, setShowColorPicker] = useState(false);
 	const [color, setColor] = useState("#E5E5E5");
-	const dispatch = useDispatch();
+	const todoList = useSelector(selectTodoList);
+	const dispatch = useDispatch()
 	useEffect(() => {
-		dispatch(reloadTodoList as any);
-	});
+		dispatch(reloadLectureList as any);
+	}, [dispatch])
 	//const [todoList, setTodoList] = useLocalStorage
 	return (
 		<Container show={show}>
@@ -90,18 +100,13 @@ function TodoContainer({ show, setShow }: Props) {
 				<TodoMenu setShow={setShow} />
 			</header>
 			<article>
-				<TodoCard color="#E5E5E5" />
-				<TodoCard color="#FECACA" />
-				<TodoCard color="#FDE68A" />
-				<TodoCard color="#A5F3FC" />
-				<TodoCard color="#E5E5E5" />
-				<TodoCard color="#FECACA" />
-				<TodoCard color="#FDE68A" />
-				<TodoCard color="#A5F3FC" />
-				<TodoCard color="#E5E5E5" />
-				<TodoCard color="#FECACA" />
-				<TodoCard color="#FDE68A" />
-				<TodoCard color="#A5F3FC" />
+				{todoList.map((todo) => {
+					return <TodoCard color={todo.color} content={todo.content} course_name={todo.course_name}
+						date={todo.date} linkcode={todo.linkcode} />
+				})
+
+				}
+
 			</article>
 			<footer>
 				<div className="menus">

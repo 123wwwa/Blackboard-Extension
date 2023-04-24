@@ -1,10 +1,8 @@
 import styled from '@emotion/styled'
+import { useEffect, useState } from 'react';
+import {Todo} from 'type'
 
-type TodoCardProps = {
-  color?: string;
-};
-
-const Container = styled.div<TodoCardProps>`
+const Container = styled.div<any>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -13,6 +11,10 @@ const Container = styled.div<TodoCardProps>`
   padding: 15px 20px;
   background-color: ${props => props.color || '#F5F5F5'};
   border-radius: 10px;
+  &:hover {
+    filter: brightness(80%);
+    cursor: pointer;
+  }
 `;
 
 const Content = styled.div`
@@ -52,17 +54,33 @@ const TrashIcon = styled.img`
   cursor: pointer;
 `;
 
-function TodoCard({ color }: TodoCardProps) {
+function TodoCard({color, content, course_name, date, linkcode}: Todo) {
+  const [remainingTime, setRemainingTime] = useState<Date>(new Date(0));
+  const [currentTime, setCurrentTime] = useState<Date>(new Date(Date.now()));
+  useEffect(()=>{
+    setInterval(()=>{
+      setCurrentTime(new Date(Date.now()))
+      setRemainingTime(new Date(date-Date.now()-(3240 * 10000)))
+    },1000)
+  },[])
+  const getDayDiff = (date1: Date, date2: Date) => {
+    return Math.floor((date1.getTime() - date2.getTime()) / 8.64e7);
+  }
+ 
   return (
-    <Container color={color}>
+    <Container color={color}
+    onClick={()=>{
+      if(!linkcode) return;
+      window.open(`https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/${linkcode}`, '_blank');
+    }}>
       <Content>
-        <Title>System Programming: Assignment 1</Title>
-        <DateText>2023-04-04 23:59</DateText>
+        <Title >{content}</Title>
+        <DateText>{new Date(date+(3240 * 10000)).toISOString().replace("T", " ").replace(/\..*/, '')}</DateText>
       </Content>
 
       <DueDateContainer>
-        <DueDateText>0 Days</DueDateText>
-        <DueDateText>04:05:07</DueDateText>
+        <DueDateText>{getDayDiff(new Date(date), currentTime)} Days</DueDateText>
+        <DueDateText>{remainingTime.getHours().toString().padStart(2,'0')}:{remainingTime.getMinutes().toString().padStart(2,'0')}:{remainingTime.getSeconds().toString().padStart(2,'0')}</DueDateText>
       </DueDateContainer>
       
       <TrashIcon src={chrome.runtime.getURL("public/icons/icon-trash.png")} />

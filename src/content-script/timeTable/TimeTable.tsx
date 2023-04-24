@@ -1,15 +1,18 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 
-import React, { useEffect, useRef, useState } from 'react'
-import './App.css'
+import React, { useEffect, useState } from 'react'
 import { Lecture, ShapedLecture } from '../../type'
 import { reloadLectureList, selectLectureList, selectIsLectureLoaded, selectShapedLectureList } from '../../features/lecture_reducer';
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { AppDispatch, RootState, store } from '../../features/store'
+import { LectureGrid } from './common/LectureGrid';
+import styled  from '@emotion/styled';
+import { css } from '@emotion/react';
 const HeadHeight = 30;
 const TableHeight = 45;
 const TableWidth = 80;
+
 const RenderTableDay = () => {
   const [logoURL, setLogoURL] = useState<string>("");
   const dispatch: AppDispatch = useDispatch();
@@ -17,33 +20,72 @@ const RenderTableDay = () => {
   const isLectureListLoaded = useSelector(selectIsLectureLoaded);
   const shapedLectureList: any = useSelector<RootState>(selectShapedLectureList);
 
-
-
+  const LectureContent = styled.div<{marginTop?: string, height?: string, backgroundColor?: string}>`
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top:${props=>props.marginTop};
+  background-color: ${props=>props.backgroundColor};
+  height: ${props=>props.height};
+  :&hover {
+    filter: brightness(80%);
+    cursor: pointer;
+  }
+  `;
+  const LectureTextArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  `
+  const LectureName = styled.span`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  `
+  const LecturePlace = styled.span`
+  color:darkgray;
+  `
+  const LectureDiv2 = styled.div`
+  position: absolute;
+  width: 80px;
+  border: 1px solid transparent;
+  font-family: 400 .8em "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  `
   const LectureDiv = (props: any) => {
     const marginTop: number = (props.item["timeplace"].start - (9 * 12)) / 12 * (TableHeight) + (HeadHeight); // minus 9 hour to start from 9 
-    // add 2 to consider margin.
     const height: number = (props.item["timeplace"].end - props.item["timeplace"].start) / 12 * (TableHeight);
     const place = props.item["timeplace"].place;
+    //console.log(props.item);
     const link = props.item["link"];
     return (
-      <div id="lectureDiv">
-        <div
-          id="lectureContent"
-          style={{
-            backgroundColor: props.item["color"],
-            marginTop: marginTop + 'px',
-            height: height + 'px',
-            width: "100%",
-          }}
+      <LectureDiv2>
+        <LectureContent
+          marginTop={marginTop.toString()+"px"}
+          height={height.toString()+"px"}
+          backgroundColor={props.item["color"]}
+
           onClick={() => {
             window.open(link, "_blank");
           }}>
-          <div id="lectureText">
-            <span id="lectureName">{props.item["name"]}</span>
-            <span id="lecturePlace">{place}</span>
-          </div>
-        </div>
-      </div>
+          <LectureTextArea>
+            <LectureName>{props.item["name"]}</LectureName>
+            <LecturePlace>{place}</LecturePlace>
+          </LectureTextArea>
+        </LectureContent>
+      </LectureDiv2>
 
     )
   }
@@ -51,7 +93,10 @@ const RenderTableDay = () => {
     dispatch(reloadLectureList as any);
     setLogoURL(chrome.runtime.getURL("public/assets/HeXA_logo.png"));
   }, [dispatch])
+  
   const dayList = ["월", "화", "수", "목", "금"];
+  const bgColordiv = document.getElementsByClassName("portlet clearfix")[1] as HTMLElement;
+  const [gridBgColor, setGridBgColor] = useState(window.getComputedStyle(bgColordiv,null).getPropertyValue('background-color')); 
   return (
     <>
 
@@ -60,24 +105,18 @@ const RenderTableDay = () => {
       }}>
         {isLectureListLoaded && <>
           <div>
-            <div id="lectureGrid"
-              style={{
-                width: "20px", height: HeadHeight,
-              }}>
+            <LectureGrid width='20px' height={HeadHeight.toString()+"px"} color={gridBgColor}>
               <img src={logoURL}
                 style={{
                   width: "20px", height: "20px",
                 }} />
-            </div>
+            </LectureGrid>
             {[...Array(12)].map((x, j) => {
-              return (<div id="lectureGrid"
-                style={{
-                  width: "20px", height: TableHeight,
-                }}>
+              return (<LectureGrid width='20px' height={TableHeight.toString()+"px"} color={gridBgColor}>
                 <span>
                   {j + 9}
                 </span>
-              </div>)
+              </LectureGrid>)
             })}
           </div>
           {[...Array(5)].map((x, i) => {
@@ -87,18 +126,13 @@ const RenderTableDay = () => {
                   <LectureDiv item={item}></LectureDiv>
                 </>)
               })}
-              <div id="lectureGrid"
-                style={{
-                  width: TableWidth, height: HeadHeight,
-                }}>
+              <LectureGrid width={TableWidth.toString()+"px"} height={HeadHeight.toString()+"px"} color={gridBgColor}>
                 {dayList[i]}
-              </div>
+              </LectureGrid>
               {[...Array(12)].map(() => {
-                return (<div id="lectureGrid"
-                  style={{
-                    width: TableWidth, height: TableHeight,
-                  }}>
-                </div>)
+                return (<LectureGrid
+                    width= {TableWidth.toString()+"px"} height= {TableHeight.toString()+"px"} color={gridBgColor}>                  
+                </LectureGrid>)
               })}
             </div>)
           })}
@@ -112,8 +146,8 @@ const TimeTable = () => {
     <div id="parent"
       style={{
         height: "440px",
-        width: "200%",
-
+        width: "100%",
+        marginLeft: "5px"
       }}>
       <Provider store={store}>
         <RenderTableDay />

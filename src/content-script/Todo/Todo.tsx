@@ -15,7 +15,7 @@ const styles = {
 	Wrapper: css({
 		position: "fixed",
 		right: "30px",
-		bottom: "30px",
+		bottom: "60px",
 		fontSize: "16px",
 		fontFamily: "Pretendard-Regular",
 		zIndex: 9999,
