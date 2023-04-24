@@ -2,7 +2,6 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 import React, { useEffect, useState } from 'react'
-import './App.css'
 import { Lecture, ShapedLecture } from '../../type'
 import { reloadLectureList, selectLectureList, selectIsLectureLoaded, selectShapedLectureList } from '../../features/lecture_reducer';
 import { useSelector, useDispatch, Provider } from 'react-redux';
@@ -51,14 +50,33 @@ const RenderTableDay = () => {
   const LecturePlace = styled.span`
   color:darkgray;
   `
+  const LectureDiv2 = styled.div`
+  position: absolute;
+  width: 80px;
+  border: 1px solid transparent;
+  font-family: 400 .8em "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  `
   const LectureDiv = (props: any) => {
     const marginTop: number = (props.item["timeplace"].start - (9 * 12)) / 12 * (TableHeight) + (HeadHeight); // minus 9 hour to start from 9 
     const height: number = (props.item["timeplace"].end - props.item["timeplace"].start) / 12 * (TableHeight);
     const place = props.item["timeplace"].place;
+    //console.log(props.item);
     const link = props.item["link"];
     return (
-      <div id="lectureDiv">
+      <LectureDiv2>
         <LectureContent
+          marginTop={marginTop.toString()+"px"}
+          height={height.toString()+"px"}
+          backgroundColor={props.item["color"]}
+
           onClick={() => {
             window.open(link, "_blank");
           }}>
@@ -67,7 +85,7 @@ const RenderTableDay = () => {
             <LecturePlace>{place}</LecturePlace>
           </LectureTextArea>
         </LectureContent>
-      </div>
+      </LectureDiv2>
 
     )
   }
@@ -94,8 +112,7 @@ const RenderTableDay = () => {
                 }} />
             </LectureGrid>
             {[...Array(12)].map((x, j) => {
-              return (<LectureGrid width='20px' height={TableHeight.toString()+"px"} color={gridBgColor}
-              >
+              return (<LectureGrid width='20px' height={TableHeight.toString()+"px"} color={gridBgColor}>
                 <span>
                   {j + 9}
                 </span>
