@@ -8,9 +8,12 @@ import { reloadLectureList, selectLectureList, selectIsLectureLoaded, selectShap
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { AppDispatch, RootState, store } from '../../features/store'
 import { LectureGrid } from './common/LectureGrid';
+import styled  from '@emotion/styled';
+import { css } from '@emotion/react';
 const HeadHeight = 30;
 const TableHeight = 45;
 const TableWidth = 80;
+
 const RenderTableDay = () => {
   const [logoURL, setLogoURL] = useState<string>("");
   const dispatch: AppDispatch = useDispatch();
@@ -18,32 +21,52 @@ const RenderTableDay = () => {
   const isLectureListLoaded = useSelector(selectIsLectureLoaded);
   const shapedLectureList: any = useSelector<RootState>(selectShapedLectureList);
 
-
-
+  const LectureContent = styled.div<{marginTop?: string, height?: string, backgroundColor?: string}>`
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top:${props=>props.marginTop};
+  background-color: ${props=>props.backgroundColor};
+  height: ${props=>props.height};
+  :&hover {
+    filter: brightness(80%);
+    cursor: pointer;
+  }
+  `;
+  const LectureTextArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  `
+  const LectureName = styled.span`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  `
+  const LecturePlace = styled.span`
+  color:darkgray;
+  `
   const LectureDiv = (props: any) => {
     const marginTop: number = (props.item["timeplace"].start - (9 * 12)) / 12 * (TableHeight) + (HeadHeight); // minus 9 hour to start from 9 
-    // add 2 to consider margin.
     const height: number = (props.item["timeplace"].end - props.item["timeplace"].start) / 12 * (TableHeight);
     const place = props.item["timeplace"].place;
     const link = props.item["link"];
     return (
       <div id="lectureDiv">
-        <div
-          id="lectureContent"
-          style={{
-            backgroundColor: props.item["color"],
-            marginTop: marginTop + 'px',
-            height: height + 'px',
-            width: "100%",
-          }}
+        <LectureContent
           onClick={() => {
             window.open(link, "_blank");
           }}>
-          <div id="lectureText">
-            <span id="lectureName">{props.item["name"]}</span>
-            <span id="lecturePlace">{place}</span>
-          </div>
-        </div>
+          <LectureTextArea>
+            <LectureName>{props.item["name"]}</LectureName>
+            <LecturePlace>{place}</LecturePlace>
+          </LectureTextArea>
+        </LectureContent>
       </div>
 
     )
@@ -56,7 +79,6 @@ const RenderTableDay = () => {
   const dayList = ["월", "화", "수", "목", "금"];
   const bgColordiv = document.getElementsByClassName("portlet clearfix")[1] as HTMLElement;
   const [gridBgColor, setGridBgColor] = useState(window.getComputedStyle(bgColordiv,null).getPropertyValue('background-color')); 
-  console.log(gridBgColor);
   return (
     <>
 
