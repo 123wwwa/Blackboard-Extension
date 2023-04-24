@@ -30,7 +30,7 @@ const RenderTableDay = () => {
   margin-top:${props=>props.marginTop};
   background-color: ${props=>props.backgroundColor};
   height: ${props=>props.height};
-  :&hover {
+  &:hover {
     filter: brightness(80%);
     cursor: pointer;
   }
@@ -42,21 +42,20 @@ const RenderTableDay = () => {
   align-items: center;
   `
   const LectureName = styled.span`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  color: #00748b;
+  font: 700 .8em "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 13px;
   `
   const LecturePlace = styled.span`
   color:darkgray;
+  font-weight: bold;
+  font-size: 11px;
   `
   const LectureDiv2 = styled.div`
   position: absolute;
   width: 80px;
   border: 1px solid transparent;
-  font-family: 400 .8em "Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 10px;
-  font-weight: bold;
+  
   text-align: center;
   display: flex;
   box-sizing: border-box;
