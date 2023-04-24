@@ -1,4 +1,4 @@
-import IconButton from "./common/IconButton";
+import ImageButton from "./common/ImageButton";
 import TodoMenu from "./TodoMenu";
 import TodoCard from "./TodoCard";
 import ActionIcon from "./common/ActionIcon";
@@ -10,7 +10,12 @@ import { ChromePicker } from "react-color";
 import { css } from "@emotion/react";
 import SketchPicker from "react-color/lib/components/sketch/Sketch";
 import { useDispatch, useSelector } from "react-redux";
-import { reloadLectureList, reloadTodoList, selectTodoList } from "../../features/lecture_reducer";
+import {
+	reloadLectureList,
+	reloadTodoList,
+	selectTodoList,
+} from "../../features/lecture_reducer";
+import { faPalette, faPlus } from "@fortawesome/free-solid-svg-icons";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,7 +36,6 @@ const Container = styled.div<{ show: boolean }>`
 	box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.14);
 	opacity: ${(props) => (props.show ? 1 : 0)};
 	display: ${(props) => (props.show ? "flex" : "none")};
-	${(props) => props.show && "transition-delay: 0s;"};
 
 	header {
 		display: flex;
@@ -56,13 +60,13 @@ const Container = styled.div<{ show: boolean }>`
 		gap: 10px;
 		&::-webkit-slider-thumb {
 			background: #6c757d;
-    		border-radius: 8px;
+			border-radius: 8px;
 		}
 		&::-webkit-scrollbar {
 			width: 7px;
-    		height: 10px;
-    		background-color: white; 
-    		border-radius: 8px;
+			height: 10px;
+			background-color: white;
+			border-radius: 8px;
 		}
 	}
 
@@ -85,15 +89,15 @@ function TodoContainer({ show, setShow }: Props) {
 	const [showColorPicker, setShowColorPicker] = useState(false);
 	const [color, setColor] = useState("#E5E5E5");
 	const todoList = useSelector(selectTodoList);
-	const dispatch = useDispatch()
+	const dispatch = useDispatch();
 	useEffect(() => {
 		dispatch(reloadLectureList as any);
-	}, [dispatch])
+	}, [dispatch]);
 	//const [todoList, setTodoList] = useLocalStorage
 	return (
 		<Container show={show}>
 			<header>
-				<IconButton
+				<ImageButton
 					title="구글 연동"
 					icon={chrome.runtime.getURL("public/icons/icon-google-calendar.png")}
 				/>
@@ -101,12 +105,16 @@ function TodoContainer({ show, setShow }: Props) {
 			</header>
 			<article>
 				{todoList.map((todo) => {
-					return <TodoCard color={todo.color} content={todo.content} course_name={todo.course_name}
-						date={todo.date} linkcode={todo.linkcode} />
-				})
-
-				}
-
+					return (
+						<TodoCard
+							color={todo.color}
+							content={todo.content}
+							course_name={todo.course_name}
+							date={todo.date}
+							linkcode={todo.linkcode}
+						/>
+					);
+				})}
 			</article>
 			<footer>
 				<div className="menus">
@@ -129,17 +137,13 @@ function TodoContainer({ show, setShow }: Props) {
 						</div>
 					)}
 					<ActionIcon
-						size="24px"
-						icon={chrome.runtime.getURL("public/icons/icon-palette.png")}
+						icon={faPalette}
 						onClick={() => setShowColorPicker((show) => !show)}
 					/>
 					<TextInput placeholder="새 일정 이름 입력" />
 					<DatePicker />
 				</div>
-				<ActionIcon
-					size="24px"
-					icon={chrome.runtime.getURL("public/icons/icon-plus.png")}
-				/>
+				<ActionIcon icon={faPlus} />
 			</footer>
 		</Container>
 	);

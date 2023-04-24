@@ -1,7 +1,14 @@
 import React from "react";
-import IconButton from "./common/IconButton";
 import ActionIcon from "./common/ActionIcon";
 import styled from "@emotion/styled";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+	faBars,
+	faClose,
+	faGear,
+	faHamburger,
+	faRefresh,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Container = styled.div`
 	display: flex;
@@ -12,28 +19,15 @@ const Container = styled.div`
 
 type Props = {
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
-function TodoMenu({ setShow } : Props): JSX.Element {
+function TodoMenu({ setShow }: Props): JSX.Element {
 	return (
 		<Container>
-			<ActionIcon
-				icon={chrome.runtime.getURL("public/icons/icon-refresh.png")}
-				size={"15px"}
-			/>
-			<ActionIcon
-				icon={chrome.runtime.getURL("public/icons/icon-settings.png")}
-				size={"15px"}
-			/>
-			<ActionIcon
-				icon={chrome.runtime.getURL("public/icons/icon-hamburger.png")}
-				size={"16px"}
-			/>
-			<ActionIcon
-				icon={chrome.runtime.getURL("public/icons/icon-x.png")}
-				size={"12px"}
-				onClick={() => setShow(show => !show)}
-			/>
+			<ActionIcon icon={faRefresh} />
+			<ActionIcon icon={faGear} />
+			<ActionIcon icon={faBars} />
+			<ActionIcon icon={faClose} onClick={() => setShow((show) => !show)} />
 		</Container>
 	);
 }

@@ -8,6 +8,8 @@ import { Assignment, FileUrl } from "../../type";
 import TodoButton from "./TodoButton";
 import TodoContainer from "./TodoContainer";
 import AssignmentList from "./AssignmentList";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 const styles = {
 	Wrapper: css({
@@ -24,12 +26,12 @@ function Todo() {
 	const [showMainArea, setShowMainArea] = useState<boolean>(false);
 
 	return (
-        <div>
-		<div css={styles.Wrapper}>
-			<TodoContainer show={showMainArea} setShow={setShowMainArea} />
+		<div>
+			<div css={styles.Wrapper}>
+				<TodoContainer show={showMainArea} setShow={setShowMainArea} />
+			</div>
+			<TodoButton setShow={setShowMainArea} />
 		</div>
-        <TodoButton setShow={setShowMainArea} />
-        </div>
 	);
 }
 

@@ -5,7 +5,7 @@ type Props = {
 	title?: string;
 };
 
-const IconButtonContainer = styled.button`
+const ImageButtonContainer = styled.button`
 	width: 105px;
 	height: 30px;
 	padding: 6px 12px;
@@ -35,13 +35,13 @@ const IconButtonContainer = styled.button`
 	}
 `;
 
-function IconButton({ icon, title }: Props) {
+function ImageButton({ icon, title }: Props) {
 	return (
-		<IconButtonContainer>
+		<ImageButtonContainer>
 			<img src={icon} />
 			<p>{title}</p>
-		</IconButtonContainer>
+		</ImageButtonContainer>
 	);
 }
 
-export default IconButton;
+export default ImageButton;
