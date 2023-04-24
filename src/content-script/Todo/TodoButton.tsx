@@ -15,21 +15,27 @@ function TodoButton({ setShow }: Props) {
 		Wrapper: css({
 			position: "fixed",
 			right: "30px",
-			bottom: "0px",
+			bottom: "10px",
 			fontSize: "16px",
 			fontFamily: "Pretendard-Regular",
-			zIndex: 10000
+			zIndex: 10000,
+			width: "50px",
+			height: "50px",
 		}),
+		Img: css({
+			width: "100%",
+			height: "100%",
+		})
 	};
 	return (
 		<button
 			css={styles.Wrapper}
 			onClick={() => {
-				console.log("clicked");
 				setShow((show) => !show);
 			}}
 		>
-			TodoButton
+			<img src={chrome.runtime.getURL("public/assets/HeXA_logo.png")} 
+			css={styles.Img}/>
 		</button>
 	);
 }

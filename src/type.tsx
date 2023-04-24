@@ -16,10 +16,10 @@ export interface Assignment {
 
 export interface Todo {
   content: string
-  course_name: string
+  course_name?: string
   date: number
   color: string
-  linkcode: string
+  linkcode?: string
 }
 export interface AssignmentList {
     [key: string]: Assignment

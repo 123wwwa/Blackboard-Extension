@@ -39,10 +39,13 @@ export const lectureSlice = createSlice({
         },
         setTodoList: (state, action) => {
             state.todoList = action.payload;
-        }
+        },
+        addTodo: (state, action) => {
+            state.todoList.push(action.payload);
+        },
     },
 });
-export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList } = lectureSlice.actions;
+export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo } = lectureSlice.actions;
 
 export const reloadTodoList = (dispatch: AppDispatch) => {
 

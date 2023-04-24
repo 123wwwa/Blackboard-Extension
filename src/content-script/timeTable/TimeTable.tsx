@@ -1,12 +1,13 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 import { Lecture, ShapedLecture } from '../../type'
 import { reloadLectureList, selectLectureList, selectIsLectureLoaded, selectShapedLectureList } from '../../features/lecture_reducer';
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { AppDispatch, RootState, store } from '../../features/store'
+import { LectureGrid } from './common/LectureGrid';
 const HeadHeight = 30;
 const TableHeight = 45;
 const TableWidth = 80;
@@ -49,10 +50,13 @@ const RenderTableDay = () => {
   }
   useEffect(() => {
     dispatch(reloadLectureList as any);
-
     setLogoURL(chrome.runtime.getURL("public/assets/HeXA_logo.png"));
   }, [dispatch])
+  
   const dayList = ["월", "화", "수", "목", "금"];
+  const bgColordiv = document.getElementsByClassName("portlet clearfix")[1] as HTMLElement;
+  const [gridBgColor, setGridBgColor] = useState(window.getComputedStyle(bgColordiv,null).getPropertyValue('background-color')); 
+  console.log(gridBgColor);
   return (
     <>
 
@@ -61,24 +65,19 @@ const RenderTableDay = () => {
       }}>
         {isLectureListLoaded && <>
           <div>
-            <div id="lectureGrid"
-              style={{
-                width: "20px", height: HeadHeight,
-              }}>
+            <LectureGrid width='20px' height={HeadHeight.toString()+"px"} color={gridBgColor}>
               <img src={logoURL}
                 style={{
                   width: "20px", height: "20px",
                 }} />
-            </div>
+            </LectureGrid>
             {[...Array(12)].map((x, j) => {
-              return (<div id="lectureGrid"
-                style={{
-                  width: "20px", height: TableHeight,
-                }}>
+              return (<LectureGrid width='20px' height={TableHeight.toString()+"px"} color={gridBgColor}
+              >
                 <span>
                   {j + 9}
                 </span>
-              </div>)
+              </LectureGrid>)
             })}
           </div>
           {[...Array(5)].map((x, i) => {
@@ -88,18 +87,13 @@ const RenderTableDay = () => {
                   <LectureDiv item={item}></LectureDiv>
                 </>)
               })}
-              <div id="lectureGrid"
-                style={{
-                  width: TableWidth, height: HeadHeight,
-                }}>
+              <LectureGrid width={TableWidth.toString()+"px"} height={HeadHeight.toString()+"px"} color={gridBgColor}>
                 {dayList[i]}
-              </div>
+              </LectureGrid>
               {[...Array(12)].map(() => {
-                return (<div id="lectureGrid"
-                  style={{
-                    width: TableWidth, height: TableHeight,
-                  }}>
-                </div>)
+                return (<LectureGrid
+                    width= {TableWidth.toString()+"px"} height= {TableHeight.toString()+"px"} color={gridBgColor}>                  
+                </LectureGrid>)
               })}
             </div>)
           })}
@@ -114,7 +108,7 @@ const TimeTable = () => {
       style={{
         height: "440px",
         width: "100%",
-
+        marginLeft: "5px"
       }}>
       <Provider store={store}>
         <RenderTableDay />

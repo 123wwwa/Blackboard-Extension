@@ -56,14 +56,21 @@ const TrashIcon = styled.img`
 
 function TodoCard({color, content, course_name, date, linkcode}: Todo) {
   const [remainingTime, setRemainingTime] = useState<Date>(new Date(0));
+  const [currentTime, setCurrentTime] = useState<Date>(new Date(Date.now()));
   useEffect(()=>{
     setInterval(()=>{
-      setRemainingTime(new Date(date-(9 * 60 * 60 * 1000)-Date.now()))
+      setCurrentTime(new Date(Date.now()))
+      setRemainingTime(new Date(date-Date.now()-(3240 * 10000)))
     },1000)
   },[])
+  const getDayDiff = (date1: Date, date2: Date) => {
+    return Math.floor((date1.getTime() - date2.getTime()) / 8.64e7);
+  }
+ 
   return (
     <Container color={color}
     onClick={()=>{
+      if(!linkcode) return;
       window.open(`https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/${linkcode}`, '_blank');
     }}>
       <Content>
@@ -72,7 +79,7 @@ function TodoCard({color, content, course_name, date, linkcode}: Todo) {
       </Content>
 
       <DueDateContainer>
-        <DueDateText>{new Date(remainingTime).getDay()} Days</DueDateText>
+        <DueDateText>{getDayDiff(new Date(date), currentTime)} Days</DueDateText>
         <DueDateText>{remainingTime.getHours().toString().padStart(2,'0')}:{remainingTime.getMinutes().toString().padStart(2,'0')}:{remainingTime.getSeconds().toString().padStart(2,'0')}</DueDateText>
       </DueDateContainer>
       
