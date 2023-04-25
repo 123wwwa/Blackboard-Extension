@@ -10,6 +10,8 @@ import {
 } from "../../features/lecture_reducer";
 import TodoList from "./TodoList";
 import TodoFooter from "./TodoFooter";
+import AssignmentCard from "./Assignment/AssignmentCard";
+import AssignmentList from "./Assignment/AssignmentList";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -109,7 +111,10 @@ function TodoContainer({ show, setShow }: Props) {
 				</>
 			) : (
 				// 다운로드 탭
-				<> </>
+				<>
+					<AssignmentList />
+					{/* <AssignmentCard assignment={}  /> */}
+				</>
 			)}
 		</Container>
 	);
