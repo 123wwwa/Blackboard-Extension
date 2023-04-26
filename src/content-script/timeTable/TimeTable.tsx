@@ -67,7 +67,6 @@ const RenderTableDay = () => {
     const marginTop: number = (props.item["timeplace"].start - (9 * 12)) / 12 * (TableHeight) + (HeadHeight); // minus 9 hour to start from 9 
     const height: number = (props.item["timeplace"].end - props.item["timeplace"].start) / 12 * (TableHeight);
     const place = props.item["timeplace"].place;
-    //console.log(props.item);
     const link = props.item["link"];
     return (
       <LectureDiv2>

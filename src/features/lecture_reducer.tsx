@@ -68,6 +68,7 @@ export const reloadLectureList = (dispatch: AppDispatch) => {
             })
         })
         dispatch(setLecutureList(resLecturelist));
+        console.log(resLecturelist);
         if (!resLecturelist || (Object.keys(resLecturelist).length === 0 && Object.getPrototypeOf(resLecturelist) === Object.prototype)) {
         }
         var l: ShapedLecture[][] = [[], [], [], [], []];
