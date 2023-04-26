@@ -22,7 +22,7 @@ export interface Todo {
 }
 
 export interface AssignmentList {
-    [key: string]: Assignment
+    [key: string]: Assignment;
 }
 export interface FileUrl {
     fileName: string

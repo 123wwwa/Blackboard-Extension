@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Todo } from "type";
 import ActionIcon from "./common/ActionIcon";
 
-const Container = styled.div<any>`
+const Container = styled.div<{ color: string; }>`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -13,6 +13,8 @@ const Container = styled.div<any>`
 	padding: 15px 20px;
 	background-color: ${(props) => props.color || "#F5F5F5"};
 	border-radius: 10px;
+	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.04));
+	
 	&:hover {
 		filter: brightness(80%);
 		cursor: pointer;
@@ -36,18 +38,18 @@ const Title = styled.h1`
 	margin: 0;
 `;
 
-const DateText = styled.p`
-	font-size: 12px;
-	font-weight: 400;
-`;
-
 const DueDateContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 `;
 
-const DueDateText = styled(DateText)`
+export const DateText = styled.p`
+	font-size: 12px;
+	font-weight: 400;
+`;
+
+export const DueDateText = styled(DateText)`
 	color: #dc2626;
 `;
 
