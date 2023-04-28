@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Lecture, ShapedLecture } from '../../type'
-import { reloadLectureList, selectLectureList, selectIsLectureLoaded, selectShapedLectureList } from '../../features/lecture_reducer';
+import { getLectureList ,reloadTodoList,selectLectureList, selectIsLectureLoaded, selectShapedLectureList } from '../../features/lecture_reducer';
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { AppDispatch, RootState, store } from '../../features/store'
 import { LectureGrid } from './common/LectureGrid';
@@ -88,7 +88,7 @@ const RenderTableDay = () => {
     )
   }
   useEffect(() => {
-    dispatch(reloadLectureList as any);
+    dispatch(getLectureList as any);
     setLogoURL(chrome.runtime.getURL("public/assets/HeXA_logo.png"));
   }, [dispatch])
   

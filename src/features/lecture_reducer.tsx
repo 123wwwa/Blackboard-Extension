@@ -1,12 +1,10 @@
 export { }
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
-//import { v4 as uuid } from 'uuid';
 
 import { createSlice } from "@reduxjs/toolkit";
 import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo } from "type";
 import { AppDispatch, RootState } from "./store";
-const colorlist = ["#eff9cc", "#dee8f6", "#ffe9e9", "#ffedda", "#dcf2e9", "#dceef2", "#fff8cc", "#ffe9e9"];
 interface LectureList {
     [key: string]: Lecture;
 }
@@ -15,12 +13,14 @@ export interface InitialState {
     shapedLectureList: ShapedLecture[][];
     isLectureLoaded: boolean;
     todoList: Todo[];
+    deletedTodoList: Todo[];
 }
 let initialState: InitialState = {
     lectureSlice: {},
     shapedLectureList: [[], [], [], [], []],
     isLectureLoaded: false,
     todoList: [],
+    deletedTodoList: []
 }
 
 export const lectureSlice = createSlice({
@@ -47,85 +47,87 @@ export const lectureSlice = createSlice({
 });
 export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo } = lectureSlice.actions;
 
-export const reloadTodoList = (dispatch: AppDispatch) => {
+
+const setChromeStorage = (key: string, value: any) => {
+    window.chrome.storage.sync.set({ [key]: value }, () => {
+    });
+}
+const getChromeStorage: any = async (key: string) => {
+    const data = await window.chrome.storage.sync.get([key]);
+    return data[key];
+}
+export const getLectureList = async (dispatch: AppDispatch) => {
+    let lectureInfoStr = await getChromeStorage("lectureInfo");
+    let resLecturelist: LectureList = JSON.parse(lectureInfoStr);
+    let assignmentListStr = await getChromeStorage("fileInfo");
+    let assignmentList = JSON.parse(assignmentListStr);
+    Object.entries(assignmentList).forEach(([key1, value1]) => {
+        let course_id: string = key1.split("-")[1];
+        Object.entries(resLecturelist).forEach(([key2, value]) => {
+            let lecture: any = value;
+            if (lecture.id == course_id) {
+                resLecturelist[key2].assignment.push(value1 as Assignment);
+            }
+        })
+    })
+    dispatch(setLecutureList(resLecturelist));
+    let l: ShapedLecture[][] = [[], [], [], [], []];
+    let i = 0;
+    let key: string;
+    for (key in resLecturelist) {
+        let item: any = resLecturelist[key];
+        i += 1;
+        for (let c = 0; c < 3; c++) {
+            if (item["timeplace" + c]) {
+                let newItem: ShapedLecture = {
+                    "name": item["name"],
+                    "professor": item["professor"],
+                    "time": item["time"],
+                    "link": item["link"],
+                    "color": item["color"],
+                    "timeplace": item["timeplace" + c]
+                }
+                l[item["timeplace" + c].day].push(newItem);
+
+            }
+        }
+    }
+    dispatch(setShapedLectureList(l));
 
 }
 
-export const reloadLectureList = (dispatch: AppDispatch) => {
-    window.chrome.storage.sync.get(['lectureInfo'], (res) => {
-        if (res.lectureInfo == undefined && res.lectureInfo == null) {
-            
-        }
-        var resLecturelist: LectureList = JSON.parse(res.lectureInfo);
-        var assignmentList = JSON.parse(localStorage.getItem("fileInfo") || "{}")
-        Object.entries(assignmentList).forEach(([key1, value1]) => {
-            var course_id: string = key1.split("-")[1];
-            Object.entries(resLecturelist).forEach(([key2, value]) => {
-                var lecture: any = value;
-                if (lecture.id == course_id) {
-                    resLecturelist[key2].assignment.push(value1 as Assignment);
-                }
-            })
-        })
-        dispatch(setLecutureList(resLecturelist));
-        console.log(resLecturelist);
-        if (!resLecturelist || (Object.keys(resLecturelist).length === 0 && Object.getPrototypeOf(resLecturelist) === Object.prototype)) {
-        }
-        var l: ShapedLecture[][] = [[], [], [], [], []];
-        var key: string;
-        var i = 0;
-        for (key in resLecturelist) {
-            var item: any = resLecturelist[key];
-            i += 1;
-            for (var c = 0; c < 3; c++) {
-                if (item["timeplace" + c]) {
-                    var newItem: ShapedLecture = {
-                        "name": item["name"],
-                        "professor": item["professor"],
-                        "time": item["time"],
-                        "link": item["link"],
-                        "color": item["color"],
-                        "timeplace": item["timeplace" + c]
-                    }
-                    l[item["timeplace" + c].day].push(newItem);
-
-                }
+export const reloadTodoList = async (dispatch: AppDispatch) => {
+    let todoList: Todo[] = [];
+    const fetchUrl = "https://blackboard.unist.ac.kr/webapps/calendar/calendarData/selectedCalendarEvents?start=" + Date.now() + "&end=2147483647000";
+    const fetchData = await (await fetch(fetchUrl)).json();
+    let resLecturelistStr = await getChromeStorage("lectureInfo");
+    let resLecturelist: LectureList = JSON.parse(resLecturelistStr);
+    for (let key in fetchData) {
+        let letureColor: string = "";
+        Object.entries(resLecturelist).forEach(([key2, value]) => {
+            let lecture: Lecture = value;
+            if (lecture.engName == fetchData[key]["calendarName"]) {
+                letureColor = lecture.color;
             }
+        })
+        let newStartString = fetchData[key]["start"];
+        let newDate = new Date(newStartString);
+        let assignName = fetchData[key]["title"];
+        let link = "";
+        if (fetchData[key]["calendarName"] !== "Personal") {
+            assignName = fetchData[key]["calendarName"] + ": " + assignName;
+            link = fetchData[key]["id"];
         }
-        dispatch(setShapedLectureList(l));
-        let todoList: Todo[] = [];
-        const fetchUrl = "https://blackboard.unist.ac.kr/webapps/calendar/calendarData/selectedCalendarEvents?start=" + Date.now() + "&end=2147483647000";
-        fetch(fetchUrl)
-            .then((response) => response.json())
-            .then(function (fetchData) {
-                for (var key in fetchData) {
-                    let letureColor:string ="";
-                    Object.entries(resLecturelist).forEach(([key2, value]) => {
-                        var lecture:Lecture = value;
-                        if(lecture.engName == fetchData[key]["calendarName"]){
-                            letureColor = lecture.color;
-                        }
-                    })
-                    var newStartString = fetchData[key]["start"];
-                    var newDate = new Date(newStartString);
-                    var assignName = fetchData[key]["title"];
-                    var link = "";
-                    if (fetchData[key]["calendarName"] !== "Personal") {
-                        assignName = fetchData[key]["calendarName"] + ": " + assignName;
-                        link = fetchData[key]["id"];
-                    }
-                    var todo: Todo = {
-                        course_name: fetchData[key]["calendarName"],
-                        content: assignName,
-                        date: newDate.getTime(),
-                        color: letureColor,
-                        linkcode: link
-                    };
-                    todoList.push(todo);
-                }
-                dispatch(setTodoList(todoList));
-            })
-    })
+        let todo: Todo = {
+            course_name: fetchData[key]["calendarName"],
+            content: assignName,
+            date: newDate.getTime(),
+            color: letureColor,
+            linkcode: link
+        };
+        todoList.push(todo);
+    }
+    dispatch(setTodoList(todoList));
 }
 export const updateLectureAssignment = (AssignmentData: AssignmentList) => (dispatch: AppDispatch) => {
     dispatch(setLectureAssignment(AssignmentData));

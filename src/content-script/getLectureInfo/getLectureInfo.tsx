@@ -53,16 +53,6 @@ const getLectureElement = () =>{
             j++;
         }
     }
-    // var assignmentList= JSON.parse(localStorage.getItem("fileInfo") || "{}");
-    // for (var key in assignmentList) {
-    //     var assignment = assignmentList[key];
-    //     for(var key2 in lecturelist) {
-    //         var item2 = lecturelist[key2];
-    //         if (item2["id"] == assignment["id"]) {
-    //             lecturelist[key2]["assignment"].push(assignment);
-    //         }
-    //     }
-    // }
     
     fetch(window.chrome.runtime.getURL('public/assets/lectureInfo.json'))
         .then((resp) => resp.json())
@@ -87,13 +77,23 @@ const getLectureElement = () =>{
                     }
                 }
             }
-            console.log(lecturelist);
             window.chrome.storage.sync.set({ 'lectureInfo': JSON.stringify(lecturelist) }, () =>{});
+            window.chrome.storage.sync.set({ 'lectureInfoLastUpdate': new Date() }, () =>{});
         });
 }
 waitForElm().then((elm) => {
-    window.chrome.storage.sync.get(['lectureInfo'], function(res) {
-        getLectureElement();
+    window.chrome.storage.sync.get(['lectureInfo'], (res)=> {
+        // check if lectureInfo is empty
+        let lectureInfo = res.lectureInfo;
+        if(!lectureInfo) {
+            getLectureElement();
+            return;
+        }
+        if (!(Object.keys(lectureInfo).length === 0 && lectureInfo.constructor === Object)) {
+            getLectureElement();
+        }
+
+        
     });
 });
 export {}
