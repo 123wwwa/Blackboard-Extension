@@ -1,6 +1,24 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 import { Lecture, LectureList } from '../../type';
+let colorlist:string[] = ["#f2e8e8", "#ffe9e9", "#eff9cc", "#dcf2e9", "#dee8f6", "#fff8cc", "#ffedda","#ffedda","#dceef2","#a78bfa","#a5b4fc"];
+function shuffle<T>(array: T[]): T[] {
+    let currentIndex = array.length,  randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+};
 const waitForElm = () => {
     return new Promise(resolve => {
         if (document.querySelector('div[id*="22_1termCourses"]')) {
@@ -24,7 +42,6 @@ const waitForElm = () => {
 const getLectureElement = () =>{
     var AllaTag = document.getElementsByTagName('a');
     var lectureDiv = document.querySelector('ul[class*="portletList-img courseListing coursefakeclass"]');
-    const colorlist:string[] = ["#eff9cc", "#dee8f6", "#ffe9e9", "#ffedda", "#dcf2e9", "#dceef2", "#fff8cc", "#ffe9e9"];
 
     var lecturelist:LectureList = {};
     var j=0;
@@ -78,9 +95,15 @@ const getLectureElement = () =>{
                 }
             }
             window.chrome.storage.sync.set({ 'lectureInfo': JSON.stringify(lecturelist) }, () =>{});
-            window.chrome.storage.sync.set({ 'lectureInfoLastUpdate': new Date() }, () =>{});
+            window.chrome.storage.sync.set({ 'lectureInfoLastUpdate': new Date() }, () =>{
+                new BroadcastChannel("lectureInfoLastUpdate").postMessage(new Date());
+            });
         });
 }
+new BroadcastChannel("reloadLectureList").addEventListener("message", (e) => {
+    shuffle(colorlist);
+    getLectureElement();
+});
 waitForElm().then((elm) => {
     window.chrome.storage.sync.get(['lectureInfo'], (res)=> {
         // check if lectureInfo is empty
@@ -89,7 +112,7 @@ waitForElm().then((elm) => {
             getLectureElement();
             return;
         }
-        if (!(Object.keys(lectureInfo).length === 0 && lectureInfo.constructor === Object)) {
+        if (Object.keys(lectureInfo).length === 0 && lectureInfo.constructor === Object) {
             getLectureElement();
         }
 

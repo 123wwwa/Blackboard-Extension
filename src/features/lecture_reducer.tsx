@@ -54,11 +54,14 @@ const setChromeStorage = (key: string, value: any) => {
 }
 const getChromeStorage: any = async (key: string) => {
     const data = await window.chrome.storage.sync.get([key]);
+    if(!data[key]){
+        return "{}";
+    }
     return data[key];
 }
 export const getLectureList = async (dispatch: AppDispatch) => {
     let lectureInfoStr = await getChromeStorage("lectureInfo");
-    let resLecturelist: LectureList = JSON.parse(lectureInfoStr);
+    let resLecturelist: LectureList = JSON.parse(lectureInfoStr) ;
     let assignmentListStr = await getChromeStorage("fileInfo");
     let assignmentList = JSON.parse(assignmentListStr);
     Object.entries(assignmentList).forEach(([key1, value1]) => {

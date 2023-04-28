@@ -2,13 +2,15 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 import React, { useEffect, useState } from 'react'
-import { Lecture, ShapedLecture } from '../../type'
 import { getLectureList ,reloadTodoList,selectLectureList, selectIsLectureLoaded, selectShapedLectureList } from '../../features/lecture_reducer';
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { AppDispatch, RootState, store } from '../../features/store'
 import { LectureGrid } from './common/LectureGrid';
 import styled  from '@emotion/styled';
-import { css } from '@emotion/react';
+import ActionIcon  from '../Todo/common/ActionIcon';
+import {
+	faRefresh,
+} from "@fortawesome/free-solid-svg-icons";
 const HeadHeight = 30;
 const TableHeight = 45;
 const TableWidth = 80;
@@ -90,8 +92,14 @@ const RenderTableDay = () => {
   useEffect(() => {
     dispatch(getLectureList as any);
     setLogoURL(chrome.runtime.getURL("public/assets/HeXA_logo.png"));
+    new BroadcastChannel("lectureInfoLastUpdate").onmessage = (e) => {
+      dispatch(getLectureList as any);
+      dispatch(reloadTodoList as any);
+    }
   }, [dispatch])
-  
+  const emitRefresh = () => {
+    new BroadcastChannel("reloadLectureList").postMessage("reloadLectureList");
+  }
   const dayList = ["월", "화", "수", "목", "금"];
   const bgColordiv = document.getElementsByClassName("portlet clearfix")[1] as HTMLElement;
   const [gridBgColor, setGridBgColor] = useState(window.getComputedStyle(bgColordiv,null).getPropertyValue('background-color')); 
@@ -104,10 +112,7 @@ const RenderTableDay = () => {
         {isLectureListLoaded && <>
           <div>
             <LectureGrid width='20px' height={HeadHeight.toString()+"px"} color={gridBgColor}>
-              <img src={logoURL}
-                style={{
-                  width: "20px", height: "20px",
-                }} />
+            <ActionIcon icon={faRefresh} onClick={emitRefresh}/>
             </LectureGrid>
             {[...Array(12)].map((x, j) => {
               return (<LectureGrid width='20px' height={TableHeight.toString()+"px"} color={gridBgColor}>
