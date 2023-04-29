@@ -5,6 +5,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { useTheme } from "@emotion/react";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
+	opacity?: string;
 	icon: IconProp;
 	size?: string;
 };
@@ -49,12 +50,12 @@ const Container = styled.button<{ size: string }>`
 	}
 `;
 
-function ActionIcon({ icon, size = "16px", ...props }: Props) {
+function ActionIcon({ icon, opacity="0.4", size = "16px", ...props }: Props) {
 	const theme = useTheme();
 
 	return (
 		<Container size={size} {...props}>
-			<FontAwesomeIcon icon={icon} opacity="0.4" fontSize={size} />
+			<FontAwesomeIcon icon={icon} opacity={opacity} fontSize={size} />
 		</Container>
 	);
 }

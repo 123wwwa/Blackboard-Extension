@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+	getTodoList,
 	reloadTodoList,
 	selectTodoList,
 } from "../../features/lecture_reducer";
@@ -77,7 +78,6 @@ function TodoContainer({ show, setShow }: Props) {
 	useEffect(() => {
 		dispatch(reloadTodoList as any);
 	}, [dispatch]);
-	//const [todoList, setTodoList] = useLocalStorage
 	return (
 		<Container show={show}>
 			<header>

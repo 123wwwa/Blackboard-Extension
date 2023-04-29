@@ -9,6 +9,8 @@ import {
 	faHamburger,
 	faRefresh,
 } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import { reloadTodoList, resetTodoList } from "../../features/lecture_reducer";
 
 const Container = styled.div`
 	display: flex;
@@ -22,9 +24,14 @@ type Props = {
 };
 
 function TodoMenu({ setShow }: Props): JSX.Element {
+	const dispatch = useDispatch(); 
+	const refreshTodo = () => {
+		dispatch(resetTodoList as any);
+	};
+
 	return (
 		<Container>
-			<ActionIcon icon={faRefresh} />
+			<ActionIcon icon={faRefresh} onClick={refreshTodo}/>
 			<ActionIcon icon={faGear} />
 			<ActionIcon icon={faBars} />
 			<ActionIcon icon={faClose} onClick={() => setShow((show) => !show)} />

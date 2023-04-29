@@ -34,11 +34,7 @@ function TodoList({ todoList }: Props) {
 			{todoList.map((todo) => {
 				return (
 					<TodoCard
-						color={todo.color}
-						content={todo.content}
-						course_name={todo.course_name}
-						date={todo.date}
-						linkcode={todo.linkcode}
+						item={todo}
 					/>
 				);
 			})}

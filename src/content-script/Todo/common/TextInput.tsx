@@ -21,7 +21,7 @@ const InputContainer = styled.input<{ icon?: ReactNode }>`
 
 type Props = InputHTMLAttributes<HTMLInputElement> & { icon?: ReactNode };
 
-function TextInput(props : Props) {
+function TextInput({ ...props }: Props) {
   return (
     <div css={css({ position: "relative" })}>
       <InputContainer icon={props.icon} {...props} />

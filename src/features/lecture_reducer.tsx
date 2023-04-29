@@ -43,9 +43,16 @@ export const lectureSlice = createSlice({
         addTodo: (state, action) => {
             state.todoList.push(action.payload);
         },
+
+        addDeletedTodo: (state, action) => {
+            state.deletedTodoList.push(action.payload);
+        },
+        resetDeletedTodo (state) {
+            state.deletedTodoList = [];
+        }
     },
 });
-export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo } = lectureSlice.actions;
+export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo ,addDeletedTodo, resetDeletedTodo } = lectureSlice.actions;
 
 
 const setChromeStorage = (key: string, value: any) => {
@@ -59,6 +66,15 @@ const getChromeStorage: any = async (key: string) => {
     }
     return data[key];
 }
+const APIwithcatch = async (url:string)=> {
+    try{
+        var response = await fetch(url);
+        if (!response.ok) throw new Error(response.statusText);
+        return response.json();
+    }catch(e){
+        return null;
+    }
+  }
 export const getLectureList = async (dispatch: AppDispatch) => {
     let lectureInfoStr = await getChromeStorage("lectureInfo");
     let resLecturelist: LectureList = JSON.parse(lectureInfoStr) ;
@@ -98,13 +114,42 @@ export const getLectureList = async (dispatch: AppDispatch) => {
     dispatch(setShapedLectureList(l));
 
 }
-
+export const getTodoList = async (dispatch: AppDispatch) => {
+    let todoListStr = await getChromeStorage("todoList");
+    let todoList: Todo[] = JSON.parse(todoListStr);
+    dispatch(setTodoList(todoList));
+}
+export const resetTodoList = async (dispatch: AppDispatch) => {
+    dispatch(resetDeletedTodo);
+    setChromeStorage("deletedTodoList", "[]");
+    dispatch(reloadTodoList);
+}
 export const reloadTodoList = async (dispatch: AppDispatch) => {
     let todoList: Todo[] = [];
     const fetchUrl = "https://blackboard.unist.ac.kr/webapps/calendar/calendarData/selectedCalendarEvents?start=" + Date.now() + "&end=2147483647000";
-    const fetchData = await (await fetch(fetchUrl)).json();
+    const fetchData = await APIwithcatch(fetchUrl);
+    if(!fetchData)  {
+        dispatch(getTodoList);
+        return;
+    };
+    if(fetchData.length == 0) {
+        dispatch(getTodoList);
+        return;
+    };
     let resLecturelistStr = await getChromeStorage("lectureInfo");
     let resLecturelist: LectureList = JSON.parse(resLecturelistStr);
+    // remove deleted todo
+    let deletedTodoListStr = await getChromeStorage("deletedTodoList");
+    if(deletedTodoListStr == "{}") { deletedTodoListStr = "[]"; }
+    let deletedTodoList: Todo[] = JSON.parse(deletedTodoListStr);
+    for (let key in deletedTodoList) {
+        let deletedTodo: Todo = deletedTodoList[key];
+        for (let key2 in fetchData) {
+            if (deletedTodo.linkcode == fetchData[key2]["id"]) {
+                fetchData.splice(parseInt(key2), 1);
+            }
+        }
+    }
     for (let key in fetchData) {
         let letureColor: string = "";
         Object.entries(resLecturelist).forEach(([key2, value]) => {
@@ -130,10 +175,28 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
         };
         todoList.push(todo);
     }
+    setChromeStorage("todoList", JSON.stringify(todoList));
     dispatch(setTodoList(todoList));
 }
-export const updateLectureAssignment = (AssignmentData: AssignmentList) => (dispatch: AppDispatch) => {
-    dispatch(setLectureAssignment(AssignmentData));
+export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
+    if(todo.linkcode){ // check if linkcode exist to add only fetched todo
+        dispatch(addDeletedTodo(todo));
+        let deletedTodoListStr = await getChromeStorage("deletedTodoList");
+        let deletedTodoList: Todo[] = JSON.parse(deletedTodoListStr);
+        deletedTodoList.push(todo);
+        setChromeStorage("deletedTodoList", JSON.stringify(deletedTodoList));
+        console.log("deletedTodoList", deletedTodoList);
+    }
+    let todoListStr = await getChromeStorage("todoList");
+    let todoList: Todo[] = JSON.parse(todoListStr);
+    let newTodoList: Todo[] = [];
+    for (let key in todoList) {
+        if (todoList[key].content !== todo.content && todoList[key].date !== todo.date && todoList[key].course_name !== todo.course_name && todoList[key].linkcode !== todo.linkcode) {
+            newTodoList.push(todoList[key]);
+        }
+    }
+    setChromeStorage("todoList", JSON.stringify(newTodoList));
+    dispatch(setTodoList(newTodoList));
 }
 export const selectLectureList = (state: RootState) => state.lectureSlice.lectureSlice;
 export const selectShapedLectureList = (state: RootState) => state.lectureSlice.shapedLectureList;

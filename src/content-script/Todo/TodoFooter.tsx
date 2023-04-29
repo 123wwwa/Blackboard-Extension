@@ -6,6 +6,10 @@ import { SketchPicker } from "react-color";
 import ActionIcon from "./common/ActionIcon";
 import DatePicker from "./common/DatePicker";
 import TextInput from "./common/TextInput";
+import SketchColorPicker from "./common/ColorPicker";
+import { Todo } from "type";
+import { useDispatch } from "react-redux";
+import { addTodo } from "../../features/lecture_reducer";
 
 type Props = {
 	color: string;
@@ -27,37 +31,29 @@ const TodoFooterWrapper = styled.footer`
 `;
 
 function TodoFooter({ color, setColor }: Props) {
-	const [showColorPicker, setShowColorPicker] = useState(false);
-
+	const [currentDate, setCurrentDate] = React.useState<Date>(new Date());
+	const [title, setTitle] = React.useState<string>("");
+	const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setTitle(e.target.value);
+	};
+	const dispatch = useDispatch(); 
+	const onClickAdd = () => {
+		const todo:Todo = {
+			content: title,
+			color: color,
+			date: +currentDate,
+		};
+		console.log(todo);
+		dispatch(addTodo(todo))
+	}
 	return (
 		<TodoFooterWrapper>
 			<div className="menus">
-				{showColorPicker && (
-					<div css={css({ position: "absolute", zIndex: 10 })}>
-						<div
-							css={css({
-								position: "fixed",
-								left: 0,
-								right: 0,
-								top: 0,
-								bottom: 0,
-							})}
-							onClick={() => setShowColorPicker(false)}
-						></div>
-						<SketchPicker
-							color={color}
-							onChange={(color) => setColor(color.hex)}
-						/>
-					</div>
-				)}
-				<ActionIcon
-					icon={faPalette}
-					onClick={() => setShowColorPicker((show) => !show)}
-				/>
-				<TextInput placeholder="새 일정 이름 입력" />
-				<DatePicker />
+				<SketchColorPicker color={color} setColor={setColor} />
+				<TextInput placeholder="새 일정 이름 입력" onChange={onChangeTitle}/>
+				<DatePicker currentDate = {currentDate} setCurrentDate= {setCurrentDate}/>
 			</div>
-			<ActionIcon icon={faPlus} />
+			<ActionIcon icon={faPlus} onClick={onClickAdd}/>
 		</TodoFooterWrapper>
 	);
 }

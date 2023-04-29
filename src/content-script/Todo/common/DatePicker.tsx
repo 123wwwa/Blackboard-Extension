@@ -8,11 +8,11 @@ import TextInput from "./TextInput";
 import ActionIcon from "./ActionIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
-
-function DatePicker() {
-	const [currentDate, setCurrentDate] = React.useState<Date>(new Date());
-	console.log(currentDate);
-
+type Props = {
+	currentDate: Date;
+	setCurrentDate: React.Dispatch<React.SetStateAction<Date>>;
+};
+function DatePicker({ currentDate, setCurrentDate}: Props) {
 	return (
 		<DatePickerComp
 			locale={ko}

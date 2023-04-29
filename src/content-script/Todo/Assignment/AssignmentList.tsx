@@ -1,5 +1,10 @@
 import styled from '@emotion/styled';
 import AssignmentCard from './AssignmentCard';
+import { useEffect } from 'react';
+import { AppDispatch } from 'features/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { LectureList } from 'type';
+import { getLectureList, selectLectureList } from '../../../features/lecture_reducer';
 
 const AssignmentListWrapper = styled.article`
 	width: 100%;
@@ -23,14 +28,20 @@ const AssignmentListWrapper = styled.article`
 `;
 
 function AssignmentList() {
-  return (
-    <AssignmentListWrapper>
-        <AssignmentCard name="System Programming" count={3} color="#E5E5E5" />
-        <AssignmentCard name="Advanced Programming" count={2} color="#FECACA" />
-        <AssignmentCard name="Discrete Mathematics" count={1} color="#FDE68A" />
-        <AssignmentCard name="Differential Equations" count={3} color="#A5F3FC" />
-    </AssignmentListWrapper>
-  )
+	const dispatch:AppDispatch = useDispatch();
+	const lectureList:LectureList = useSelector(selectLectureList);
+	useEffect(()=>{
+		dispatch(getLectureList as any);
+	},[dispatch])
+	console.log(lectureList);
+	return (
+		<AssignmentListWrapper>
+			{Object.entries(lectureList).map(([key, value]) => {
+				return <AssignmentCard name={value.name} count={value.assignment.length} color={value.color} />;
+			})
+			}
+		</AssignmentListWrapper>
+	)
 }
 
 export default AssignmentList

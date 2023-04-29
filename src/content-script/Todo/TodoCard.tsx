@@ -3,6 +3,8 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { Todo } from "type";
 import ActionIcon from "./common/ActionIcon";
+import { useDispatch } from "react-redux";
+import { deleteTodo } from "../../features/lecture_reducer";
 
 const Container = styled.div<{ color: string; }>`
 	display: flex;
@@ -52,35 +54,46 @@ export const DateText = styled.p`
 export const DueDateText = styled(DateText)`
 	color: #dc2626;
 `;
-
-function TodoCard({ color, content, course_name, date, linkcode }: Todo) {
+type Props = {
+	item: Todo;
+};
+// const deleteTodoItem = (item: Todo) => {
+// 	const dispatch = useDispatch();
+// 	return deleteTodo(dispatch as any)(item);
+// };
+function TodoCard({ item }: Props) {
 	const [remainingTime, setRemainingTime] = useState<Date>(new Date(0));
 	const [currentTime, setCurrentTime] = useState<Date>(new Date(Date.now()));
+	const dispatch = useDispatch(); 
 	useEffect(() => {
 		setInterval(() => {
 			setCurrentTime(new Date(Date.now()));
-			setRemainingTime(new Date(date - Date.now() - 3240 * 10000));
+			setRemainingTime(new Date(item.date - Date.now() - 3240 * 10000));
 		}, 1000);
 	}, []);
 	const getDayDiff = (date1: Date, date2: Date) => {
 		return Math.floor((date1.getTime() - date2.getTime()) / 8.64e7);
 	};
-
+	const deleteTodoItem = (item: Todo) => {
+		return deleteTodo(dispatch as any)(item);
+	};
 	return (
 		<Container
-			color={color}
-			onClick={() => {
-				if (!linkcode) return;
+			color={item.color}
+			onClick={(e) => {
+				if (!item.linkcode) return;
+				// check e.target is <path> or not
+				if(e.target instanceof SVGPathElement) return;
 				window.open(
-					`https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/${linkcode}`,
+					`https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/${item.linkcode}`,
 					"_blank"
 				);
 			}}
 		>
 			<Content>
-				<Title>{content}</Title>
+				<Title>{item.content}</Title>
 				<DateText>
-					{new Date(date + 3240 * 10000)
+					{new Date(item.date + 3240 * 10000)
 						.toISOString()
 						.replace("T", " ")
 						.replace(/\..*/, "")}
@@ -89,7 +102,7 @@ function TodoCard({ color, content, course_name, date, linkcode }: Todo) {
 
 			<DueDateContainer>
 				<DueDateText>
-					{getDayDiff(new Date(date), currentTime)} Days
+					{getDayDiff(new Date(item.date), currentTime)} Days
 				</DueDateText>
 				<DueDateText>
 					{remainingTime.getHours().toString().padStart(2, "0")}:
@@ -98,7 +111,7 @@ function TodoCard({ color, content, course_name, date, linkcode }: Todo) {
 				</DueDateText>
 			</DueDateContainer>
 
-			<ActionIcon icon={faTrash} />
+			<ActionIcon icon={faTrash} onClick={()=>deleteTodoItem(item)}/>
 		</Container>
 	);
 }
