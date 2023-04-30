@@ -9,7 +9,7 @@ import TextInput from "./common/TextInput";
 import SketchColorPicker from "./common/ColorPicker";
 import { Todo } from "type";
 import { useDispatch } from "react-redux";
-import { addTodo } from "../../features/lecture_reducer";
+import { addTodo, addTodoItem } from "../../features/lecture_reducer";
 
 type Props = {
 	color: string;
@@ -43,8 +43,7 @@ function TodoFooter({ color, setColor }: Props) {
 			color: color,
 			date: +currentDate,
 		};
-		console.log(todo);
-		dispatch(addTodo(todo))
+		addTodoItem(dispatch)(todo);
 	}
 	return (
 		<TodoFooterWrapper>

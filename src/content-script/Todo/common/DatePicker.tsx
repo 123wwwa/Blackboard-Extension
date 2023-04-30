@@ -13,6 +13,14 @@ type Props = {
 	setCurrentDate: React.Dispatch<React.SetStateAction<Date>>;
 };
 function DatePicker({ currentDate, setCurrentDate}: Props) {
+	const onChangeDate = (date: Date) => {
+		const now = +new Date();
+		if(+date < now) {
+			setCurrentDate(new Date());
+			return;
+		}
+		setCurrentDate(date);
+	}
 	return (
 		<DatePickerComp
 			locale={ko}
@@ -20,7 +28,7 @@ function DatePicker({ currentDate, setCurrentDate}: Props) {
 			selected={currentDate}
 			dateFormat={"yyyy.MM.dd HH:mm"}
 			minDate={new Date()}
-			onChange={(date: Date) => setCurrentDate(date)}
+			onChange={onChangeDate}
 			customInput={<TextInput icon={<FontAwesomeIcon icon={faCalendar} opacity="0.4" />} />}
 		/>
 	);
