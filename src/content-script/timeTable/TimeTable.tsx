@@ -16,9 +16,8 @@ const TableHeight = 45;
 const TableWidth = 80;
 
 const RenderTableDay = () => {
-  const [logoURL, setLogoURL] = useState<string>("");
   const dispatch: AppDispatch = useDispatch();
-  const lectureList = useSelector(selectLectureList);
+  //const lectureList = useSelector(selectLectureList);
   const isLectureListLoaded = useSelector(selectIsLectureLoaded);
   const shapedLectureList: any = useSelector<RootState>(selectShapedLectureList);
 
@@ -92,7 +91,7 @@ const RenderTableDay = () => {
   useEffect(() => {
     dispatch(getLectureList as any);
     dispatch(reloadBB_alarms as any);
-    setLogoURL(chrome.runtime.getURL("public/assets/HeXA_logo.png"));
+
     new BroadcastChannel("lectureInfoLastUpdate").onmessage = (e) => {
       dispatch(getLectureList as any);
       dispatch(reloadTodoList as any);

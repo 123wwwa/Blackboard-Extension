@@ -73,14 +73,6 @@ function AssignmentCard({
 	return (
 		<Container
 			color={color}
-			// color={color}
-			// onClick={() => {
-			// 	if (!linkcode) return;
-			// 	window.open(
-			// 		`https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/${linkcode}`,
-			// 		"_blank"
-			// 	);
-			// }}
 		>
 			<Content>
 				<Title>{name}</Title>

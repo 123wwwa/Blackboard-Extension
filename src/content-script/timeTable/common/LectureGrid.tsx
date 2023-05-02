@@ -1,6 +1,4 @@
 import styled from '@emotion/styled'
-import { ReactElement, InputHTMLAttributes } from 'react'
-import { ReactNode } from 'react'
 
 
 export const LectureGrid = styled.div<{ color?: string, width?:string, height:string }>`
