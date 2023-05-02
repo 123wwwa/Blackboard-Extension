@@ -30,13 +30,13 @@ const switchEventType = (eventType: string) => {
 }
 const getTitle = (rawHtml: any, eventType: string) => {
     if (eventType === "AN:AN_AVAIL") {
-        const eventTitleRegex = /<span class = 'announcementTitle'>(.*?)<\/span>/;
+        const eventTitleRegex = /<span class = 'announcementTitle'>(.*?)</;
         const match = eventTitleRegex.exec(rawHtml);
         if (match) {
             return match[1];
         }
     } else {
-        const eventTitleRegex = /<span class='eventTitle'>(.*?)<\/span>/;
+        const eventTitleRegex = /<span class='eventTitle'>(.*?)</;
         const match = eventTitleRegex.exec(rawHtml);
         if (match) {
             return match[1]; 

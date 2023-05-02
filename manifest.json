@@ -16,11 +16,9 @@
   "icons": {},
   "content_scripts": [
     {
-      "matches": [
-        "https://blackboard.unist.ac.kr/webapps/portal/execute/tabs/*"
-      ],
+      "matches": ["https://blackboard.unist.ac.kr/webapps/portal/execute/tabs/*"],
       "js": [
-        "src/content-script/getLectureInfo/getLectureInfo.tsx"
+        "src/content-script/GetLectureInfo/getLectureInfo.tsx"
       ],
       "media": []
     },
@@ -31,7 +29,7 @@
     },
     {
       "matches": ["https://blackboard.unist.ac.kr/*"],
-      "js": ["src/content-script/timeTable/main.tsx", "src/content-script/Todo/main.tsx", "src/content-script/CancelLogout/CancelLogout.js"],
+      "js": ["src/content-script/TimeTable/main.tsx", "src/content-script/Todo/main.tsx", "src/content-script/CancelLogout/CancelLogout.js"],
       "media": []
     },
     {
@@ -39,19 +37,9 @@
       "js": ["src/content-script/LoadAssignment/loadfile.js"]
     },
     {
-      "matches": ["https://au-lti.bbcollab.com/*"],
-      "js": ["src/content-script/ClickCollaborate/ClickCollaborate.js"],
-      "run_at": "document_end"
-    },
-    {
       "matches": ["https://blackboard.unist.ac.kr/webapps/blackboard/content/listContent.jsp*"],
       "js": ["src/content-script/AssignmentList/assignmentList.tsx"]
 
-    },
-    {
-      "matches": ["https://unist-kr.zoom.us/j/*"],
-      "js": ["src/content-script/ChangeCollabName/ChangeCollabName.js"],
-      "run_at": "document_end"
     }
   ],
   
@@ -78,18 +66,6 @@
           "src/content-script/CancelLogout/CancelLogout-append.js"
       ],
       "matches": ["https://blackboard.unist.ac.kr/*"] 
-    },
-    {
-      "resources": [
-          "src/content-script/ClickCollaborate/ClickCollaborate-append.js"
-      ],
-      "matches": ["https://au-lti.bbcollab.com/*"]
-    },
-    {
-      "resources": [
-          "src/content-script/ChangeCollabName/ChangeCollabName-append.js"
-      ],
-      "matches": ["https://unist-kr.zoom.us/*"]
     },
     {
       "resources": [

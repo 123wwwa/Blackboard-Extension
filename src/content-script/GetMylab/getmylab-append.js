@@ -1,7 +1,6 @@
 (function (XHR) {
     "use strict";
     var open = XHR.prototype.open;
-    //window.jsonData = {};
     XHR.prototype.open = function (method, url, async, user, pass) {
         this._url = url;
 
