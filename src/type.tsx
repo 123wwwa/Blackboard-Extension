@@ -20,7 +20,17 @@ export interface Todo {
   color: string
   linkcode?: string
 }
-
+export interface BB_alarm {
+    // content: string,
+    detail : string,
+    type: string,
+    course_name: string,
+    title: string,
+    course_id: string,
+    color : string,
+    date: number,
+    url: string,
+}
 export interface AssignmentList {
     [key: string]: Assignment;
 }

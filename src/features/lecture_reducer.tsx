@@ -3,8 +3,9 @@ export { }
 /// <reference types="vite-plugin-svgr/client" />
 
 import { createSlice } from "@reduxjs/toolkit";
-import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo } from "type";
+import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo, BB_alarm } from "type";
 import { AppDispatch, RootState } from "./store";
+import { RawAlarm, convertBB_alarm } from "./rawAlarmHandler";
 interface LectureList {
     [key: string]: Lecture;
 }
@@ -14,13 +15,15 @@ export interface InitialState {
     isLectureLoaded: boolean;
     todoList: Todo[];
     deletedTodoList: Todo[];
+    bb_alarmList: BB_alarm[];
 }
 let initialState: InitialState = {
     lectureSlice: {},
     shapedLectureList: [[], [], [], [], []],
     isLectureLoaded: false,
     todoList: [],
-    deletedTodoList: []
+    deletedTodoList: [],
+    bb_alarmList: [],
 }
 
 export const lectureSlice = createSlice({
@@ -47,37 +50,40 @@ export const lectureSlice = createSlice({
         addDeletedTodo: (state, action) => {
             state.deletedTodoList.push(action.payload);
         },
-        resetDeletedTodo (state) {
+        resetDeletedTodo(state) {
             state.deletedTodoList = [];
+        },
+        setBB_alarms: (state, action) => {
+            state.bb_alarmList = action.payload;
         }
     },
 });
-export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo ,addDeletedTodo, resetDeletedTodo } = lectureSlice.actions;
+export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo, addDeletedTodo, resetDeletedTodo, setBB_alarms } = lectureSlice.actions;
 
 
 const setChromeStorage = (key: string, value: any) => {
     window.chrome.storage.sync.set({ [key]: value }, () => {
     });
 }
-const getChromeStorage: any = async (key: string, defaultValue: string) => {
+export const getChromeStorage: any = async (key: string, defaultValue: string) => {
     const data = await window.chrome.storage.sync.get([key]);
-    if(!data[key]){
+    if (!data[key]) {
         return defaultValue;
     }
     return data[key];
 }
-const APIwithcatch = async (url:string)=> {
-    try{
-        var response = await fetch(url);
+const APIwithcatch = async (url: string, header: string) => {
+    try {
+        var response = await fetch(url, JSON.parse(header));
         if (!response.ok) throw new Error(response.statusText);
         return response.json();
-    }catch(e){
+    } catch (e) {
         return null;
     }
-  }
+}
 export const getLectureList = async (dispatch: AppDispatch) => {
     let lectureInfoStr = await getChromeStorage("lectureInfo", "{}");
-    let resLecturelist: LectureList = JSON.parse(lectureInfoStr) ;
+    let resLecturelist: LectureList = JSON.parse(lectureInfoStr);
     let assignmentListStr = await getChromeStorage("fileInfo", "{}");
     let assignmentList = JSON.parse(assignmentListStr);
     Object.entries(assignmentList).forEach(([key1, value1]) => {
@@ -120,18 +126,6 @@ export const getTodoList = async (dispatch: AppDispatch) => {
     dispatch(setTodoList(todoList));
 }
 export const resetTodoList = async (dispatch: AppDispatch) => {
-    // delete todo only if linkcode is undefined
-    // let todoListStr = await getChromeStorage("todoList", "[]");
-    // let todoList: Todo[] = JSON.parse(todoListStr);
-    // let newTodoList: Todo[] = [];
-    // for (let key in todoList) {
-    //     let todo: Todo = todoList[key];
-    //     console.log(todo.linkcode);
-    //     if (!todo.linkcode) {
-    //         newTodoList.push(todo);
-    //     }
-    // }
-    // dispatch(setTodoList(newTodoList));
     setChromeStorage("deletedTodoList", "[]");
     dispatch(reloadTodoList);
 }
@@ -146,19 +140,20 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
         }
     }
     const fetchUrl = "https://blackboard.unist.ac.kr/webapps/calendar/calendarData/selectedCalendarEvents?start=" + Date.now() + "&end=2147483647000";
-    const fetchData = await APIwithcatch(fetchUrl);
-    if(!fetchData)  {
+    const fetchData = await APIwithcatch(fetchUrl, "{}");
+    if (!fetchData) {
         dispatch(getTodoList);
         return;
     };
-    if(fetchData.length == 0) {
+    
+    if (fetchData.length == 0) {
         dispatch(getTodoList);
         return;
     };
     let resLecturelistStr = await getChromeStorage("lectureInfo", "{}");
     let resLecturelist: LectureList = JSON.parse(resLecturelistStr);
     // remove deleted todo
-    let deletedTodoListStr = await getChromeStorage("deletedTodoList",[]);
+    let deletedTodoListStr = await getChromeStorage("deletedTodoList", []);
     let deletedTodoList: Todo[] = JSON.parse(deletedTodoListStr);
     for (let key in deletedTodoList) {
         let deletedTodo: Todo = deletedTodoList[key];
@@ -212,7 +207,7 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
     dispatch(setTodoList(newTodoList));
 }
 export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
-    if(todo.linkcode){ // check if linkcode exist to add only fetched todo
+    if (todo.linkcode) { // check if linkcode exist to add only fetched todo
         dispatch(addDeletedTodo(todo));
         let deletedTodoListStr = await getChromeStorage("deletedTodoList", "[]");
         let deletedTodoList: Todo[] = JSON.parse(deletedTodoListStr);
@@ -230,7 +225,6 @@ export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
         }
         newTodoList.push(newTodo);
     }
-    console.log(newTodoList);
     setChromeStorage("todoList", JSON.stringify(newTodoList));
     dispatch(setTodoList(newTodoList));
 }
@@ -249,7 +243,52 @@ export const addTodoItem = (dispatch: AppDispatch) => async (todo: Todo) => {
     todoList.push(todo);
     setChromeStorage("todoList", JSON.stringify(todoList));
 }
-
+export const getBB_alarms = async (dispatch: AppDispatch) => {
+    let bb_alarmsStr = await getChromeStorage("BB_alarms", "[]");
+    let bb_alarms: BB_alarm[] = JSON.parse(bb_alarmsStr);
+    dispatch(setBB_alarms(bb_alarms));
+}
+export const reloadBB_alarms = async (dispatch: AppDispatch) => {
+    const url = "https://blackboard.unist.ac.kr/webapps/streamViewer/streamViewer";
+    const fetchdata = await fetch(url, {
+        "headers": {
+          "accept": "text/javascript, text/html, application/xml, text/xml, */*",
+          "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+          "sec-ch-ua": "\"Chromium\";v=\"112\", \"Google Chrome\";v=\"112\", \"Not:A-Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\"",
+          "sec-fetch-dest": "empty",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "same-origin",
+          "x-prototype-version": "1.7",
+          "x-requested-with": "XMLHttpRequest"
+        },
+        "referrer": "https://blackboard.unist.ac.kr/webapps/streamViewer/streamViewer?cmd=view&streamName=alerts&globalNavigation=false",
+        "referrerPolicy": "strict-origin-when-cross-origin",
+        "body": "cmd=loadStream&streamName=alerts&providers=%7B%7D&forOverview=false",
+        "method": "POST",
+        "mode": "cors",
+        "credentials": "include"
+      });
+    if(!fetchdata.ok) {
+        dispatch(getBB_alarms);
+        return
+    };
+    let alarmListStr = await fetchdata.text();
+    if(!alarmListStr) {
+        dispatch(getBB_alarms);
+        return
+    };
+    let BB_alarms =  await convertBB_alarm(alarmListStr);
+    if(BB_alarms.length == 0) {
+        dispatch(getBB_alarms);
+        return
+    };
+    setChromeStorage("BB_alarms", JSON.stringify(BB_alarms)); 
+    console.log(BB_alarms);
+    dispatch(setBB_alarms(BB_alarms));
+}
 
 export const selectLectureList = (state: RootState) => state.lectureSlice.lectureSlice;
 export const selectShapedLectureList = (state: RootState) => state.lectureSlice.shapedLectureList;

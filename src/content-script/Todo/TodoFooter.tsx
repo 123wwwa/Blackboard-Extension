@@ -44,12 +44,16 @@ function TodoFooter({ color, setColor }: Props) {
 			date: +currentDate,
 		};
 		addTodoItem(dispatch)(todo);
+		setTitle("");
+		setColor("#F5F5F5");
+		setCurrentDate(new Date());
 	}
+
 	return (
 		<TodoFooterWrapper>
 			<div className="menus">
 				<SketchColorPicker color={color} setColor={setColor} />
-				<TextInput placeholder="새 일정 이름 입력" onChange={onChangeTitle}/>
+				<TextInput placeholder="새 일정 이름 입력" value={title} onChange={onChangeTitle}/>
 				<DatePicker currentDate = {currentDate} setCurrentDate= {setCurrentDate}/>
 			</div>
 			<ActionIcon icon={faPlus} onClick={onClickAdd}/>

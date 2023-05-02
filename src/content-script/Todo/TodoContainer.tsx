@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	getTodoList,
+	getBB_alarms,
 	reloadTodoList,
 	selectTodoList,
 } from "../../features/lecture_reducer";
@@ -68,7 +68,7 @@ const Container = styled.div<{ show: boolean }>`
 	}
 `;
 
-const TodoTabs = ["과제", "다운로드"];
+const TodoTabs = ["과제", "다운로드", "일정"];
 
 function TodoContainer({ show, setShow }: Props) {
 	const [color, setColor] = useState("#E5E5E5");
@@ -77,7 +77,34 @@ function TodoContainer({ show, setShow }: Props) {
 	const dispatch = useDispatch();
 	useEffect(() => {
 		dispatch(reloadTodoList as any);
+		
 	}, [dispatch]);
+	const renderSwitch = (tab: string) => {
+		switch (tab) {
+			case "과제":
+				return(
+				<>
+					<TodoList todoList={todoList} />
+					<TodoFooter color={color} setColor={setColor} />
+				</>)
+			case "다운로드":
+				return(
+				<>
+					<AssignmentList />
+				</>)
+			case "일정":
+				return(
+				<>
+				</>)
+			default:
+				return(
+				<>
+					<TodoList todoList={todoList} />
+					<TodoFooter color={color} setColor={setColor} />
+				</>)
+		}
+	}
+
 	return (
 		<Container show={show}>
 			<header>
@@ -102,19 +129,7 @@ function TodoContainer({ show, setShow }: Props) {
 				</div>
 				<TodoMenu setShow={setShow} />
 			</header>
-			{tab === "과제" ? (
-				// 과제 탭
-				<>
-					<TodoList todoList={todoList} />
-					<TodoFooter color={color} setColor={setColor} />
-				</>
-			) : (
-				// 다운로드 탭
-				<>
-					<AssignmentList />
-					{/* <AssignmentCard assignment={}  /> */}
-				</>
-			)}
+			{renderSwitch(tab)}
 		</Container>
 	);
 }

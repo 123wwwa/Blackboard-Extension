@@ -2,7 +2,7 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 import React, { useEffect, useState } from 'react'
-import { getLectureList ,reloadTodoList,selectLectureList, selectIsLectureLoaded, selectShapedLectureList } from '../../features/lecture_reducer';
+import { getLectureList ,reloadTodoList,selectLectureList, selectIsLectureLoaded, selectShapedLectureList, getBB_alarms, reloadBB_alarms } from '../../features/lecture_reducer';
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { AppDispatch, RootState, store } from '../../features/store'
 import { LectureGrid } from './common/LectureGrid';
@@ -91,6 +91,7 @@ const RenderTableDay = () => {
   }
   useEffect(() => {
     dispatch(getLectureList as any);
+    dispatch(reloadBB_alarms as any);
     setLogoURL(chrome.runtime.getURL("public/assets/HeXA_logo.png"));
     new BroadcastChannel("lectureInfoLastUpdate").onmessage = (e) => {
       dispatch(getLectureList as any);
