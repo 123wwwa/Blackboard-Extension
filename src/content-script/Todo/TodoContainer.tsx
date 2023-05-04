@@ -12,7 +12,7 @@ import TodoList from "./TodoList";
 import TodoFooter from "./TodoFooter";
 import AssignmentCard from "./Assignment/AssignmentCard";
 import AssignmentList from "./Assignment/AssignmentList";
-import AlarmList from "./Alarm/alarmList";
+import AlarmList from "./Alarm/AlarmList";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
