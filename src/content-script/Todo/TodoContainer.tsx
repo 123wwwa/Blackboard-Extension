@@ -12,6 +12,7 @@ import TodoList from "./TodoList";
 import TodoFooter from "./TodoFooter";
 import AssignmentCard from "./Assignment/AssignmentCard";
 import AssignmentList from "./Assignment/AssignmentList";
+import AlarmList from "./Alarm/alarmList";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -95,6 +96,7 @@ function TodoContainer({ show, setShow }: Props) {
 			case "일정":
 				return(
 				<>
+					<AlarmList/>
 				</>)
 			default:
 				return(

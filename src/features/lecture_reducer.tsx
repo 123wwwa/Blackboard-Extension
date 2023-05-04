@@ -294,4 +294,5 @@ export const selectLectureList = (state: RootState) => state.lectureSlice.lectur
 export const selectShapedLectureList = (state: RootState) => state.lectureSlice.shapedLectureList;
 export const selectIsLectureLoaded = (state: RootState) => state.lectureSlice.isLectureLoaded;
 export const selectTodoList = (state: RootState) => state.lectureSlice.todoList;
+export const selectBB_alarmList = (state: RootState) => state.lectureSlice.bb_alarmList;
 export default lectureSlice.reducer;

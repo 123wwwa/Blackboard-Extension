@@ -33,7 +33,6 @@ function AssignmentList() {
 	useEffect(()=>{
 		dispatch(getLectureList as any);
 	},[dispatch])
-	console.log(lectureList);
 	return (
 		<AssignmentListWrapper>
 			{Object.entries(lectureList).map(([key, value]) => {
