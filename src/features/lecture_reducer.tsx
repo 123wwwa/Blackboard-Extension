@@ -153,7 +153,7 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
     let resLecturelistStr = await getChromeStorage("lectureInfo", "{}");
     let resLecturelist: LectureList = JSON.parse(resLecturelistStr);
     // remove deleted todo
-    let deletedTodoListStr = await getChromeStorage("deletedTodoList", []);
+    let deletedTodoListStr = await getChromeStorage("deletedTodoList", "[]");
     let deletedTodoList: Todo[] = JSON.parse(deletedTodoListStr);
     for (let key in deletedTodoList) {
         let deletedTodo: Todo = deletedTodoList[key];
