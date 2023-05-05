@@ -1,8 +1,6 @@
 import styled from "@emotion/styled";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Assignment, Todo } from "type";
-import ActionIcon from "../common/ActionIcon";
 import { DueDateText } from "../TodoCard";
 
 const DownloadWrapper = styled.div`
@@ -26,7 +24,7 @@ const Container = styled.div<{ color: string }>`
 	padding: 15px 20px;
 	background-color: ${(props) => props.color || "#F5F5F5"};
 	border-radius: 10px;
-    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.04));
+	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.04));
 	cursor: pointer;
 
 	&:hover:not(:has(${DownloadWrapper}:hover)) {
@@ -57,28 +55,26 @@ const Subtitle = styled.p`
 	color: rgba(0, 0, 0, 0.7);
 `;
 
-// type Props = {
-// 	assignment?: Assignment;
-// };
-
-function AssignmentCard({
-	name,
-	count,
-	color,
-}: {
+type Props = {
 	name: string;
 	count: number;
 	color: string;
-}) {
+	onSelect: () => void;
+};
+
+function AssignmentCard({ name, count, color, onSelect }: Props) {
 	return (
-		<Container
-			color={color}
-		>
+		<Container color={color} onClick={onSelect}>
 			<Content>
 				<Title>{name}</Title>
 				<Subtitle>제출한 과제: {count}</Subtitle>
 			</Content>
-			<DownloadWrapper>
+			<DownloadWrapper
+				onClick={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+				}}
+			>
 				<DueDateText>전체 다운로드</DueDateText>
 				<FontAwesomeIcon icon={faDownload} opacity={0.4} />
 			</DownloadWrapper>

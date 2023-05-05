@@ -6,6 +6,7 @@ const GlobalStyle = () => (
 		styles={{
             "*": {
                 boxSizing: "border-box",
+				fontFamily: "Pretendard-Regular",
             },
 		}}
 	/>

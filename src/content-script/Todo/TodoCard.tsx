@@ -11,7 +11,7 @@ const Container = styled.div<{ color: string; }>`
 	align-items: center;
 	justify-content: space-between;
 	width: 100%;
-	min-height: 63px;
+	/* min-height: 63px; */
 	padding: 15px 20px;
 	background-color: ${(props) => props.color || "#F5F5F5"};
 	border-radius: 10px;
