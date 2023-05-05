@@ -16,7 +16,7 @@ const Container = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	gap: 20px;
+	gap: 12px;
 `;
 
 type Props = {

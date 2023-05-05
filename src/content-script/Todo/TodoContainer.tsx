@@ -1,7 +1,7 @@
 import ImageButton from "./common/ImageButton";
 import TodoMenu from "./TodoMenu";
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	getBB_alarms,
@@ -78,34 +78,38 @@ function TodoContainer({ show, setShow }: Props) {
 	const dispatch = useDispatch();
 	useEffect(() => {
 		dispatch(reloadTodoList as any);
-		
 	}, [dispatch]);
-	const renderSwitch = (tab: string) => {
+
+	const TabListComponent = useMemo(() => {
 		switch (tab) {
 			case "과제":
-				return(
-				<>
-					<TodoList todoList={todoList} />
-					<TodoFooter color={color} setColor={setColor} />
-				</>)
+				return (
+					<>
+						<TodoList todoList={todoList} />
+						<TodoFooter color={color} setColor={setColor} />
+					</>
+				);
 			case "다운로드":
-				return(
-				<>
-					<AssignmentList />
-				</>)
+				return (
+					<>
+						<AssignmentList />
+					</>
+				);
 			case "일정":
-				return(
-				<>
-					<AlarmList/>
-				</>)
+				return (
+					<>
+						<AlarmList />
+					</>
+				);
 			default:
-				return(
-				<>
-					<TodoList todoList={todoList} />
-					<TodoFooter color={color} setColor={setColor} />
-				</>)
+				return (
+					<>
+						<TodoList todoList={todoList} />
+						<TodoFooter color={color} setColor={setColor} />
+					</>
+				);
 		}
-	}
+	}, [tab]);
 
 	return (
 		<Container show={show}>
@@ -131,7 +135,7 @@ function TodoContainer({ show, setShow }: Props) {
 				</div>
 				<TodoMenu setShow={setShow} />
 			</header>
-			{renderSwitch(tab)}
+			{TabListComponent}
 		</Container>
 	);
 }

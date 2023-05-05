@@ -44,9 +44,9 @@ class SketchColorPicker extends React.Component<Props, State> {
     render() {
         const styles = {
             color: css({
-                width: "36px",
-                height: "25px",
-                borderRadius: "2px",
+                width: "28px",
+                height: "28px",
+                borderRadius: "10px",
                 color: this.props.color,
             }),
             swatch: css({
@@ -87,7 +87,8 @@ class SketchColorPicker extends React.Component<Props, State> {
 
                         </div>
                     ) : null}
-                    <ActionIcon css={styles.color}
+                    <ActionIcon
+                        css={styles.color}
                         icon={faPalette}
                         opacity="0.8"
                         onClick={this.handleClick}>

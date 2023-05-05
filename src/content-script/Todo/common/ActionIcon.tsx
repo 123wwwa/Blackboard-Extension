@@ -16,6 +16,7 @@ const Container = styled.button<{ size: string }>`
     border: none;
     outline: none;
     background-color: transparent;
+	border-radius: 10px;
     margin: 0;
     padding: 0;
 	display: flex;
@@ -26,8 +27,7 @@ const Container = styled.button<{ size: string }>`
     cursor: pointer;
 
 	&:hover {
-		scale: 1.1;
-		opacity: 0.7;
+		background-color: #E9E9E9
 	}
 
 	&:focus {
@@ -50,12 +50,12 @@ const Container = styled.button<{ size: string }>`
 	}
 `;
 
-function ActionIcon({ icon, opacity="0.4", size = "16px", ...props }: Props) {
+function ActionIcon({ icon, opacity="0.4", size = "28px", ...props }: Props) {
 	const theme = useTheme();
 
 	return (
 		<Container size={size} {...props}>
-			<FontAwesomeIcon icon={icon} opacity={opacity} fontSize={size} />
+			<FontAwesomeIcon icon={icon} opacity={opacity} fontSize={`calc(${size} - 12px)`} />
 		</Container>
 	);
 }
