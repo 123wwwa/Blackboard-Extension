@@ -51,12 +51,26 @@ const Container = styled.div<{ show: boolean }>`
 				color: rgba(0, 0, 0, 0.5);
 				font-size: 14px;
 				gap: 23px;
+				
 
 				p {
 					cursor: pointer;
+					position: relative;
 
-					&.active {
+					&:after {
+						content: "";
+						position: absolute;
+						bottom: 0;
+						left: 0;
+						width: 100%;
+						transform: scaleX(0);
+						height: 1px;
+						transition: all 300ms;
 						border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+					}
+
+					&.active:after {
+						transform: scaleX(1);
 					}
 				}
 			}
