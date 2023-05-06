@@ -28,7 +28,15 @@ const Container = styled.div<{ color: string }>`
 		filter: brightness(80%);
 	}
 `;
-
+const TitleContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+`;
+export const TitleText = styled.p`
+	font-size: 12px;
+	font-weight: 400;
+`;
 const Content = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -38,7 +46,7 @@ const Content = styled.div`
 	flex-basis: 60%;
 `;
 
-const Title = styled.h1`
+const LectureText = styled.h1`
 	font-size: 24px;
 	font-weight: 700;
 	font-size: 14px;
@@ -71,9 +79,12 @@ const AlarmCard = (props: {alarm: BB_alarm}) => {
 
             }>
             <Content>
-				<Title>{props.alarm.course_name}:{props.alarm.title}</Title>
+				<LectureText>{props.alarm.course_name}</LectureText>
 				<Subtitle>{timeStampToDate(props.alarm.date)}</Subtitle>
 			</Content>
+            <TitleContainer>
+                <TitleText>{props.alarm.title}</TitleText>
+            </TitleContainer>
         </Container>
     )
 }
