@@ -1,10 +1,17 @@
 import styled from "@emotion/styled";
-import { faDownload, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+	faBook,
+	faClock,
+	faDownload,
+	faGripHorizontal,
+	faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { Assignment, Todo } from "type";
 import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Checkbox from "../common/Checkbox";
+import Menu from "../common/Menu";
 
 const DownloadWrapper = styled.div`
 	display: flex;
@@ -77,6 +84,8 @@ type Props = {
 // 	return deleteTodo(dispatch as any)(item);
 // };
 function DownloadCard({ item }: Props) {
+	const [show, setShow] = useState(false);
+
 	return (
 		<Container color={"#E9E9E9"}>
 			<Checkbox />
@@ -86,10 +95,41 @@ function DownloadCard({ item }: Props) {
 					<DateText>2023-04-04 23:59</DateText>
 				</Content>
 
-				<DownloadWrapper>
-					<DueDateText>과제 파일</DueDateText>
-					<FontAwesomeIcon icon={faDownload} opacity={0.4} />
-				</DownloadWrapper>
+				<Menu show={show} onChange={setShow}>
+					<Menu.Target>
+						<DownloadWrapper>
+							<DueDateText>과제 파일</DueDateText>
+							<FontAwesomeIcon icon={faDownload} opacity={0.4} />
+						</DownloadWrapper>
+					</Menu.Target>
+					<Menu.Dropdown>
+						<Menu.MenuItem
+							leftIcon={<Checkbox />}
+							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
+						>
+							<p>input.txt</p>
+						</Menu.MenuItem>
+						<Menu.MenuItem
+							leftIcon={<Checkbox />}
+							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
+						>
+							<p>output.txt</p>
+						</Menu.MenuItem>
+						<Menu.MenuItem
+							leftIcon={<Checkbox />}
+							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
+						>
+							<p>assignment1.pdf</p>
+						</Menu.MenuItem>
+						<Menu.Divider />
+						<Menu.MenuItem
+							leftIcon={<Checkbox />}
+							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
+						>
+							<p>attempt1.pdf</p>
+						</Menu.MenuItem>
+					</Menu.Dropdown>
+				</Menu>
 			</InnerContainer>
 		</Container>
 	);

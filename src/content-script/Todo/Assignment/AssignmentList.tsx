@@ -81,6 +81,7 @@ function AssignmentList({ activeLectureId, setActiveLectureId }: Props) {
 					Object.entries(lectureList).map(([key, value]) => {
 						return (
 							<AssignmentCard
+								key={key}
 								name={value.name}
 								count={value.assignment.length}
 								color={value.color}

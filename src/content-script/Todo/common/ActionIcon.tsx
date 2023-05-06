@@ -1,8 +1,8 @@
-import React, { ButtonHTMLAttributes } from "react";
+import { ButtonHTMLAttributes, forwardRef, useRef } from "react";
 import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { useTheme } from "@emotion/react";
+import useMergedRef from "../../../hooks/useMergedRef";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 	opacity?: string;
@@ -11,23 +11,23 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const Container = styled.button<{ size: string }>`
-	width: ${props => props.size};
-	height: ${props => props.size};
-    border: none;
-    outline: none;
-    background-color: transparent;
+	width: ${(props) => props.size};
+	height: ${(props) => props.size};
+	border: none;
+	outline: none;
+	background-color: transparent;
 	border-radius: 10px;
-    margin: 0;
-    padding: 0;
+	margin: 0;
+	padding: 0;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-shrink: 0;
 	transition: all 0.2s ease-in-out;
-    cursor: pointer;
+	cursor: pointer;
 
 	&:hover {
-		background-color: #E9E9E9
+		background-color: #e9e9e9;
 	}
 
 	&:focus {
@@ -50,14 +50,21 @@ const Container = styled.button<{ size: string }>`
 	}
 `;
 
-function ActionIcon({ icon, opacity="0.4", size = "28px", ...props }: Props) {
-	const theme = useTheme();
-
+const ActionIcon = forwardRef<HTMLButtonElement, Props>(function ActionIcon(
+	{ icon, opacity = "0.4", size = "28px", ...props }: Props,
+	ref
+) {
+	const innerRef = useRef<HTMLButtonElement>(null);
+	const mergedRef = useMergedRef([innerRef, ref]);
 	return (
-		<Container size={size} {...props}>
-			<FontAwesomeIcon icon={icon} opacity={opacity} fontSize={`calc(${size} - 12px)`} />
+		<Container size={size} {...props} ref={mergedRef}>
+			<FontAwesomeIcon
+				icon={icon}
+				opacity={opacity}
+				fontSize={`calc(${size} - 12px)`}
+			/>
 		</Container>
 	);
-}
+});
 
 export default ActionIcon;
