@@ -40,7 +40,6 @@ function Checkbox({ value = false, onChange = () => {}, ...props }: Props) {
 	const checkedRef = useRef<boolean | null>(value);
 
 	useEffect(() => {
-		console.log(value, checkedRef.current);
 		checkedRef.current = value;
 		updateInput(inputRef, value);
 	}, [value]);
