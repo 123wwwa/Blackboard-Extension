@@ -1,30 +1,19 @@
-import { BB_alarm } from "type"
+import { BB_alarm } from "type";
 import styled from "@emotion/styled";
-const DownloadWrapper = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 25px;
-	padding: 4px 2px;
-
-	&:hover {
-		border-radius: 5px;
-		background-color: rgba(28, 25, 23, 0.35);
-	}
-`;
+import moment from "moment";
 
 const Container = styled.div<{ color: string }>`
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	gap: 12px;
 	width: 100%;
-	min-height: 63px;
 	padding: 15px 20px;
 	background-color: ${(props) => props.color || "#F5F5F5"};
 	border-radius: 10px;
-    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.04));
+	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.04));
 	cursor: pointer;
 
-	&:hover:not(:has(${DownloadWrapper}:hover)) {
+	&:hover {
 		filter: brightness(80%);
 	}
 `;
@@ -35,7 +24,8 @@ const Content = styled.div`
 	justify-content: center;
 	align-items: flex-start;
 	gap: 4px;
-	flex-basis: 60%;
+	word-break: break-all;
+	flex-basis: 30%;
 `;
 
 const Title = styled.h1`
@@ -51,30 +41,53 @@ const Subtitle = styled.p`
 	font-weight: 400;
 	color: rgba(0, 0, 0, 0.7);
 `;
-const AlarmCard = (props: {alarm: BB_alarm}) => {
-    const timeStampToDate = (timeStamp:number) =>{
-        const date = new Date(timeStamp);
-        const year = date.getFullYear();
-        const month = date.getMonth()+1;
-        const day = date.getDate();
-        const hour = date.getHours();
-        const minute = date.getMinutes();
-        const second = date.getSeconds();
-        return `${year}년 ${month}월 ${day}일 ${hour}시 ${minute}분 ${second}초`;
-    }
-    // 한글 포맷 
-    return(
-        <Container color={props.alarm.color}
-            onClick={()=>{
-                window.open("https://blackboard.unist.ac.kr/"+props.alarm.url, "_blank");
-            }
 
-            }>
-            <Content>
-				<Title>{props.alarm.course_name}:{props.alarm.title}</Title>
-				<Subtitle>{timeStampToDate(props.alarm.date)}</Subtitle>
+const Detail = styled.div`
+	flex-basis: 45%;
+	word-break: break-word;
+	font-size: 14px;
+	font-weight: 700;
+`;
+
+const Type = styled.div`
+	flex-basis: 15%;
+	margin-left: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 12px;
+	color: #dc2626;
+	word-break: break-word;
+`;
+
+const AlarmCard = (props: { alarm: BB_alarm }) => {
+	const type = props.alarm.type;
+	const typeName = type.includes("Announcement")
+		? "공지"
+		: type.includes("Assignment")
+		? "과제"
+		: type.includes("Content")
+		? "자료"
+		: "기타";
+	return (
+		<Container
+			color={props.alarm.color}
+			onClick={() => {
+				window.open(
+					"https://blackboard.unist.ac.kr/" + props.alarm.url,
+					"_blank"
+				);
+			}}
+		>
+			<Content>
+				<Title>{props.alarm.course_name}</Title>
+				<Subtitle>
+					{moment(new Date(props.alarm.date)).format("YYYY-MM-DD HH:mm")}
+				</Subtitle>
 			</Content>
-        </Container>
-    )
-}
+			<Detail>{props.alarm.title}</Detail>
+			<Type>{typeName}</Type>
+		</Container>
+	);
+};
 export default AlarmCard;
