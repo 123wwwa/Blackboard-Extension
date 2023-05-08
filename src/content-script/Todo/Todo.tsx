@@ -8,7 +8,6 @@ import { css } from "@emotion/react";
 import TodoButton from "./TodoButton";
 import TodoContainer from "./TodoContainer";
 
-
 const styles = {
 	Wrapper: css({
 		position: "fixed",
@@ -16,6 +15,7 @@ const styles = {
 		bottom: "60px",
 		fontSize: "16px",
 		fontFamily: "Pretendard-Regular",
+		transition: "all 200ms",
 		zIndex: 9999,
 	}),
 };
@@ -25,7 +25,16 @@ function Todo() {
 
 	return (
 		<div>
-			<div css={styles.Wrapper}>
+			<div
+				css={[
+					styles.Wrapper,
+					css({
+						opacity: showMainArea ? 1 : 0,
+						transform: showMainArea ? "translateY(0)" : "translateY(-10px)",
+						pointerEvents: showMainArea ? "auto" : "none",
+					}),
+				]}
+			>
 				<TodoContainer show={showMainArea} setShow={setShowMainArea} />
 			</div>
 			<TodoButton setShow={setShowMainArea} />

@@ -27,8 +27,6 @@ const Container = styled.div<{ show: boolean }>`
 	transition: opacity 300ms linear, visibility 0s linear 300ms;
 	box-sizing: border-box;
 	box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.14);
-	opacity: ${(props) => (props.show ? 1 : 0)};
-	display: ${(props) => (props.show ? "flex" : "none")};
 
 	header {
 		display: flex;
