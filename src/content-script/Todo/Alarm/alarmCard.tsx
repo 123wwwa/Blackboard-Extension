@@ -12,6 +12,10 @@ const Container = styled.div<{ color: string }>`
 	border-radius: 10px;
 	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.04));
 	cursor: pointer;
+
+	&:hover {
+		filter: brightness(80%);
+	}
 `;
 
 const Content = styled.div`
@@ -41,6 +45,8 @@ const Subtitle = styled.p`
 const Detail = styled.div`
 	flex-basis: 45%;
 	word-break: break-word;
+	font-size: 14px;
+	font-weight: 700;
 `;
 
 const Type = styled.div`
@@ -50,7 +56,7 @@ const Type = styled.div`
 	justify-content: center;
 	align-items: center;
 	font-size: 12px;
-	color: #DC2626;
+	color: #dc2626;
 	word-break: break-word;
 `;
 

@@ -7,6 +7,7 @@ import { reloadTodoList } from "../../features/lecture_reducer";
 import AlarmList from "./Alarm/AlarmList";
 import TodoLayout from "./TodoLayout";
 import AssignmentLayout from "./Assignment/AssignmentLayout";
+import AlarmLayout from "./Alarm/AlarmLayout";
 
 type Props = {
 	show: boolean;
@@ -51,7 +52,6 @@ const Container = styled.div<{ show: boolean }>`
 				color: rgba(0, 0, 0, 0.5);
 				font-size: 14px;
 				gap: 23px;
-				
 
 				p {
 					cursor: pointer;
@@ -94,11 +94,7 @@ function TodoContainer({ show, setShow }: Props) {
 			case "다운로드":
 				return <AssignmentLayout />;
 			case "일정":
-				return (
-					<>
-						<AlarmList />
-					</>
-				);
+				return <AlarmLayout />;
 			default:
 				return <TodoLayout />;
 		}
