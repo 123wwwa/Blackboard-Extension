@@ -85,14 +85,14 @@ type Props = {
 // };
 function DownloadCard({ item }: Props) {
 	const [show, setShow] = useState(false);
-
+	console.log(item);
 	return (
 		<Container color={"#E9E9E9"}>
 			<Checkbox />
 			<InnerContainer>
-				<Content>
-					<Title>{item?.Name || "System Programming: Assignment 3"}</Title>
-					<DateText>2023-04-04 23:59</DateText>
+				<Content onClick={()=> window.open(item?.url,"_blank")}>
+					<Title>{item?.Name}</Title>
+					<DateText>{item?.Due_Date}</DateText>
 				</Content>
 
 				<Menu show={show} onChange={setShow}>
@@ -103,7 +103,26 @@ function DownloadCard({ item }: Props) {
 						</DownloadWrapper>
 					</Menu.Target>
 					<Menu.Dropdown>
-						<Menu.MenuItem
+						{item?.Assignment_Files?<>{item?.Assignment_Files.map((file) => (
+							<Menu.MenuItem
+								leftIcon={<Checkbox />}
+								rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
+								onClick={() => window.open(file.fileURL, "_blank")}
+							>
+								<p>{file.fileName}</p>
+							</Menu.MenuItem>
+						))}</>:<></>}
+						<Menu.Divider />
+						{item?.fileUrl?<>{item?.fileUrl.map((file) => (
+							<Menu.MenuItem
+								leftIcon={<Checkbox />}
+								rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
+								onClick={() => window.open(file.fileURL, "_blank")}
+							>
+								<p>{file.fileName}</p>
+							</Menu.MenuItem>
+						))}</>:<></>}
+						{/* <Menu.MenuItem
 							leftIcon={<Checkbox />}
 							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
 						>
@@ -120,14 +139,14 @@ function DownloadCard({ item }: Props) {
 							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
 						>
 							<p>assignment1.pdf</p>
-						</Menu.MenuItem>
-						<Menu.Divider />
-						<Menu.MenuItem
+						</Menu.MenuItem> */}
+						{/* <Menu.Divider /> */}
+						{/* <Menu.MenuItem
 							leftIcon={<Checkbox />}
 							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
 						>
 							<p>attempt1.pdf</p>
-						</Menu.MenuItem>
+						</Menu.MenuItem> */}
 					</Menu.Dropdown>
 				</Menu>
 			</InnerContainer>

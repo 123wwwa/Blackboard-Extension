@@ -94,9 +94,11 @@ function AssignmentList({ activeLectureId, setActiveLectureId }: Props) {
 					// 		return <DownloadCard item={item} />;
 					//   })
 					<>
-						<DownloadCard />
-						<DownloadCard />
-						<DownloadCard />
+						{lectureList[activeLectureId].assignment ? <>
+						{lectureList[activeLectureId].assignment.map((item) => {
+							return <DownloadCard item={item} />;
+						})}
+						</> : <></>}
 					</>
 				)}
 			</ListContainer>
