@@ -5,6 +5,7 @@ type Props = {
 };
 
 function TodoButton({ setShow }: Props) {
+	const [hexaLogo, setHexaLogo] = React.useState(chrome.runtime.getURL("public/assets/HeXA_logo.png"));
 	const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         e.stopPropagation();
@@ -34,7 +35,7 @@ function TodoButton({ setShow }: Props) {
 				setShow((show) => !show);
 			}}
 		>
-			<img src={chrome.runtime.getURL("public/assets/HeXA_logo.png")} 
+			<img src={hexaLogo} 
 			css={styles.Img}/>
 		</button>
 	);

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	getBB_alarms,
+	postTodoList,
 	reloadTodoList,
 	selectTodoList,
 } from "../../features/lecture_reducer";
@@ -75,35 +76,40 @@ function TodoContainer({ show, setShow }: Props) {
 	const [color, setColor] = useState("#E5E5E5");
 	const [tab, setTab] = useState("과제");
 	const todoList = useSelector(selectTodoList);
+	const [googleCalendarIcon, setGoogleCalendarIcon] = useState(chrome.runtime.getURL("public/icons/icon-google-calendar.png"));
 	const dispatch = useDispatch();
+	const postTodoLists = () =>{
+
+		postTodoList(todoList);
+	}
 	useEffect(() => {
 		dispatch(reloadTodoList as any);
-		
+
 	}, [dispatch]);
 	const renderSwitch = (tab: string) => {
 		switch (tab) {
 			case "과제":
-				return(
-				<>
-					<TodoList todoList={todoList} />
-					<TodoFooter color={color} setColor={setColor} />
-				</>)
+				return (
+					<>
+						<TodoList todoList={todoList} />
+						<TodoFooter color={color} setColor={setColor} />
+					</>)
 			case "다운로드":
-				return(
-				<>
-					<AssignmentList />
-				</>)
+				return (
+					<>
+						<AssignmentList />
+					</>)
 			case "일정":
-				return(
-				<>
-					<AlarmList/>
-				</>)
+				return (
+					<>
+						<AlarmList />
+					</>)
 			default:
-				return(
-				<>
-					<TodoList todoList={todoList} />
-					<TodoFooter color={color} setColor={setColor} />
-				</>)
+				return (
+					<>
+						<TodoList todoList={todoList} />
+						<TodoFooter color={color} setColor={setColor} />
+					</>)
 		}
 	}
 
@@ -113,9 +119,8 @@ function TodoContainer({ show, setShow }: Props) {
 				<div className="box">
 					<ImageButton
 						title="구글 연동"
-						icon={chrome.runtime.getURL(
-							"public/icons/icon-google-calendar.png"
-						)}
+						icon={googleCalendarIcon}
+						onClick={postTodoLists}
 					/>
 					<div className="tabs">
 						{TodoTabs.map((tabName) => (

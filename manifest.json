@@ -18,6 +18,7 @@
     "client_id": "380279767804-39su41apgh655gpl1omcu9106caob58h.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/calendar",
     "https://www.googleapis.com/auth/calendar.readonly",
+    "https://www.googleapis.com/auth/calendar.events",
     "https://www.googleapis.com/auth/userinfo.email"]
   },
   "background": {

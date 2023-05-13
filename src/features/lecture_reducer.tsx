@@ -123,7 +123,7 @@ export const getTodoList = async (dispatch: AppDispatch) => {
     let todoListStr = await getChromeStorage("todoList", "[]");
     let todoList: Todo[] = JSON.parse(todoListStr);
     dispatch(setTodoList(todoList));
-    postTodoList(todoList);
+    //postTodoList(todoList);
 }
 export const resetTodoList = async (dispatch: AppDispatch) => {
     setChromeStorage("deletedTodoList", "[]");
@@ -205,7 +205,7 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
     }
     setChromeStorage("todoList", JSON.stringify(newTodoList));
     dispatch(setTodoList(newTodoList));
-    postTodoList(newTodoList);
+    //postTodoList(newTodoList);
 }
 export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
     if (todo.linkcode) { // check if linkcode exist to add only fetched todo
@@ -228,7 +228,7 @@ export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
     }
     setChromeStorage("todoList", JSON.stringify(newTodoList));
     dispatch(setTodoList(newTodoList));
-    postTodoList(newTodoList);
+    //postTodoList(newTodoList);
 }
 export const addTodoItem = (dispatch: AppDispatch) => async (todo: Todo) => {
     // check if duplicated
@@ -290,7 +290,7 @@ export const reloadBB_alarms = async (dispatch: AppDispatch) => {
     setChromeStorage("BB_alarms", JSON.stringify(BB_alarms)); 
     dispatch(setBB_alarms(BB_alarms));
 }
-const postTodoList = async (todoList: Todo[]) => {
+export const postTodoList = async (todoList: Todo[]) => {
     window.chrome.runtime.sendMessage({ action: "updateTodo", todoList: todoList });
 }
 export const selectLectureList = (state: RootState) => state.lectureSlice.lectureSlice;
