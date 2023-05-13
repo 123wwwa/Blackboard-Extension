@@ -6,6 +6,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         // check if todoList changed
         if (checkAlreadyExists(todoList, request.todoList)) {
             console.log('todoList not changed');
+            sendDoneMessage();
             return;
         }
         todoList = request.todoList;
@@ -34,13 +35,13 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                 console.log('no events');
                 token = await authorize();
                 postEvent(token, event, calendarId);
-                return;
+                continue;
             }
             let exists = false;
             calendarEvents.items.forEach((element) => {
                 //console.log(element, event);
                 if (compareEvent(element, event)) {
-                    console.log('event already exists');
+                    //console.log('event already exists');
                     exists = true;
                 }
             });
@@ -51,16 +52,23 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                 postEvent(token, event, calendarId);
             }
         }
+        //post message when done
+        sendDoneMessage();
     }
 
 })
+const sendDoneMessage = () =>{
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'calendarUpdateDone' });
+    });
+}
 const checkAlreadyExists = (prevEvents, events) => {
     if (!prevEvents) {
         return false;
     }
     let exists = false;
     events.forEach((element) => {
-        prevEvents.items.forEach((prevElement) => {
+        prevEvents.forEach((prevElement) => {
             if (compareEvent(element, prevElement)) {
                 exists = true;
             }

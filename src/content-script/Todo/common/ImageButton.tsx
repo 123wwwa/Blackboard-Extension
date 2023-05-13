@@ -6,7 +6,7 @@ type Props = {
 	onClick?: () => void;
 };
 
-const ImageButtonContainer = styled.button`
+export const ImageButtonContainer = styled.button`
 	width: 105px;
 	height: 30px;
 	padding: 6px 12px;

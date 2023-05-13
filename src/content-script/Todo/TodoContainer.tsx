@@ -1,19 +1,19 @@
-import ImageButton from "./common/ImageButton";
+import ImageButton, { ImageButtonContainer } from "./common/ImageButton";
 import TodoMenu from "./TodoMenu";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-	getBB_alarms,
 	postTodoList,
 	reloadTodoList,
 	selectTodoList,
 } from "../../features/lecture_reducer";
 import TodoList from "./TodoList";
 import TodoFooter from "./TodoFooter";
-import AssignmentCard from "./Assignment/AssignmentCard";
 import AssignmentList from "./Assignment/AssignmentList";
 import AlarmList from "./Alarm/AlarmList";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import ActionIcon from "./common/ActionIcon";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -77,14 +77,20 @@ function TodoContainer({ show, setShow }: Props) {
 	const [tab, setTab] = useState("과제");
 	const todoList = useSelector(selectTodoList);
 	const [googleCalendarIcon, setGoogleCalendarIcon] = useState(chrome.runtime.getURL("public/icons/icon-google-calendar.png"));
+	const [isUpdated, setIsUpdated] = useState(true);
 	const dispatch = useDispatch();
-	const postTodoLists = () =>{
-
+	const postTodoLists = () => {
+		setIsUpdated(false);
 		postTodoList(todoList);
 	}
 	useEffect(() => {
 		dispatch(reloadTodoList as any);
-
+		chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+			if (request.action === "calendarUpdateDone") {
+				setIsUpdated(true);
+			}
+		}
+		);
 	}, [dispatch]);
 	const renderSwitch = (tab: string) => {
 		switch (tab) {
@@ -117,11 +123,13 @@ function TodoContainer({ show, setShow }: Props) {
 		<Container show={show}>
 			<header>
 				<div className="box">
-					<ImageButton
+					{isUpdated ? <ImageButton
 						title="구글 연동"
 						icon={googleCalendarIcon}
 						onClick={postTodoLists}
-					/>
+					/> : <ImageButtonContainer>
+						<ActionIcon icon={faSpinner} className="loading" />
+						</ImageButtonContainer>}
 					<div className="tabs">
 						{TodoTabs.map((tabName) => (
 							<p
