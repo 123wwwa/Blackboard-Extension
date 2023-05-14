@@ -1,4 +1,3 @@
-export { }
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 
@@ -61,7 +60,7 @@ export const lectureSlice = createSlice({
 export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo, addDeletedTodo, resetDeletedTodo, setBB_alarms } = lectureSlice.actions;
 
 
-const setChromeStorage = (key: string, value: any) => {
+export const setChromeStorage = (key: string, value: any) => {
     window.chrome.storage.sync.set({ [key]: value }, () => {
     });
 }
@@ -124,6 +123,7 @@ export const getTodoList = async (dispatch: AppDispatch) => {
     let todoListStr = await getChromeStorage("todoList", "[]");
     let todoList: Todo[] = JSON.parse(todoListStr);
     dispatch(setTodoList(todoList));
+    //postTodoList(todoList);
 }
 export const resetTodoList = async (dispatch: AppDispatch) => {
     setChromeStorage("deletedTodoList", "[]");
@@ -205,6 +205,7 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
     }
     setChromeStorage("todoList", JSON.stringify(newTodoList));
     dispatch(setTodoList(newTodoList));
+    //postTodoList(newTodoList);
 }
 export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
     if (todo.linkcode) { // check if linkcode exist to add only fetched todo
@@ -227,6 +228,7 @@ export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
     }
     setChromeStorage("todoList", JSON.stringify(newTodoList));
     dispatch(setTodoList(newTodoList));
+    //postTodoList(newTodoList);
 }
 export const addTodoItem = (dispatch: AppDispatch) => async (todo: Todo) => {
     // check if duplicated
@@ -286,10 +288,11 @@ export const reloadBB_alarms = async (dispatch: AppDispatch) => {
         return
     };
     setChromeStorage("BB_alarms", JSON.stringify(BB_alarms)); 
-    console.log(BB_alarms);
     dispatch(setBB_alarms(BB_alarms));
 }
-
+export const postTodoList = async (todoList: Todo[]) => {
+    window.chrome.runtime.sendMessage({ action: "updateTodo", todoList: todoList });
+}
 export const selectLectureList = (state: RootState) => state.lectureSlice.lectureSlice;
 export const selectShapedLectureList = (state: RootState) => state.lectureSlice.shapedLectureList;
 export const selectIsLectureLoaded = (state: RootState) => state.lectureSlice.isLectureLoaded;

@@ -11,8 +11,19 @@
     "storage",
     "alarms",
     "activeTab",
-    "webRequest"
+    "webRequest",
+    "identity"
   ],
+  "oauth2": {
+    "client_id": "380279767804-39su41apgh655gpl1omcu9106caob58h.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/calendar",
+    "https://www.googleapis.com/auth/calendar.readonly",
+    "https://www.googleapis.com/auth/calendar.events",
+    "https://www.googleapis.com/auth/userinfo.email"]
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
   "icons": {},
   "content_scripts": [
     {
@@ -23,9 +34,12 @@
       "media": []
     },
     {
-      "matches": ["<all_urls>"],
-      "js": ["src/content-script/GetMylab/getmylab.js"],
-      "all_frames": true
+      "matches": ["https://mylab.pearson.com/Student/*", "https://openvellum.ecollege.com/course.html*"],
+      "js": ["src/content-script/GetMylab/main.tsx"]
+    },
+    {
+      "matches": ["https://mylab.pearson.com/api/studenthome?requestType=studenthomedata*"],
+      "js": ["src/content-script/GetMylab/getmylab.tsx"]
     },
     {
       "matches": ["https://blackboard.unist.ac.kr/*"],
@@ -66,13 +80,6 @@
           "src/content-script/CancelLogout/CancelLogout-append.js"
       ],
       "matches": ["https://blackboard.unist.ac.kr/*"] 
-    },
-    {
-      "resources": [
-          "src/content-script/GetMylab/getmylab-append.js"
-      ],
-      "matches": ["<all_urls>"],
-      "all_frames": true
     }
   ]
 }

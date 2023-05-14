@@ -1,13 +1,15 @@
-import ImageButton from "./common/ImageButton";
+import ImageButton, { ImageButtonContainer } from "./common/ImageButton";
 import TodoMenu from "./TodoMenu";
 import styled from "@emotion/styled";
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
-import { reloadTodoList } from "../../features/lecture_reducer";
+import { useDispatch, useSelector } from "react-redux";
+import { postTodoList, reloadTodoList, selectTodoList } from "../../features/lecture_reducer";
 import AlarmList from "./Alarm/AlarmList";
 import TodoLayout from "./TodoLayout";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import AssignmentLayout from "./Assignment/AssignmentLayout";
 import AlarmLayout from "./Alarm/AlarmLayout";
+import ActionIcon from "./common/ActionIcon";
 
 type Props = {
 	show: boolean;
@@ -80,9 +82,22 @@ const TodoTabs = ["과제", "다운로드", "일정"];
 
 function TodoContainer({ show, setShow }: Props) {
 	const [tab, setTab] = useState("과제");
+	const todoList = useSelector(selectTodoList);
+	const [googleCalendarIcon, setGoogleCalendarIcon] = useState(chrome.runtime.getURL("public/icons/icon-google-calendar.png"));
+	const [isUpdated, setIsUpdated] = useState(true);
 	const dispatch = useDispatch();
+	const postTodoLists = () => {
+		setIsUpdated(false);
+		postTodoList(todoList);
+	}
 	useEffect(() => {
 		dispatch(reloadTodoList as any);
+		chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+			if (request.action === "calendarUpdateDone") {
+				setIsUpdated(true);
+			}
+		}
+		);
 	}, [dispatch]);
 
 	const TabListComponent = useMemo(() => {
@@ -102,12 +117,13 @@ function TodoContainer({ show, setShow }: Props) {
 		<Container show={show}>
 			<header>
 				<div className="box">
-					<ImageButton
+					{isUpdated ? <ImageButton
 						title="구글 연동"
-						icon={chrome.runtime.getURL(
-							"public/icons/icon-google-calendar.png"
-						)}
-					/>
+						icon={googleCalendarIcon}
+						onClick={postTodoLists}
+					/> : <ImageButtonContainer>
+						<ActionIcon icon={faSpinner} className="loading" />
+						</ImageButtonContainer>}
 					<div className="tabs">
 						{TodoTabs.map((tabName) => (
 							<p

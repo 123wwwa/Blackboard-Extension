@@ -3,9 +3,10 @@ import styled from "@emotion/styled";
 type Props = {
 	icon: string;
 	title?: string;
+	onClick?: () => void;
 };
 
-const ImageButtonContainer = styled.button`
+export const ImageButtonContainer = styled.button`
 	width: 105px;
 	height: 30px;
 	padding: 6px 12px;
@@ -35,9 +36,9 @@ const ImageButtonContainer = styled.button`
 	}
 `;
 
-function ImageButton({ icon, title }: Props) {
+function ImageButton({ icon, title, onClick }: Props) {
 	return (
-		<ImageButtonContainer>
+		<ImageButtonContainer onClick={onClick}>
 			<img src={icon} />
 			<p>{title}</p>
 		</ImageButtonContainer>
