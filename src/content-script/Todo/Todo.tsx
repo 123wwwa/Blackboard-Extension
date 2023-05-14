@@ -30,7 +30,7 @@ function Todo() {
 					styles.Wrapper,
 					css({
 						opacity: showMainArea ? 1 : 0,
-						transform: showMainArea ? "translateY(0)" : "translateY(-10px)",
+						transform: showMainArea ? "translateY(0)" : "translateY(10px)",
 						pointerEvents: showMainArea ? "auto" : "none",
 					}),
 				]}

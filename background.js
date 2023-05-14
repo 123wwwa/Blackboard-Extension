@@ -55,7 +55,6 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         //post message when done
         sendDoneMessage();
     }
-
 })
 const sendDoneMessage = () =>{
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {

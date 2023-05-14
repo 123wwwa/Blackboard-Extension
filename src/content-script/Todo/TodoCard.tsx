@@ -5,8 +5,9 @@ import { Todo } from "type";
 import ActionIcon from "./common/ActionIcon";
 import { useDispatch } from "react-redux";
 import { deleteTodo } from "../../features/lecture_reducer";
+import moment from "moment";
 
-const Container = styled.div<{ color: string; }>`
+const Container = styled.div<{ color: string }>`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -16,7 +17,9 @@ const Container = styled.div<{ color: string; }>`
 	background-color: ${(props) => props.color || "#F5F5F5"};
 	border-radius: 10px;
 	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.04));
-	
+	filter: brightness(100%);
+	transition: all 0.2s ease-in-out;
+
 	&:hover {
 		filter: brightness(80%);
 		cursor: pointer;
@@ -29,7 +32,7 @@ const Content = styled.div`
 	justify-content: center;
 	align-items: flex-start;
 	gap: 4px;
-  flex-basis: 60%;
+	flex-basis: 60%;
 `;
 
 const Title = styled.h1`
@@ -62,18 +65,18 @@ type Props = {
 // 	return deleteTodo(dispatch as any)(item);
 // };
 function TodoCard({ item }: Props) {
-	const [remainingTime, setRemainingTime] = useState<Date>(new Date(0));
-	const [currentTime, setCurrentTime] = useState<Date>(new Date(Date.now()));
-	const dispatch = useDispatch(); 
+	const dispatch = useDispatch();
+	const [timer, setTimer] = useState<moment.Duration>(
+		moment.duration(moment(item.date).diff(Date.now()))
+	);
 	useEffect(() => {
-		setInterval(() => {
-			setCurrentTime(new Date(Date.now()));
-			setRemainingTime(new Date(item.date - Date.now() - 3240 * 10000));
+		const intervalFn = setInterval(() => {
+			setTimer(moment.duration(moment(item.date).diff(Date.now())));
 		}, 1000);
+		return () => {
+			clearInterval(intervalFn);
+		};
 	}, []);
-	const getDayDiff = (date1: Date, date2: Date) => {
-		return Math.floor((date1.getTime() - date2.getTime()) / 8.64e7);
-	};
 	const deleteTodoItem = (item: Todo) => {
 		return deleteTodo(dispatch as any)(item);
 	};
@@ -83,7 +86,7 @@ function TodoCard({ item }: Props) {
 			onClick={(e) => {
 				if (!item.linkcode) return;
 				// check e.target is <path> or not
-				if(e.target instanceof SVGPathElement) return;
+				if (e.target instanceof SVGPathElement) return;
 				window.open(
 					`https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/${item.linkcode}`,
 					"_blank"
@@ -92,26 +95,28 @@ function TodoCard({ item }: Props) {
 		>
 			<Content>
 				<Title>{item.content}</Title>
-				<DateText>
-					{new Date(item.date + 3240 * 10000)
-						.toISOString()
-						.replace("T", " ")
-						.replace(/\..*/, "")}
-				</DateText>
+				<DateText>{moment(item.date).format("YYYY-MM-DD HH:mm:ss")}</DateText>
 			</Content>
 
 			<DueDateContainer>
-				<DueDateText>
-					{getDayDiff(new Date(item.date), currentTime)} Days
-				</DueDateText>
-				<DueDateText>
-					{remainingTime.getHours().toString().padStart(2, "0")}:
-					{remainingTime.getMinutes().toString().padStart(2, "0")}:
-					{remainingTime.getSeconds().toString().padStart(2, "0")}
-				</DueDateText>
+				{timer.asMilliseconds() >= 0 ? (
+					<>
+						<DueDateText>{timer.days()} Days</DueDateText>
+						<DueDateText>
+							{timer.hours().toString().padStart(2, "0")}:
+							{timer.minutes().toString().padStart(2, "0")}:
+							{timer.seconds().toString().padStart(2, "0")}
+						</DueDateText>
+					</>
+				) : (
+					<>
+						<DueDateText>Due Date</DueDateText>
+						<DueDateText>Exceeded</DueDateText>
+					</>
+				)}
 			</DueDateContainer>
 
-			<ActionIcon icon={faTrash} onClick={()=>deleteTodoItem(item)}/>
+			<ActionIcon icon={faTrash} onClick={() => deleteTodoItem(item)} />
 		</Container>
 	);
 }

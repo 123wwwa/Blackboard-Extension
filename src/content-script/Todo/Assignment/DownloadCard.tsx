@@ -36,6 +36,8 @@ const Container = styled.div<{ color: string }>`
 	background-color: ${(props) => props.color || "#F5F5F5"};
 	border-radius: 10px;
 	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.04));
+	filter: brightness(100%);
+	transition: all 0.2s ease-in-out;
 `;
 
 const InnerContainer = styled.div`
