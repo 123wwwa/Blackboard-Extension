@@ -54,19 +54,21 @@ export const lectureSlice = createSlice({
         },
         setBB_alarms: (state, action) => {
             state.bb_alarmList = action.payload;
+            //console.log(state.bb_alarmList);
         }
     },
 });
 export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo, addDeletedTodo, resetDeletedTodo, setBB_alarms } = lectureSlice.actions;
 
 
-export const setChromeStorage = (key: string, value: any) => {
-    window.chrome.storage.sync.set({ [key]: value }, () => {
-    });
+export const setChromeStorage = async (key: string, value: any) => {
+    window.chrome.storage.sync.set({ [key]: value });
 }
 export const getChromeStorage: any = async (key: string, defaultValue: string) => {
     const data = await window.chrome.storage.sync.get([key]);
+    //console.log(data);
     if (!data[key]) {
+        console.log("no data");
         return defaultValue;
     }
     return data[key];
@@ -248,6 +250,7 @@ export const addTodoItem = (dispatch: AppDispatch) => async (todo: Todo) => {
 export const getBB_alarms = async (dispatch: AppDispatch) => {
     let bb_alarmsStr = await getChromeStorage("BB_alarms", "[]");
     let bb_alarms: BB_alarm[] = JSON.parse(bb_alarmsStr);
+    console.log(bb_alarms);
     dispatch(setBB_alarms(bb_alarms));
 }
 export const reloadBB_alarms = async (dispatch: AppDispatch) => {
@@ -275,19 +278,22 @@ export const reloadBB_alarms = async (dispatch: AppDispatch) => {
       });
     if(!fetchdata.ok) {
         dispatch(getBB_alarms);
-        return
+        return;
     };
+    
     let alarmListStr = await fetchdata.text();
     if(!alarmListStr) {
         dispatch(getBB_alarms);
-        return
+        return;
+    };
+    let rawAlarmList = JSON.parse(alarmListStr).sv_streamEntries;
+    if(rawAlarmList.length == 0) {
+        //dispatch(getBB_alarms);
+        //console.log("no alarm");
+        return;
     };
     let BB_alarms =  await convertBB_alarm(alarmListStr);
-    if(BB_alarms.length == 0) {
-        dispatch(getBB_alarms);
-        return
-    };
-    setChromeStorage("BB_alarms", JSON.stringify(BB_alarms)); 
+    setChromeStorage("BB_alarms", JSON.stringify(BB_alarms));  
     dispatch(setBB_alarms(BB_alarms));
 }
 export const postTodoList = async (todoList: Todo[]) => {

@@ -31,7 +31,9 @@ const TodoListWrapper = styled.article`
 function TodoList({ todoList }: Props) {
 	return (
 		<TodoListWrapper>
-			{todoList.map((todo) => {
+			{todoList.slice().sort((a, b) => {
+					return a.date - b.date;
+				}).map((todo) => {
 				return (
 					<TodoCard
 						item={todo}
