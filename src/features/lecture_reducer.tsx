@@ -2,7 +2,7 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 import { createSlice } from "@reduxjs/toolkit";
-import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo, BB_alarm } from "type";
+import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo, BB_alarm, alignWith } from "type";
 import { AppDispatch, RootState } from "./store";
 import { RawAlarm, convertBB_alarm } from "./rawAlarmHandler";
 interface LectureList {
@@ -15,6 +15,7 @@ export interface InitialState {
     todoList: Todo[];
     deletedTodoList: Todo[];
     bb_alarmList: BB_alarm[];
+    alignWith: alignWith;
 }
 let initialState: InitialState = {
     lectureSlice: {},
@@ -23,6 +24,7 @@ let initialState: InitialState = {
     todoList: [],
     deletedTodoList: [],
     bb_alarmList: [],
+    alignWith: "date",
 }
 
 export const lectureSlice = createSlice({
@@ -55,10 +57,13 @@ export const lectureSlice = createSlice({
         setBB_alarms: (state, action) => {
             state.bb_alarmList = action.payload;
             //console.log(state.bb_alarmList);
+        },
+        setAlignWith: (state, action) => {
+            state.alignWith = action.payload;
         }
     },
 });
-export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo, addDeletedTodo, resetDeletedTodo, setBB_alarms } = lectureSlice.actions;
+export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo, addDeletedTodo, resetDeletedTodo, setBB_alarms, setAlignWith } = lectureSlice.actions;
 
 
 export const setChromeStorage = async (key: string, value: any) => {
@@ -304,4 +309,5 @@ export const selectShapedLectureList = (state: RootState) => state.lectureSlice.
 export const selectIsLectureLoaded = (state: RootState) => state.lectureSlice.isLectureLoaded;
 export const selectTodoList = (state: RootState) => state.lectureSlice.todoList;
 export const selectBB_alarmList = (state: RootState) => state.lectureSlice.bb_alarmList;
+export const selectAlignWith = (state: RootState) => state.lectureSlice.alignWith;
 export default lectureSlice.reducer;

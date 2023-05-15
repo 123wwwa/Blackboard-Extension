@@ -1,11 +1,9 @@
 let calendarId;
 let todoList;
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-    console.log(request);
     if (request.action == 'updateTodo') {
         // check if todoList changed
         if (checkAlreadyExists(todoList, request.todoList)) {
-            console.log('todoList not changed');
             sendDoneMessage();
             return;
         }
@@ -39,13 +37,13 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             }
             let exists = false;
             calendarEvents.items.forEach((element) => {
-                //console.log(element, event);
+                
                 if (compareEvent(element, event)) {
                     //console.log('event already exists');
                     exists = true;
                 }
             });
-            //console.log(exists);
+            
             //post event
             if (!exists) {
                 token = await authorize();
@@ -144,5 +142,5 @@ const postEvent = async (token, event, calendarId) => {
     let url = `https://www.googleapis.com/calendar/v3/calendars/primary/events`
     const req = await fetch(url, init);
     const res = await req.json();
-    console.log(res);
+    //console.log(res);
 }

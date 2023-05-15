@@ -70,3 +70,4 @@ export interface Timeplace {
     end: string
     place: string
 }
+export type alignWith = 'date' | 'subject';

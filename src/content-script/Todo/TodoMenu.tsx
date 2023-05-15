@@ -12,8 +12,9 @@ import {
 	faRefresh,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
-import { reloadTodoList, resetTodoList } from "../../features/lecture_reducer";
+import { reloadTodoList, resetTodoList, setAlignWith } from "../../features/lecture_reducer";
 import Menu from "./common/Menu";
+import { alignWith } from "type";
 
 const Container = styled.div`
 	display: flex;
@@ -24,15 +25,19 @@ const Container = styled.div`
 
 type Props = {
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
+	tab: string;
 };
 
-function TodoMenu({ setShow }: Props): JSX.Element {
+function TodoMenu({ setShow, tab }: Props): JSX.Element {
 	const [showSortMenu, setShowSortMenu] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const refreshTodo = () => {
 		dispatch(resetTodoList as any);
 	};
-
+	const alignWith = (type: alignWith) => {
+		if(tab !== "과제") return;
+		dispatch(setAlignWith(type) as any);
+	}
 	return (
 		<Container>
 			<ActionIcon icon={faRefresh} onClick={refreshTodo} />
@@ -43,11 +48,13 @@ function TodoMenu({ setShow }: Props): JSX.Element {
 				</Menu.Target>
 				<Menu.Dropdown>
 					<Menu.MenuItem
+						onClick={()=>{alignWith("date")}}
 						leftIcon={<FontAwesomeIcon icon={faClock} opacity={0.4} />}
 					>
 						날짜별 정렬
 					</Menu.MenuItem>
 					<Menu.MenuItem
+						onClick={()=>{alignWith("subject")}}
 						leftIcon={<FontAwesomeIcon icon={faBook} opacity={0.4} />}
 					>
 						과목별 정렬

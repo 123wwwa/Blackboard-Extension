@@ -27,7 +27,7 @@ const waitForElm = () => {
 };
 const Child = (props: { data: Todo }) => {
     const dispatch = useDispatch(); 
-    const updateTodo = (json: any) => {
+    const updateTodo = async (json: any) => {
         let homeworklist: any[] = json.studentHomeData.upcoming;
         homeworklist.forEach((homework: any) => {
             let todo: Todo = {

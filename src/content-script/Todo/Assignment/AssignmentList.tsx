@@ -95,7 +95,9 @@ function AssignmentList({ activeLectureId, setActiveLectureId }: Props) {
 					//   })
 					<>
 						{lectureList[activeLectureId].assignment ? <>
-						{lectureList[activeLectureId].assignment.map((item) => {
+						{lectureList[activeLectureId].assignment.slice().sort((a,b)=>{
+							return new Date(b.Due_Date).getTime() - new Date(a.Due_Date).getTime();
+						}).map((item) => {
 							return <DownloadCard item={item} />;
 						})}
 						</> : <></>}
