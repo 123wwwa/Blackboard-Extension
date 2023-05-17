@@ -36,8 +36,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                 continue;
             }
             let exists = false;
-            calendarEvents.items.forEach((element) => {
-                
+            calendarEvents.items.forEach((element) => {               
                 if (compareEvent(element, event)) {
                     //console.log('event already exists');
                     exists = true;

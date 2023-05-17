@@ -2,7 +2,7 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 import { createSlice } from "@reduxjs/toolkit";
-import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo, BB_alarm, alignWith } from "type";
+import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo, BB_alarm, AlignWith, FileUrl } from "type";
 import { AppDispatch, RootState } from "./store";
 import { RawAlarm, convertBB_alarm } from "./rawAlarmHandler";
 interface LectureList {
@@ -15,7 +15,8 @@ export interface InitialState {
     todoList: Todo[];
     deletedTodoList: Todo[];
     bb_alarmList: BB_alarm[];
-    alignWith: alignWith;
+    alignWith: AlignWith;
+    checkedFiles: FileUrl[];
 }
 let initialState: InitialState = {
     lectureSlice: {},
@@ -25,6 +26,7 @@ let initialState: InitialState = {
     deletedTodoList: [],
     bb_alarmList: [],
     alignWith: "date",
+    checkedFiles: [],
 }
 
 export const lectureSlice = createSlice({
@@ -39,7 +41,7 @@ export const lectureSlice = createSlice({
             state.isLectureLoaded = true;
         },
         setLectureAssignment: (state, action) => {
-            let assignmentList: AssignmentList = action.payload;
+            let lecture = state.lectureSlice[action.payload.lectureID];
         },
         setTodoList: (state, action) => {
             state.todoList = action.payload;
@@ -47,7 +49,6 @@ export const lectureSlice = createSlice({
         addTodo: (state, action) => {
             state.todoList.push(action.payload);
         },
-
         addDeletedTodo: (state, action) => {
             state.deletedTodoList.push(action.payload);
         },
@@ -60,11 +61,33 @@ export const lectureSlice = createSlice({
         },
         setAlignWith: (state, action) => {
             state.alignWith = action.payload;
+        },
+        addCheckedFile: (state, action) => {
+           if(state.checkedFiles.find((file) => file.fileURL == action.payload.fileURL) == undefined){ // check if file is already checked
+                state.checkedFiles.push(action.payload);
+            }
+        },
+        removeCheckedFile: (state, action) => {
+            state.checkedFiles = state.checkedFiles.filter((file) => file.fileURL != action.payload.fileURL);   
+        },
+        setCheckedFiles: (state, action) => {
+            state.checkedFiles = action.payload;
+        },
+        deleteSelectedFiles: (state) => {
+            // delete files inside lectureList.assignment
+            state.checkedFiles.forEach((file) => {
+                Object.entries(state.lectureSlice).forEach(([key, value]) => {
+                    let assignments = value.assignment;
+                    assignments.forEach((assignment, index) => {
+                        state.lectureSlice[key].assignment[index].Assignment_Files = assignment.Assignment_Files.filter((fileUrl) => fileUrl.fileURL != file.fileURL);
+                        state.lectureSlice[key].assignment[index].fileUrl = assignment.fileUrl.filter((fileUrl) => fileUrl.fileURL != file.fileURL);
+                    });
+                });  
+            })
         }
     },
 });
-export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo, addDeletedTodo, resetDeletedTodo, setBB_alarms, setAlignWith } = lectureSlice.actions;
-
+export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo, addDeletedTodo, resetDeletedTodo, setBB_alarms, setAlignWith, addCheckedFile, setCheckedFiles, removeCheckedFile, deleteSelectedFiles} = lectureSlice.actions;
 
 export const setChromeStorage = async (key: string, value: any) => {
     window.chrome.storage.sync.set({ [key]: value });
@@ -310,4 +333,5 @@ export const selectIsLectureLoaded = (state: RootState) => state.lectureSlice.is
 export const selectTodoList = (state: RootState) => state.lectureSlice.todoList;
 export const selectBB_alarmList = (state: RootState) => state.lectureSlice.bb_alarmList;
 export const selectAlignWith = (state: RootState) => state.lectureSlice.alignWith;
+export const selectCheckedFiles = (state: RootState) => state.lectureSlice.checkedFiles;
 export default lectureSlice.reducer;

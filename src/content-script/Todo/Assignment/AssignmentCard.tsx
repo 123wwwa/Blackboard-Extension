@@ -2,6 +2,9 @@ import styled from "@emotion/styled";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DueDateText } from "../TodoCard";
+import { Assignment, Lecture } from "type";
+import JSZip from "jszip";
+import { it } from "node:test";
 
 const DownloadWrapper = styled.div`
 	display: flex;
@@ -56,18 +59,47 @@ const Subtitle = styled.p`
 `;
 
 type Props = {
-	name: string;
-	count: number;
-	color: string;
+	item: Lecture;
 	onSelect: () => void;
 };
 
-function AssignmentCard({ name, count, color, onSelect }: Props) {
+function AssignmentCard({ item, onSelect }: Props) {
+	const urlToBlob = async(url:string) => {
+		let blob = await fetch(url).then(r => r.blob());
+		return blob;
+	}
+	const downloadAllasZip = () => {
+		if(!item.assignment || item.assignment.length === 0) {
+			return;
+		}
+		const zip = new JSZip();
+		item.assignment.forEach((assignment) => {
+			if(assignment.fileUrl){
+				assignment.fileUrl.forEach((fileUrl) => {
+					zip.file(fileUrl.fileName, urlToBlob(fileUrl.fileURL));
+				})
+			}
+			if(assignment.Assignment_Files){
+				assignment.Assignment_Files.forEach((file) => {
+					zip.file(file.fileName, urlToBlob(file.fileURL));
+				})
+			}
+		});
+		zip.generateAsync({ type: "blob" }).then((content) => {
+			const a = document.createElement("a");
+			const url = URL.createObjectURL(content);
+			a.href = url;
+			a.download = `${item.name}.zip`;
+			a.click();
+			URL.revokeObjectURL(url);
+		});
+			
+	}
 	return (
-		<Container color={color} onClick={onSelect}>
+		<Container color={item.color} onClick={onSelect}>
 			<Content>
-				<Title>{name}</Title>
-				<Subtitle>제출한 과제: {count}</Subtitle>
+				<Title>{item.name}</Title>
+				<Subtitle>제출한 과제: {item.assignment.length}</Subtitle>
 			</Content>
 			<DownloadWrapper
 				onClick={(e) => {
@@ -75,7 +107,7 @@ function AssignmentCard({ name, count, color, onSelect }: Props) {
 					e.stopPropagation();
 				}}
 			>
-				<DueDateText>전체 다운로드</DueDateText>
+				<DueDateText onClick={downloadAllasZip}>전체 다운로드</DueDateText>
 				<FontAwesomeIcon icon={faDownload} opacity={0.4} />
 			</DownloadWrapper>
 		</Container>

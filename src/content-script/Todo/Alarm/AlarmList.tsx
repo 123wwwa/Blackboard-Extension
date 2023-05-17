@@ -34,7 +34,7 @@ const AlarmList = () => {
 	}, [dispatch]);
 	return (
 		<AssignmentListWrapper>
-			{Object.entries(
+			{BB_alarmList.length !=0?Object.entries(
 				BB_alarmList.slice().sort((a, b) => {
 					return b.date - a.date;
 				})
@@ -46,7 +46,7 @@ const AlarmList = () => {
 						</div>
 					);
 				}
-			})}
+			}):<div>알림이 없습니다.</div>}
 		</AssignmentListWrapper>
 	);
 };

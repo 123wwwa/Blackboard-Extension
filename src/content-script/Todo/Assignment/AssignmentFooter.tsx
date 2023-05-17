@@ -2,6 +2,10 @@ import styled from "@emotion/styled";
 import { faDownload, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Checkbox from "../common/Checkbox";
+import { useDispatch, useSelector } from "react-redux";
+import { addCheckedFile, selectCheckedFiles, selectLectureList, setCheckedFiles } from "../../../features/lecture_reducer";
+import { useState } from "react";
+import JSZip from "jszip";
 
 const AssignmentFooterWrapper = styled.footer`
 	display: flex;
@@ -49,11 +53,59 @@ type Props = {
 };
 
 function TodoFooter({ activeLectureId }: Props) {
+	const lectureList = useSelector(selectLectureList);
+	const checkedFiles = useSelector(selectCheckedFiles);
+	const dispatch = useDispatch();
+	const [isAllChecked, setIsAllChecked] = useState(false);
+	const checkAllFiles = () => {
+		setIsAllChecked(!isAllChecked);
+		if (!activeLectureId) return;
+		if (!lectureList[activeLectureId]) return;
+		if (!isAllChecked) {
+			lectureList[activeLectureId!].assignment.forEach((assignment) => {
+				if (assignment.Assignment_Files) {
+					assignment.Assignment_Files.forEach((file) => {
+						dispatch(addCheckedFile(file));
+					});
+				}
+				if (assignment.fileUrl) {
+					assignment.fileUrl.forEach((file) => {
+						dispatch(addCheckedFile(file));
+					})
+				}
+			})
+		}
+		else {
+			dispatch(setCheckedFiles([]));
+		}
+
+	}
+	const urlToBlob = async (url: string) => {
+		let blob = await fetch(url).then(r => r.blob());
+		return blob;
+	}
+	const downloadSelectedFiles = () => {
+		const zip = new JSZip();
+		checkedFiles.forEach((file) => {
+			zip.file(file.fileName, urlToBlob(file.fileURL), { binary: true });
+		});
+		zip.generateAsync({ type: "blob" }).then((content) => {
+			const a = document.createElement("a");
+			const url = URL.createObjectURL(content);
+			a.href = url;
+			a.download = `${activeLectureId}.zip`;
+			a.click();
+			URL.revokeObjectURL(url);
+		});
+	}
+	const deleteSelectedFiles = () => {
+		dispatch(deleteSelectedFiles as any);
+	}
 	return (
 		<AssignmentFooterWrapper>
 			<div className="menus">
-				<Checkbox />
-				<div className="icon-button">
+				<Checkbox onChange={checkAllFiles} checked={isAllChecked} />
+				<div className="icon-button" onClick={downloadSelectedFiles}>
 					선택 항목 다운로드
 					<FontAwesomeIcon icon={faDownload} />
 				</div>
@@ -62,7 +114,7 @@ function TodoFooter({ activeLectureId }: Props) {
 					<FontAwesomeIcon icon={faTrash} />
 				</div>
 			</div>
-			{<div className="select-text">{1}개 항목 선택</div>}
+			{<div className="select-text">{checkedFiles.length}개 항목 선택</div>}
 		</AssignmentFooterWrapper>
 	);
 }

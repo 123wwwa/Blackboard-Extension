@@ -4,7 +4,6 @@ import AssignmentList from "./AssignmentList";
 
 function AssignmentLayout() {
 	const [activeLectureId, setActiveLectureId] = useState<string | null>(null);
-
 	return (
 		<>
 			<AssignmentList

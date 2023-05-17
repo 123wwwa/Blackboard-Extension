@@ -7,11 +7,12 @@ import {
 	faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { Assignment, Todo } from "type";
-import { useDispatch } from "react-redux";
+import { Assignment, FileUrl, Todo } from "type";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Checkbox from "../common/Checkbox";
 import Menu from "../common/Menu";
+import { addCheckedFile, removeCheckedFile, selectCheckedFiles } from "../../../features/lecture_reducer";
 
 const DownloadWrapper = styled.div`
 	display: flex;
@@ -79,15 +80,71 @@ export const DueDateText = styled(DateText)`
 type Props = {
 	item?: Assignment;
 };
-// const deleteTodoItem = (item: Todo) => {
-// 	const dispatch = useDispatch();
-// 	return deleteTodo(dispatch as any)(item);
-// };
+
 function DownloadCard({ item }: Props) {
 	const [show, setShow] = useState(false);
+	const [parentChecked, setParentChecked] = useState(false);
+	const checkedFiles = useSelector(selectCheckedFiles);
+	const dispatch = useDispatch();
+	const checkParent = (event:any) => {
+		if(event.target.checked){
+			if(item?.Assignment_Files){
+				item?.Assignment_Files.forEach((file) => {
+					dispatch(addCheckedFile(file)); 
+				});
+			}
+			if(item?.fileUrl){
+				item?.fileUrl.forEach((file) => {
+					dispatch(addCheckedFile(file)); 
+				});
+			}
+		}else{
+			if(item?.Assignment_Files){
+				item?.Assignment_Files.forEach((file) => {
+					dispatch(removeCheckedFile(file)); 
+				});
+			}
+			if(item?.fileUrl){
+				item?.fileUrl.forEach((file) => {
+					dispatch(removeCheckedFile(file)); 
+				});
+			}
+		}
+
+	};
+	const isParentChecked = () => {
+		if(item?.Assignment_Files){
+			for(let i = 0; i < item?.Assignment_Files.length; i++){
+				if(!isChecked(item?.Assignment_Files[i]))
+					return false;
+			}
+		}
+		if(item?.fileUrl){
+			for(let i = 0; i < item?.fileUrl.length; i++){
+				if(!isChecked(item?.fileUrl[i]))
+					return false;
+			}
+		}
+		return true;
+	}
+	const isChecked = (file: FileUrl) =>{
+		if(checkedFiles.find((checkedFile) => checkedFile.fileURL === file.fileURL)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	const checkChild = (event: any, file: FileUrl) => {
+		if(event.target.checked){
+			dispatch(addCheckedFile(file));
+		}else{
+			dispatch(removeCheckedFile(file));
+		}
+	}
 	return (
 		<Container color={"#E9E9E9"}>
-			<Checkbox />
+			<Checkbox onClick={checkParent} checked={isParentChecked()}/>
 			<InnerContainer>
 				<Content onClick={()=> window.open(item?.url,"_blank")}>
 					<Title>{item?.Name}</Title>
@@ -104,9 +161,8 @@ function DownloadCard({ item }: Props) {
 					<Menu.Dropdown>
 						{item?.Assignment_Files?<>{item?.Assignment_Files.map((file) => (
 							<Menu.MenuItem
-								leftIcon={<Checkbox />}
-								rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
-								onClick={() => window.open(file.fileURL, "_blank")}
+								leftIcon={<Checkbox checked={isChecked(file)} onClick={(e)=>checkChild(e,file)} />}
+								rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} onClick={() => window.open(file.fileURL, "_blank")}/>}
 							>
 								<p>{file.fileName}</p>
 							</Menu.MenuItem>
@@ -114,9 +170,8 @@ function DownloadCard({ item }: Props) {
 						<Menu.Divider />
 						{item?.fileUrl?<>{item?.fileUrl.map((file) => (
 							<Menu.MenuItem
-								leftIcon={<Checkbox />}
-								rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
-								onClick={() => window.open(file.fileURL, "_blank")}
+								leftIcon={<Checkbox checked={isChecked(file)} onClick={(e)=>checkChild(e,file)} />}
+								rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} onClick={() => window.open(file.fileURL, "_blank")}/>}
 							>
 								<p>{file.fileName}</p>
 							</Menu.MenuItem>

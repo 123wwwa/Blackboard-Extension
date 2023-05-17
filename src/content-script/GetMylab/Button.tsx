@@ -16,7 +16,7 @@ const FixedButton = styled.button`
     width: 50px;
     height: 50px;
 `;
-const Button = () => {
+export const Button = () => {
     const dispatch = useDispatch();
     const updateTodo = (json: any) => {
         let homeworklist: any[] = json.studentHomeData.upcoming;

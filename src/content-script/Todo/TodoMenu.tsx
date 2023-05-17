@@ -14,7 +14,7 @@ import {
 import { useDispatch } from "react-redux";
 import { reloadTodoList, resetTodoList, setAlignWith } from "../../features/lecture_reducer";
 import Menu from "./common/Menu";
-import { alignWith } from "type";
+import { AlignWith } from "type";
 
 const Container = styled.div`
 	display: flex;
@@ -34,7 +34,7 @@ function TodoMenu({ setShow, tab }: Props): JSX.Element {
 	const refreshTodo = () => {
 		dispatch(resetTodoList as any);
 	};
-	const alignWith = (type: alignWith) => {
+	const alignWith = (type: AlignWith) => {
 		if(tab !== "과제") return;
 		dispatch(setAlignWith(type) as any);
 	}
