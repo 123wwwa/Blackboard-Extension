@@ -157,7 +157,6 @@ function TodoContainer({ show, setShow, position }: Props) {
 					</div>
 				</div>
 				<TodoMenu setShow={setShow} tab={tab} />
-				<TodoMenu setShow={setShow} tab={tab} />
 			</header>
 			{TabListComponent}
 		</Container>

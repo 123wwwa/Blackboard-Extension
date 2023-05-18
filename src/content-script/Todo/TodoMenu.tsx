@@ -48,9 +48,9 @@ function TodoMenu({ setShow, tab }: Props): JSX.Element {
 			dispatch(setAlignWith(type) as any);
 		}
 	};
-	const handleSortMenu = (e: any) => {
+	const handleSortMenu = (open: boolean) => {
 		if (tab == "과제") {
-			setShowSortMenu(e);
+			setShowSortMenu(open);
 		}
 	};
 	return (
@@ -59,17 +59,23 @@ function TodoMenu({ setShow, tab }: Props): JSX.Element {
 				<ActionIcon icon={faRefresh} onClick={refreshTodo} />
 			)}
 			<ActionIcon icon={faGear} />
-			<Popover open={showSortMenu} onOpenChange={setShowSortMenu}>
+			<Popover open={showSortMenu} onOpenChange={handleSortMenu}>
 				<Popover.Target>
 					<ActionIcon icon={faBars} />
 				</Popover.Target>
 				<Popover.Content>
 					<Popover.Item
+						onClick={() => {
+							alignWith("date");
+						}}
 						leftIcon={<FontAwesomeIcon icon={faClock} opacity={0.4} />}
 					>
 						날짜별 정렬
 					</Popover.Item>
 					<Popover.Item
+						onClick={() => {
+							alignWith("subject");
+						}}
 						leftIcon={<FontAwesomeIcon icon={faBook} opacity={0.4} />}
 					>
 						과목별 정렬
