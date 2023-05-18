@@ -49,28 +49,26 @@ const Container = styled.div<{ show: boolean }>`
 			.tabs {
 				display: flex;
 				align-items: center;
-				color: rgba(0, 0, 0, 0.5);
+				color: rgba(0, 0, 0, 0.4);
 				font-size: 14px;
-				gap: 23px;
+				font-weight: 700;
+				gap: 8px;
 
 				p {
 					cursor: pointer;
 					position: relative;
-
-					&:after {
-						content: "";
-						position: absolute;
-						bottom: 0;
-						left: 0;
-						width: 100%;
-						transform: scaleX(0);
-						height: 1px;
-						transition: all 300ms;
-						border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+					border-radius: 32px;
+					padding: 5px 12px;
+					background-color: white;
+					transition: all 0.2s ease-in-out;
+					filter: brightness(100%);
+					
+					&.active {
+						background-color: #F8F8F8;
 					}
 
-					&.active:after {
-						transform: scaleX(1);
+					&:hover {
+						filter: brightness(90%);
 					}
 				}
 			}

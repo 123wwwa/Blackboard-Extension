@@ -51,14 +51,24 @@ function Dropdown({ children }: Props) {
 			getPosition();
 		}
 
-		window.addEventListener("scroll", getPosition);
+		const hideMenu = () => {
+			ctx.onChange(false);
+		};
+
+		window.addEventListener(
+			"scroll",
+			ctx.hideOnScroll ? hideMenu : getPosition
+		);
 		window.addEventListener("resize", getPosition);
 
 		return () => {
-			window.removeEventListener("scroll", getPosition);
+			window.removeEventListener(
+				"scroll",
+				ctx.hideOnScroll ? hideMenu : getPosition
+			);
 			window.removeEventListener("resize", getPosition);
 		};
-	}, [ctx.show]);
+	}, [ctx.show, ctx.hideOnScroll]);
 
 	return (
 		<Portal>

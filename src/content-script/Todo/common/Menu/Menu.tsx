@@ -14,6 +14,7 @@ interface MenuContext {
 	targetRef: React.MutableRefObject<HTMLElement | null>;
 	dropdownRef?: React.MutableRefObject<HTMLDivElement | null>;
 	show: boolean;
+	hideOnScroll?: boolean;
 	onChange: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -21,6 +22,7 @@ export const MenuContext = createContext<MenuContext>({
 	targetRef: { current: null },
 	dropdownRef: { current: null },
 	show: false,
+	hideOnScroll: true,
 	onChange: () => {},
 });
 

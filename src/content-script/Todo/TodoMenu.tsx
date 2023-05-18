@@ -14,6 +14,8 @@ import {
 import { useDispatch } from "react-redux";
 import { reloadTodoList, resetTodoList } from "../../features/lecture_reducer";
 import Menu from "./common/Menu";
+import Popover from "./common/Popover";
+import { css } from "@emotion/react";
 
 const Container = styled.div`
 	display: flex;
@@ -37,7 +39,24 @@ function TodoMenu({ setShow }: Props): JSX.Element {
 		<Container>
 			<ActionIcon icon={faRefresh} onClick={refreshTodo} />
 			<ActionIcon icon={faGear} />
-			<Menu show={showSortMenu} onChange={setShowSortMenu}>
+			<Popover open={showSortMenu} onOpenChange={setShowSortMenu}>
+				<Popover.Target>
+					<ActionIcon icon={faBars} />
+				</Popover.Target>
+				<Popover.Content>
+					<Popover.Item
+						leftIcon={<FontAwesomeIcon icon={faClock} opacity={0.4} />}
+					>
+						날짜별 정렬
+					</Popover.Item>
+					<Popover.Item
+						leftIcon={<FontAwesomeIcon icon={faBook} opacity={0.4} />}
+					>
+						과목별 정렬
+					</Popover.Item>
+				</Popover.Content>
+			</Popover>
+			{/* <Menu show={showSortMenu} onChange={setShowSortMenu}>
 				<Menu.Target>
 					<ActionIcon icon={faBars} />
 				</Menu.Target>
@@ -53,7 +72,7 @@ function TodoMenu({ setShow }: Props): JSX.Element {
 						과목별 정렬
 					</Menu.MenuItem>
 				</Menu.Dropdown>
-			</Menu>
+			</Menu> */}
 			<ActionIcon icon={faClose} onClick={() => setShow((show) => !show)} />
 		</Container>
 	);

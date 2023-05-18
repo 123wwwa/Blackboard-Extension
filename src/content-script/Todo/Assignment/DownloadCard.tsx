@@ -1,14 +1,9 @@
 import styled from "@emotion/styled";
 import {
-	faBook,
-	faClock,
 	faDownload,
-	faGripHorizontal,
-	faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
-import { Assignment, Todo } from "type";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { Assignment } from "type";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Checkbox from "../common/Checkbox";
 import Menu from "../common/Menu";
