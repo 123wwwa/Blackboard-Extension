@@ -3,7 +3,11 @@ import TodoMenu from "./TodoMenu";
 import styled from "@emotion/styled";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { postTodoList, reloadTodoList, selectTodoList } from "../../features/lecture_reducer";
+import {
+	postTodoList,
+	reloadTodoList,
+	selectTodoList,
+} from "../../features/lecture_reducer";
 import AlarmList from "./Alarm/AlarmList";
 import TodoLayout from "./TodoLayout";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -62,9 +66,9 @@ const Container = styled.div<{ show: boolean }>`
 					background-color: white;
 					transition: all 0.2s ease-in-out;
 					filter: brightness(100%);
-					
+
 					&.active {
-						background-color: #F8F8F8;
+						background-color: #f8f8f8;
 					}
 
 					&:hover {
@@ -76,26 +80,27 @@ const Container = styled.div<{ show: boolean }>`
 	}
 `;
 
-const TodoTabs = ["과제", "다운로드", "알림"];
+export const TodoTabs = ["과제", "다운로드", "알림"] as const;
 
 function TodoContainer({ show, setShow }: Props) {
-	const [tab, setTab] = useState("과제");
+	const [tab, setTab] = useState<(typeof TodoTabs)[number]>("과제");
 	const todoList = useSelector(selectTodoList);
-	const [googleCalendarIcon, setGoogleCalendarIcon] = useState(chrome.runtime.getURL("public/icons/icon-google-calendar.png"));
+	const [googleCalendarIcon, setGoogleCalendarIcon] = useState(
+		chrome.runtime.getURL("public/icons/icon-google-calendar.png")
+	);
 	const [isUpdated, setIsUpdated] = useState(true);
 	const dispatch = useDispatch();
 	const postTodoLists = () => {
 		setIsUpdated(false);
 		postTodoList(todoList);
-	}
+	};
 	useEffect(() => {
 		dispatch(reloadTodoList as any);
 		chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			if (request.action === "calendarUpdateDone") {
 				setIsUpdated(true);
 			}
-		}
-		);
+		});
 	}, [dispatch]);
 
 	const TabListComponent = useMemo(() => {
@@ -115,13 +120,17 @@ function TodoContainer({ show, setShow }: Props) {
 		<Container show={show}>
 			<header>
 				<div className="box">
-					{isUpdated ? <ImageButton
-						title="구글 연동"
-						icon={googleCalendarIcon}
-						onClick={postTodoLists}
-					/> : <ImageButtonContainer>
-						<ActionIcon icon={faSpinner} className="loading" />
-						</ImageButtonContainer>}
+					{isUpdated ? (
+						<ImageButton
+							title="구글 연동"
+							icon={googleCalendarIcon}
+							onClick={postTodoLists}
+						/>
+					) : (
+						<ImageButtonContainer>
+							<ActionIcon icon={faSpinner} className="loading" />
+						</ImageButtonContainer>
+					)}
 					<div className="tabs">
 						{TodoTabs.map((tabName) => (
 							<p
@@ -134,7 +143,7 @@ function TodoContainer({ show, setShow }: Props) {
 						))}
 					</div>
 				</div>
-				<TodoMenu setShow={setShow} />
+				<TodoMenu setShow={setShow} tab={tab} />
 			</header>
 			{TabListComponent}
 		</Container>

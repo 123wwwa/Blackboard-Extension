@@ -13,9 +13,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
 import { reloadTodoList, resetTodoList } from "../../features/lecture_reducer";
-import Menu from "./common/Menu";
 import Popover from "./common/Popover";
-import { css } from "@emotion/react";
+import { TodoTabs } from "./TodoContainer";
 
 const Container = styled.div`
 	display: flex;
@@ -26,9 +25,10 @@ const Container = styled.div`
 
 type Props = {
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
+	tab: typeof TodoTabs[number];
 };
 
-function TodoMenu({ setShow }: Props): JSX.Element {
+function TodoMenu({ setShow, tab }: Props): JSX.Element {
 	const [showSortMenu, setShowSortMenu] = useState<boolean>(false);
 	const dispatch = useDispatch();
 	const refreshTodo = () => {
@@ -37,7 +37,7 @@ function TodoMenu({ setShow }: Props): JSX.Element {
 
 	return (
 		<Container>
-			<ActionIcon icon={faRefresh} onClick={refreshTodo} />
+			{tab !== "다운로드" && <ActionIcon icon={faRefresh} onClick={refreshTodo} />}
 			<ActionIcon icon={faGear} />
 			<Popover open={showSortMenu} onOpenChange={setShowSortMenu}>
 				<Popover.Target>
