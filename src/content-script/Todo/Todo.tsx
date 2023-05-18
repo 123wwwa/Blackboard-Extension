@@ -20,7 +20,6 @@ function Todo() {
 	useEffect(() => {
 		chrome.storage.local.get("position", (result) => {
 			if (result.position) {
-				console.log(result.position);
 				if (result.position.x > window.innerWidth - 100 || result.position.y > window.innerHeight - 60) {
 					setPosition({ x: window.innerWidth - 100, y: window.innerHeight - 60 });
 				} else {

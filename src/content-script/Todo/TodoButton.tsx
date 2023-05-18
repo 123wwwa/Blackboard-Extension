@@ -11,8 +11,11 @@ function TodoButton({ setShow, position, setPosition }: Props) {
 	useEffect(()=>{
 		// save position to chrome storage on tab close or refresh
 		window.addEventListener("resize", (e) => {
-			if(position.x > window.innerWidth - 100 || position.y > window.innerWidth - 60){
-				setPosition({ x: window.innerWidth - 100, y: window.innerWidth - 60 });
+			if(position.x > window.innerWidth - 100){
+				setPosition({ x: window.innerWidth - 100, y: position.y });
+			}
+			if(position.y > window.innerWidth - 60){
+				setPosition({ x: position.x, y: window.innerHeight - 60 });
 			}
 		});
 	},[])
