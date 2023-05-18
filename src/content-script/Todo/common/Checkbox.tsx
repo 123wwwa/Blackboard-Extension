@@ -1,75 +1,70 @@
-import { css } from "@emotion/react";
-import { InputHTMLAttributes, RefObject, useEffect, useRef } from "react";
+import { css, keyframes } from "@emotion/react";
+import { faCheck, faMinus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as RedixCheckbox from "@radix-ui/react-checkbox";
+import { useState } from "react";
+
+const fadeIn = keyframes({
+    from: { backgroundColor: "white" },
+    to: { backgroundColor: "#426acf" },
+});
+
+const fadeOut = keyframes({
+    from: { backgroundColor: "#426acf" },
+    to: { backgroundColor: "white" },
+});
 
 const styles = {
 	Checkbox: css({
 		width: "16px",
 		height: "16px",
 		border: "1px solid #64748B",
+		borderRadius: "2px",
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		cursor: "pointer",
+        transition: "all 0.2s ease-in-out",
+        backgroundColor: "white",
 
 		"&:focus": {
 			outline: "none",
 		},
+
+		"&[data-state='checked']": {
+			backgroundColor: "#426acf",
+            borderColor: "#426acf",
+		},
+		"&[data-state='indeterminate']": {
+			backgroundColor: "#426acf",
+            borderColor: "#426acf",
+		},
 	}),
 };
 
-
-// https://dirask.com/posts/React-three-state-checkbox-with-indeterminate-property-1yNvvD
-
-type Props = Omit<
-	InputHTMLAttributes<HTMLInputElement>,
-	"onChange" | "value"
-> & {
-	value?: boolean | null;
-	onChange?: (checked: boolean | null) => void;
-};
-
-const updateInput = (
-	ref: RefObject<HTMLInputElement>,
-	checked: boolean | null
-) => {
-	const input = ref.current;
-	if (input) {
-		input.checked = !!checked;
-		input.indeterminate = checked === null;
-	}
-};
-
-function Checkbox({ value = false, onChange = () => {}, ...props }: Props) {
-	const inputRef = useRef<HTMLInputElement>(null);
-	const checkedRef = useRef<boolean | null>(value);
-
-	useEffect(() => {
-		checkedRef.current = value;
-		updateInput(inputRef, value);
-	}, [value]);
-
-	const handleChange = () => {
-		switch (checkedRef.current) {
-			case true:
-				checkedRef.current = false;
-				break;
-			case false:
-				checkedRef.current = true;
-				break;
-			default: // null
-				checkedRef.current = true;
-				break;
-		}
-		updateInput(inputRef, checkedRef.current);
-		if (onChange) {
-			onChange(checkedRef.current);
-		}
-	};
+function Checkbox(props: RedixCheckbox.CheckboxProps) {
+	const [checked, setChecked] = useState<
+		RedixCheckbox.CheckboxProps["checked"]
+	>(props.checked);
 
 	return (
-		<input
+		<RedixCheckbox.Root
+			css={[styles.Checkbox, props.css]}
 			{...props}
-			type="checkbox"
-			css={styles.Checkbox}
-			onChange={handleChange}
-			ref={inputRef}
-		/>
+			onCheckedChange={(checked) => {
+				setChecked(checked);
+				if (props.onCheckedChange) props.onCheckedChange(checked);
+			}}
+		>
+			<RedixCheckbox.Indicator>
+				{checked === "indeterminate" && (
+					<FontAwesomeIcon icon={faMinus} color="white" size="sm" />
+				)}
+				{checked === true && (
+					<FontAwesomeIcon icon={faCheck} color="white" size="sm" />
+				)}
+			</RedixCheckbox.Indicator>
+		</RedixCheckbox.Root>
 	);
 }
 

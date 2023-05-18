@@ -1,12 +1,10 @@
 import styled from "@emotion/styled";
-import {
-	faDownload,
-} from "@fortawesome/free-solid-svg-icons";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { Assignment } from "type";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Popover from "../common/Popover";
 import Checkbox from "../common/Checkbox";
-import Menu from "../common/Menu";
 
 const DownloadWrapper = styled.div`
 	display: flex;
@@ -14,6 +12,8 @@ const DownloadWrapper = styled.div`
 	gap: 25px;
 	padding: 4px 2px;
 	border-radius: 5px;
+	filter: brightness(100%);
+	transition: all 0.2s ease-in-out;
 	cursor: pointer;
 
 	&:hover {
@@ -31,7 +31,6 @@ const Container = styled.div<{ color: string }>`
 	background-color: ${(props) => props.color || "#F5F5F5"};
 	border-radius: 10px;
 	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.04));
-	filter: brightness(100%);
 	transition: all 0.2s ease-in-out;
 `;
 
@@ -82,70 +81,78 @@ type Props = {
 // };
 function DownloadCard({ item }: Props) {
 	const [show, setShow] = useState(false);
-	console.log(item);
+
 	return (
 		<Container color={"#E9E9E9"}>
 			<Checkbox />
 			<InnerContainer>
-				<Content onClick={()=> window.open(item?.url,"_blank")}>
+				<Content onClick={() => window.open(item?.url, "_blank")}>
 					<Title>{item?.Name}</Title>
 					<DateText>{item?.Due_Date}</DateText>
 				</Content>
-
-				<Menu show={show} onChange={setShow}>
-					<Menu.Target>
+				<Popover open={show} onOpenChange={setShow}>
+					<Popover.Target>
 						<DownloadWrapper>
 							<DueDateText>과제 파일</DueDateText>
 							<FontAwesomeIcon icon={faDownload} opacity={0.4} />
 						</DownloadWrapper>
-					</Menu.Target>
-					<Menu.Dropdown>
-						{item?.Assignment_Files?<>{item?.Assignment_Files.map((file) => (
-							<Menu.MenuItem
-								leftIcon={<Checkbox />}
-								rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
-								onClick={() => window.open(file.fileURL, "_blank")}
-							>
-								<p>{file.fileName}</p>
-							</Menu.MenuItem>
-						))}</>:<></>}
-						<Menu.Divider />
-						{item?.fileUrl?<>{item?.fileUrl.map((file) => (
-							<Menu.MenuItem
-								leftIcon={<Checkbox />}
-								rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
-								onClick={() => window.open(file.fileURL, "_blank")}
-							>
-								<p>{file.fileName}</p>
-							</Menu.MenuItem>
-						))}</>:<></>}
-						{/* <Menu.MenuItem
-							leftIcon={<Checkbox />}
-							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
-						>
-							<p>input.txt</p>
-						</Menu.MenuItem>
-						<Menu.MenuItem
-							leftIcon={<Checkbox />}
-							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
-						>
-							<p>output.txt</p>
-						</Menu.MenuItem>
-						<Menu.MenuItem
-							leftIcon={<Checkbox />}
-							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
-						>
-							<p>assignment1.pdf</p>
-						</Menu.MenuItem> */}
-						{/* <Menu.Divider /> */}
-						{/* <Menu.MenuItem
-							leftIcon={<Checkbox />}
-							rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} />}
-						>
-							<p>attempt1.pdf</p>
-						</Menu.MenuItem> */}
-					</Menu.Dropdown>
-				</Menu>
+					</Popover.Target>
+					<Popover.Content hideWhenDetached>
+						{item?.Assignment_Files ? (
+							<>
+								{item?.Assignment_Files.map((file) => (
+									<Popover.Item
+										leftIcon={
+											<div
+												onClick={(e) => {
+													e.preventDefault();
+													e.stopPropagation();
+												}}
+											>
+												<Checkbox />
+											</div>
+										}
+										rightIcon={
+											<FontAwesomeIcon icon={faDownload} opacity={0.4} />
+										}
+										onClick={() => window.open(file.fileURL, "_blank")}
+									>
+										<p>{file.fileName}</p>
+									</Popover.Item>
+								))}
+							</>
+						) : (
+							<></>
+						)}
+						<Popover.Divider />
+						{item?.fileUrl ? (
+							<>
+								{item?.fileUrl.map((file) => (
+									<Popover.Item
+										leftIcon={
+											<div
+												onClick={(e) => {
+													e.preventDefault();
+													e.stopPropagation();
+												}}
+											>
+												<Checkbox />
+											</div>
+										}
+										rightIcon={
+											<FontAwesomeIcon icon={faDownload} opacity={0.4} />
+										}
+										onClick={() => window.open(file.fileURL, "_blank")}
+									>
+										<p>{file.fileName}</p>
+									</Popover.Item>
+								))}
+							</>
+						) : (
+							<></>
+						)}
+					</Popover.Content>
+				</Popover>
 			</InnerContainer>
 		</Container>
 	);

@@ -76,7 +76,7 @@ const Container = styled.div<{ show: boolean }>`
 	}
 `;
 
-const TodoTabs = ["과제", "다운로드", "일정"];
+const TodoTabs = ["과제", "다운로드", "알림"];
 
 function TodoContainer({ show, setShow }: Props) {
 	const [tab, setTab] = useState("과제");
@@ -104,7 +104,7 @@ function TodoContainer({ show, setShow }: Props) {
 				return <TodoLayout />;
 			case "다운로드":
 				return <AssignmentLayout />;
-			case "일정":
+			case "알림":
 				return <AlarmLayout />;
 			default:
 				return <TodoLayout />;

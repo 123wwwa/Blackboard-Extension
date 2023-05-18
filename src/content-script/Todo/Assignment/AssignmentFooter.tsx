@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { faDownload, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Checkbox from "../common/Checkbox";
+import Checkbox from "../common/Legacy/Checkbox";
 
 const AssignmentFooterWrapper = styled.footer`
 	display: flex;

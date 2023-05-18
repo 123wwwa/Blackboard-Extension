@@ -74,6 +74,19 @@ const styles = {
 		marginLeft: "auto",
 		paddingLeft: "20px",
 	}),
+
+	Divider: css({
+		margin: "4px 0",
+
+		"&::after": {
+			content: "''",
+			height: "1px",
+			position: "absolute",
+			left: 0,
+			right: 0,
+			backgroundColor: "#DEDEDE",
+		},
+	}),
 };
 
 function Popover({ children, ...props }: RadixPopover.PopoverProps) {
@@ -106,6 +119,10 @@ function Arrow({ children, ...props }: RadixPopover.PopoverArrowProps) {
 	return <RadixPopover.Arrow {...props}>{children}</RadixPopover.Arrow>;
 }
 
+function Divider() {
+	return <div css={styles.Divider} />;
+}
+
 interface ItemProps {
 	children: ReactNode;
 	leftIcon?: ReactNode;
@@ -132,6 +149,7 @@ Popover.Content = Content;
 Popover.CloseButton = CloseButton;
 Popover.Arrow = Arrow;
 Popover.Item = Item;
+Popover.Divider = Divider;
 Popover.displayName = "Popover";
 
 export default Popover;

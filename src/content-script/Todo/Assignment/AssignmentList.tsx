@@ -11,7 +11,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import DownloadCard from "./DownloadCard";
-import AssignmentFooter from "./AssignmentFooter";
 
 const ListContainer = styled.article`
 	display: flex;
@@ -94,11 +93,15 @@ function AssignmentList({ activeLectureId, setActiveLectureId }: Props) {
 					// 		return <DownloadCard item={item} />;
 					//   })
 					<>
-						{lectureList[activeLectureId].assignment ? <>
-						{lectureList[activeLectureId].assignment.map((item) => {
-							return <DownloadCard item={item} />;
-						})}
-						</> : <></>}
+						{lectureList[activeLectureId].assignment ? (
+							<>
+								{lectureList[activeLectureId].assignment.map((item) => {
+									return <DownloadCard item={item} />;
+								})}
+							</>
+						) : (
+							<></>
+						)}
 					</>
 				)}
 			</ListContainer>
