@@ -2,6 +2,8 @@ import styled from "@emotion/styled";
 import React from "react";
 import { Todo } from "type";
 import TodoCard from "./TodoCard";
+import { selectAlignWith } from "../../features/lecture_reducer";
+import { useSelector } from "react-redux";
 
 type Props = {
 	todoList: Todo[];
@@ -29,11 +31,23 @@ const TodoListWrapper = styled.article`
 `;
 
 function TodoList({ todoList }: Props) {
+	const alignWith = useSelector(selectAlignWith);
+	const alignWithList = () => {
+		if(alignWith === "date") {
+			return todoList.slice().sort((a, b) => {
+				return a.date - b.date;
+			})
+		}else if(alignWith === "subject") {
+			return [...todoList].sort((a, b) => {
+				let subjectA = a.course_name || ".";
+				let subjectB = b.course_name || ".";
+				return new Intl.Collator('en').compare(subjectA, subjectB);
+			})
+		}
+	}
 	return (
 		<TodoListWrapper>
-			{todoList.slice().sort((a, b) => {
-					return a.date - b.date;
-				}).map((todo) => {
+			{alignWithList()?.map((todo) => {
 				return (
 					<TodoCard
 						item={todo}

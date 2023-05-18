@@ -18,9 +18,16 @@ import ActionIcon from "./common/ActionIcon";
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
+	position: {
+		x: number;
+		y: number;
+	};
 };
 
-const Container = styled.div<{ show: boolean }>`
+const Container = styled.div<{
+	show: boolean;
+	position: { x: number; y: number };
+}>`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -82,7 +89,7 @@ const Container = styled.div<{ show: boolean }>`
 
 export const TodoTabs = ["과제", "다운로드", "알림"] as const;
 
-function TodoContainer({ show, setShow }: Props) {
+function TodoContainer({ show, setShow, position }: Props) {
 	const [tab, setTab] = useState<(typeof TodoTabs)[number]>("과제");
 	const todoList = useSelector(selectTodoList);
 	const [googleCalendarIcon, setGoogleCalendarIcon] = useState(
@@ -91,6 +98,12 @@ function TodoContainer({ show, setShow }: Props) {
 	const [isUpdated, setIsUpdated] = useState(true);
 	const dispatch = useDispatch();
 	const postTodoLists = () => {
+		let isChrome =
+			/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+		if (!isChrome) {
+			alert("구글 크롬 브라우저에서만 사용 가능한 기능입니다.");
+			return;
+		}
 		setIsUpdated(false);
 		postTodoList(todoList);
 	};
@@ -117,7 +130,7 @@ function TodoContainer({ show, setShow }: Props) {
 	}, [tab]);
 
 	return (
-		<Container show={show}>
+		<Container show={show} position={position}>
 			<header>
 				<div className="box">
 					{isUpdated ? (
@@ -143,6 +156,7 @@ function TodoContainer({ show, setShow }: Props) {
 						))}
 					</div>
 				</div>
+				<TodoMenu setShow={setShow} tab={tab} />
 				<TodoMenu setShow={setShow} tab={tab} />
 			</header>
 			{TabListComponent}

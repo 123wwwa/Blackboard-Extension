@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AlarmCard from "./AlarmCard";
 import styled from "@emotion/styled";
+import ActionIcon from "../common/ActionIcon";
 const AssignmentListWrapper = styled.article`
 	width: 100%;
 	height: 330px;
@@ -34,7 +35,7 @@ const AlarmList = () => {
 	}, [dispatch]);
 	return (
 		<AssignmentListWrapper>
-			{Object.entries(
+			{BB_alarmList.length !=0?Object.entries(
 				BB_alarmList.slice().sort((a, b) => {
 					return b.date - a.date;
 				})
@@ -46,7 +47,7 @@ const AlarmList = () => {
 						</div>
 					);
 				}
-			})}
+			}):<div>알림이 없습니다. 새로고침을 하시거나 로그인 상태인지 확인하세요.</div>}
 		</AssignmentListWrapper>
 	);
 };

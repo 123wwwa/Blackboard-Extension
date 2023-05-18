@@ -7,6 +7,7 @@ import { LectureList } from "type";
 import {
 	getLectureList,
 	selectLectureList,
+	setCheckedFiles,
 } from "../../../features/lecture_reducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -64,13 +65,17 @@ type Props = {
 function AssignmentList({ activeLectureId, setActiveLectureId }: Props) {
 	const dispatch: AppDispatch = useDispatch();
 	const lectureList: LectureList = useSelector(selectLectureList);
+	const handleGoBack = () => {
+		setActiveLectureId(null);
+		dispatch(setCheckedFiles([]));
+	};
 	useEffect(() => {
 		dispatch(getLectureList as any);
 	}, [dispatch]);
 	return (
 		<RootContainer>
 			{activeLectureId && (
-				<header onClick={() => setActiveLectureId(null)}>
+				<header onClick={handleGoBack}>
 					<FontAwesomeIcon icon={faArrowLeft} />
 					{lectureList[activeLectureId].name}
 				</header>
@@ -80,28 +85,20 @@ function AssignmentList({ activeLectureId, setActiveLectureId }: Props) {
 					Object.entries(lectureList).map(([key, value]) => {
 						return (
 							<AssignmentCard
-								key={key}
-								name={value.name}
-								count={value.assignment.length}
-								color={value.color}
+								item = {value}
 								onSelect={() => setActiveLectureId(key)}
 							/>
 						);
 					})
 				) : (
-					// : lectureList[activeLectureId].assignment.map((item) => {
-					// 		return <DownloadCard item={item} />;
-					//   })
 					<>
-						{lectureList[activeLectureId].assignment ? (
-							<>
-								{lectureList[activeLectureId].assignment.map((item) => {
-									return <DownloadCard item={item} />;
-								})}
-							</>
-						) : (
-							<></>
-						)}
+						{lectureList[activeLectureId].assignment ? <>
+						{lectureList[activeLectureId].assignment.slice().sort((a,b)=>{
+							return new Date(b.Due_Date).getTime() - new Date(a.Due_Date).getTime();
+						}).map((item) => {
+							return <DownloadCard item={item} />;
+						})}
+						</> : <></>}
 					</>
 				)}
 			</ListContainer>
