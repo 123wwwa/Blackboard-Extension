@@ -18,8 +18,7 @@ const FixedButton = styled.button`
 `;
 export const Button = () => {
     const dispatch = useDispatch();
-    const updateTodo = (json: any) => {
-        let homeworklist: any[] = json.studentHomeData.upcoming;
+    const updateTodo = (homeworklist:any) => {
         homeworklist.forEach((homework: any) => {
             let todo: Todo = {
                 content: homework.assignmentName,
@@ -30,12 +29,14 @@ export const Button = () => {
         });
     }
     useEffect(() => {
-        window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-            console.log(message);
-            if (message.action === "mylab") {
-                updateTodo(message.json);
-            }
-        });
+        // window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        //     console.log(message.json);
+        //     if (message.action === "mylab") {
+                
+        //         updateTodo(message.json);
+        //         sendResponse({ action: "mylab", status: "success" });
+        //     }
+        // });
     }, [dispatch]);
     const getFormattedDate = (date: Date, time: string) => {
         let day = date.getDate().toString().padStart(2, '0');
@@ -55,7 +56,7 @@ export const Button = () => {
         window.open(url, "_blank");
     }
     return (<>
-        <FixedButton onClick={openMylab}>마이랩 일정에 추가</FixedButton>
+        <FixedButton onClick={openMylab}>마이랩 일정 연동</FixedButton>
     </>)
 };
 export default Button;

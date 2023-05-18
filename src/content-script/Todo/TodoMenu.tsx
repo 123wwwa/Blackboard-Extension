@@ -40,16 +40,22 @@ function TodoMenu({ setShow, tab }: Props): JSX.Element {
 		}
 	};
 	const alignWith = (type: AlignWith) => {
-		if (tab !== "과제") return;
-		dispatch(setAlignWith(type) as any);
+		if (tab == "과제") {
+			dispatch(setAlignWith(type) as any);
+		}
+	}
+	const handleSortMenu = (e: any) => {
+		if(tab == '과제'){
+			setShowSortMenu(e);
+		}
 	}
 	return (
 		<Container>
 			<ActionIcon icon={faRefresh} onClick={refreshTodo} />
 			<ActionIcon icon={faGear} />
-			<Menu show={showSortMenu} onChange={setShowSortMenu}>
+			<Menu show={showSortMenu} onChange={handleSortMenu}>
 				<Menu.Target>
-					<ActionIcon icon={faBars} />
+					<ActionIcon icon={faBars}/>
 				</Menu.Target>
 				<Menu.Dropdown>
 					<Menu.MenuItem

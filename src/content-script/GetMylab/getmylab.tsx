@@ -3,9 +3,9 @@
 import { Todo } from "type";
 import React, { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { store } from '../../features/store';
-import { addTodoItem } from "../../features/lecture_reducer";
+import { addTodoItem, selectTodoList } from "../../features/lecture_reducer";
 const waitForElm = () => {
     return new Promise((resolve) => {
         if (document.body) {
@@ -29,6 +29,9 @@ const Child = (props: { data: Todo }) => {
     const dispatch = useDispatch(); 
     const updateTodo = async (json: any) => {
         let homeworklist: any[] = json.studentHomeData.upcoming;
+        let todoList = useSelector(selectTodoList);
+        const prevTodoList = todoList;
+        const addedHomeworkLength = homeworklist.length;
         homeworklist.forEach((homework: any) => {
             let todo: Todo = {
                 content: homework.assignmentName,
@@ -37,7 +40,15 @@ const Child = (props: { data: Todo }) => {
             }
             addTodoItem(dispatch)(todo);
         });
-        window.close();
+        setTimeout(() => {
+            window.close();
+        }, 1000);
+        // window.chrome.runtime.sendMessage({ action: "mylab", json: homeworklist },
+        //     (response) => {
+        //         //window.close();
+        //     }
+        // );
+        // wait for Item to add to store
     }
     useEffect(() => {
         updateTodo(props.data);
