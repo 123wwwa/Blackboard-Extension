@@ -1,6 +1,8 @@
 import { BB_alarm } from "type";
 import styled from "@emotion/styled";
 import moment from "moment";
+import { useEffect, useRef, useState } from "react";
+import Popover from "../common/Popover";
 
 const Container = styled.div<{ color: string }>`
 	display: flex;
@@ -63,6 +65,7 @@ const Type = styled.div`
 `;
 
 const AlarmCard = (props: { alarm: BB_alarm }) => {
+	const [show, setShow] = useState(false);
 	const type = props.alarm.type;
 	const typeName = type.includes("Announcement")
 		? "공지"
@@ -71,6 +74,15 @@ const AlarmCard = (props: { alarm: BB_alarm }) => {
 		: type.includes("Content")
 		? "자료"
 		: "기타";
+
+	const handleMouseOver = () => {
+		setShow(true);
+	};
+
+	const handleMouseLeave = () => {
+		setShow(false);
+	};
+
 	return (
 		<Container
 			color={props.alarm.color}
@@ -87,7 +99,23 @@ const AlarmCard = (props: { alarm: BB_alarm }) => {
 					{moment(new Date(props.alarm.date)).format("YYYY-MM-DD HH:mm")}
 				</Subtitle>
 			</Content>
-			<Detail>{props.alarm.title}</Detail>
+			<Popover open={show} onOpenChange={setShow}>
+				<Popover.Target>
+					<Detail onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave}>
+						{props.alarm.title}
+					</Detail>
+				</Popover.Target>
+				<Popover.Content
+					onClick={(e) => {
+						e.stopPropagation();
+					}}
+					onMouseOver={handleMouseOver}
+					onMouseLeave={handleMouseLeave}
+				>
+					<div dangerouslySetInnerHTML={{ __html: props.alarm.detail }} />
+				</Popover.Content>
+			</Popover>
+
 			<Type>{typeName}</Type>
 		</Container>
 	);

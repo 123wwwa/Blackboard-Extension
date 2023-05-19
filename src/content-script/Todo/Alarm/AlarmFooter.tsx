@@ -6,10 +6,7 @@ import {
 	faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React from "react";
-import ActionIcon from "../common/ActionIcon";
 import Popover from "../common/Popover";
-import TextInput from "../common/TextInput";
 
 const styles = {
 	Wrapper: css({
