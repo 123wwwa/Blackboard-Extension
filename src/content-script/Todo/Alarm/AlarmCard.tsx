@@ -1,8 +1,9 @@
 import { BB_alarm } from "type";
 import styled from "@emotion/styled";
 import moment from "moment";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Popover from "../common/Popover";
+import { getAnnouncementDisplayText } from "../../../util";
 
 const Container = styled.div<{ color: string }>`
 	display: flex;
@@ -66,14 +67,6 @@ const Type = styled.div`
 
 const AlarmCard = (props: { alarm: BB_alarm }) => {
 	const [show, setShow] = useState(false);
-	const type = props.alarm.type;
-	const typeName = type.includes("Announcement")
-		? "공지"
-		: type.includes("Assignment")
-		? "과제"
-		: type.includes("Content")
-		? "자료"
-		: "기타";
 
 	const handleMouseOver = () => {
 		setShow(true);
@@ -116,7 +109,7 @@ const AlarmCard = (props: { alarm: BB_alarm }) => {
 				</Popover.Content>
 			</Popover>
 
-			<Type>{typeName}</Type>
+			<Type>{getAnnouncementDisplayText(props.alarm.type)}</Type>
 		</Container>
 	);
 };
