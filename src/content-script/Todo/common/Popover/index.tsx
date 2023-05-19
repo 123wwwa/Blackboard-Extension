@@ -1,6 +1,6 @@
 import * as RadixPopover from "@radix-ui/react-popover";
 import { css, keyframes } from "@emotion/react";
-import { HTMLAttributes, ReactNode } from "react";
+import { HTMLAttributes, ReactNode, useEffect, useState } from "react";
 
 const slideUpAndFade = keyframes({
 	"0%": { opacity: 0, transform: "translateY(2px)" },
@@ -34,24 +34,17 @@ const styles = {
 		borderRadius: "10px",
 		filter: "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
 		opacity: 1,
-		transform: "translateY(0)",
-		transition: "opacity 150ms ease-in-out, transform 150ms ease-in-out",
-		animationDuration: "400ms",
-		animationTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
 		willChange: "transform, opacity",
+		animationDuration: "200ms",
+		animationTimingFunction: "ease-in-out",
 		pointerEvents: "auto",
+
 		'&[data-state="open"]': {
 			'&[data-side="top"]': { animationName: slideDownAndFade },
 			'&[data-side="right"]': { animationName: slideLeftAndFade },
 			'&[data-side="bottom"]': { animationName: slideUpAndFade },
 			'&[data-side="left"]': { animationName: slideRightAndFade },
 		},
-	}),
-
-	Hidden: css({
-		opacity: 0,
-		transform: "translateY(-10px)",
-		pointerEvents: "none",
 	}),
 
 	MenuItem: css({

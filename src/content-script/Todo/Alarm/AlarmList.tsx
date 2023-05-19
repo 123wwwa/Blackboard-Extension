@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AlarmCard from "./AlarmCard";
 import styled from "@emotion/styled";
-import ActionIcon from "../common/ActionIcon";
 const AssignmentListWrapper = styled.article`
 	width: 100%;
 	height: 330px;

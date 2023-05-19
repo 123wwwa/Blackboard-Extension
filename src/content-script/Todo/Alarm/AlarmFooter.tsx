@@ -8,6 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import ActionIcon from "../common/ActionIcon";
+import Popover from "../common/Popover";
 import TextInput from "../common/TextInput";
 
 const styles = {
@@ -27,13 +28,13 @@ const styles = {
 		justifyContent: "center",
 		fontSize: "14px",
 		fontWeight: 400,
-    cursor: "pointer",
-    padding: "7px 14px",
-    borderRadius: "10px",
-    transition: "all 0.2s ease-in-out",
-    "&:hover": {
-      backgroundColor: "rgba(0, 0, 0, 0.1)",
-    },
+		cursor: "pointer",
+		padding: "7px 14px",
+		borderRadius: "10px",
+		transition: "all 0.2s ease-in-out",
+		"&:hover": {
+			backgroundColor: "rgba(0, 0, 0, 0.1)",
+		},
 
 		p: {
 			opacity: 0.5,
@@ -47,23 +48,69 @@ const styles = {
 	}),
 };
 
+const mockCourses = [
+	"인간 컴퓨터 상호작용",
+	"시스템 프로그래밍",
+	"고급 프로그래밍",
+	"local visit",
+	"미분 방정식",
+	"미적분 Ⅱ",
+	"통계학",
+];
+const mockSubjects = [
+	"공지",
+	"자료",
+	"디스커션",
+	"과제",
+	"점수",
+	"설문조사",
+	"코스 개설",
+];
+
 function AlarmFooter() {
 	return (
 		<div css={styles.Wrapper}>
-			<div css={styles.Button}>
-				<FontAwesomeIcon icon={faClock} opacity="0.5" />
-				<p>날짜 선택</p>
-			</div>
+			<Popover>
+				<Popover.Target>
+					<div css={styles.Button}>
+						<FontAwesomeIcon icon={faClock} opacity="0.5" />
+						<p>날짜 선택</p>
+					</div>
+				</Popover.Target>
+				<Popover.Content css={css({ width: "135px" })}>
+					{mockCourses.map((course) => (
+						<Popover.Item css={css({ fontSize: "12px" })}>
+							{course}
+						</Popover.Item>
+					))}
+				</Popover.Content>
+			</Popover>
 			<div css={styles.Divider} />
-			<div css={styles.Button}>
-				<FontAwesomeIcon icon={faBook} opacity="0.5" />
-				<p>과목 선택</p>
-			</div>
+			<Popover>
+				<Popover.Target>
+					<div css={styles.Button}>
+						<FontAwesomeIcon icon={faBook} opacity="0.5" />
+						<p>과목 선택</p>
+					</div>
+				</Popover.Target>
+				<Popover.Content>Date Picker</Popover.Content>
+			</Popover>
 			<div css={styles.Divider} />
-			<div css={styles.Button}>
-				<FontAwesomeIcon icon={faGrip} opacity="0.5" />
-				<p>타입 선택</p>
-			</div>
+			<Popover>
+				<Popover.Target>
+					<div css={styles.Button}>
+						<FontAwesomeIcon icon={faGrip} opacity="0.5" />
+						<p>타입 선택</p>
+					</div>
+				</Popover.Target>
+				<Popover.Content css={css({ width: "125px" })}>
+					{mockSubjects.map((course) => (
+						<Popover.Item css={css({ fontSize: "12px" })}>
+							{course}
+						</Popover.Item>
+					))}
+				</Popover.Content>
+			</Popover>
 		</div>
 	);
 }
