@@ -42,10 +42,10 @@ const styles = {
 			bottom: 0,
 			left: 0,
 			width: "100%",
-			height: "1px",
-			backgroundColor: "#434343",
+			height: "0.5px",
+			backgroundColor: "rgb(67, 67, 67, 0.7)",
 			transform: "scaleX(0)",
-			transition: "all 0.2s ease-in-out",
+			transition: "all 0.2s ease-in",
 		},
 
 		"&:focus-within::after": {
