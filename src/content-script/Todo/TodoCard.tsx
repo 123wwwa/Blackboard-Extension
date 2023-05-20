@@ -59,27 +59,18 @@ export const DueDateText = styled(DateText)`
 `;
 type Props = {
 	item: Todo;
+	time: moment.Moment;
 };
 // const deleteTodoItem = (item: Todo) => {
 // 	const dispatch = useDispatch();
 // 	return deleteTodo(dispatch as any)(item);
 // };
-function TodoCard({ item }: Props) {
+function TodoCard({ item, time }: Props) {
 	const dispatch = useDispatch();
-	const [timer, setTimer] = useState<moment.Duration>(
-		moment.duration(moment(item.date).diff(Date.now()))
-	);
-	useEffect(() => {
-		const intervalFn = setInterval(() => {
-			setTimer(moment.duration(moment(item.date).diff(Date.now())));
-		}, 1000);
-		return () => {
-			clearInterval(intervalFn);
-		};
-	}, []);
 	const deleteTodoItem = (item: Todo) => {
 		return deleteTodo(dispatch as any)(item);
 	};
+	const diff = moment(item.date).diff(time);
 	return (
 		<Container
 			color={item.color}
@@ -99,14 +90,12 @@ function TodoCard({ item }: Props) {
 			</Content>
 
 			<DueDateContainer>
-				{timer.asMilliseconds() >= 0 ? (
+				{diff >= 0 ? (
 					<>
-						<DueDateText>{timer.days()} Days</DueDateText>
 						<DueDateText>
-							{timer.hours().toString().padStart(2, "0")}:
-							{timer.minutes().toString().padStart(2, "0")}:
-							{timer.seconds().toString().padStart(2, "0")}
+							{Math.floor(moment.duration(diff).asDays())} Days
 						</DueDateText>
+						<DueDateText>{moment.utc(diff).format("HH:mm:ss")}</DueDateText>
 					</>
 				) : (
 					<>

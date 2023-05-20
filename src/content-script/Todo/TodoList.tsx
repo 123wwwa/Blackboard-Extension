@@ -1,9 +1,10 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Todo } from "type";
 import TodoCard from "./TodoCard";
 import { selectAlignWith } from "../../features/lecture_reducer";
 import { useSelector } from "react-redux";
+import moment from "moment";
 
 type Props = {
 	todoList: Todo[];
@@ -31,28 +32,35 @@ const TodoListWrapper = styled.article`
 `;
 
 function TodoList({ todoList }: Props) {
+	const [time, setTime] = useState(moment());
 	const alignWith = useSelector(selectAlignWith);
-	const alignWithList = () => {
-		if(alignWith === "date") {
+	const alignWithList = useMemo(() => {
+		if (alignWith === "date") {
 			return todoList.slice().sort((a, b) => {
 				return a.date - b.date;
-			})
-		}else if(alignWith === "subject") {
+			});
+		} else if (alignWith === "subject") {
 			return [...todoList].sort((a, b) => {
 				let subjectA = a.course_name || ".";
 				let subjectB = b.course_name || ".";
-				return new Intl.Collator('en').compare(subjectA, subjectB);
-			})
+				return new Intl.Collator("en").compare(subjectA, subjectB);
+			});
 		}
-	}
+	}, [todoList, alignWith]);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			setTime(moment());
+		}, 1000);
+		return () => {
+			clearInterval(timer);
+		};
+	}, []);
+
 	return (
 		<TodoListWrapper>
-			{alignWithList()?.map((todo) => {
-				return (
-					<TodoCard
-						item={todo}
-					/>
-				);
+			{alignWithList?.map((todo) => {
+				return <TodoCard item={todo} time={time} />;
 			})}
 		</TodoListWrapper>
 	);

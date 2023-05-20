@@ -73,6 +73,8 @@ function TodoFooter({ color, setColor }: Props) {
 	};
 	const dispatch = useDispatch();
 	const onClickAdd = () => {
+		if (currentDate < new Date() || !title.trim()) return;
+		
 		const todo: Todo = {
 			content: title,
 			color: color,
