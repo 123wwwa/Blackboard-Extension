@@ -10,7 +10,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 	size?: string;
 };
 
-const Container = styled.button<{ size: string }>`
+export const ActionIconContainer = styled.button<{ size: string }>`
 	width: ${(props) => props.size};
 	height: ${(props) => props.size};
 	border: none;
@@ -57,13 +57,13 @@ const ActionIcon = forwardRef<HTMLButtonElement, Props>(function ActionIcon(
 	const innerRef = useRef<HTMLButtonElement>(null);
 	const mergedRef = useMergedRef([innerRef, ref]);
 	return (
-		<Container size={size} {...props} ref={mergedRef}>
+		<ActionIconContainer size={size} {...props} ref={mergedRef}>
 			<FontAwesomeIcon
 				icon={icon}
 				opacity={opacity}
 				fontSize={`calc(${size} - 12px)`}
 			/>
-		</Container>
+		</ActionIconContainer>
 	);
 });
 

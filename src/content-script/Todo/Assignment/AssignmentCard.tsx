@@ -6,17 +6,18 @@ import { Assignment, Lecture } from "type";
 import JSZip from "jszip";
 import { it } from "node:test";
 
-const DownloadWrapper = styled.div`
+const DownloadWrapper = styled.div<{ color: string }>`
 	display: flex;
 	align-items: center;
 	gap: 25px;
-	padding: 4px 2px;
+	padding: 8px 14px;
 	filter: brightness(100%);
+	border-radius: 10px;
 	transition: all 0.2s ease-in-out;
 
 	&:hover {
-		border-radius: 5px;
-		background-color: rgba(28, 25, 23, 0.35);
+		filter: brightness(90%);
+		background-color: ${(props) => props.color || "#F5F5F5"};
 	}
 `;
 
@@ -68,25 +69,25 @@ type Props = {
 };
 
 function AssignmentCard({ item, onSelect }: Props) {
-	const urlToBlob = async(url:string) => {
-		let blob = await fetch(url).then(r => r.blob());
+	const urlToBlob = async (url: string) => {
+		let blob = await fetch(url).then((r) => r.blob());
 		return blob;
-	}
+	};
 	const downloadAllasZip = () => {
-		if(!item.assignment || item.assignment.length === 0) {
+		if (!item.assignment || item.assignment.length === 0) {
 			return;
 		}
 		const zip = new JSZip();
 		item.assignment.forEach((assignment) => {
-			if(assignment.fileUrl){
+			if (assignment.fileUrl) {
 				assignment.fileUrl.forEach((fileUrl) => {
 					zip.file(fileUrl.fileName, urlToBlob(fileUrl.fileURL));
-				})
+				});
 			}
-			if(assignment.Assignment_Files){
+			if (assignment.Assignment_Files) {
 				assignment.Assignment_Files.forEach((file) => {
 					zip.file(file.fileName, urlToBlob(file.fileURL));
-				})
+				});
 			}
 		});
 		zip.generateAsync({ type: "blob" }).then((content) => {
@@ -97,8 +98,7 @@ function AssignmentCard({ item, onSelect }: Props) {
 			a.click();
 			URL.revokeObjectURL(url);
 		});
-			
-	}
+	};
 	return (
 		<Container color={item.color} onClick={onSelect}>
 			<Content>
@@ -106,6 +106,7 @@ function AssignmentCard({ item, onSelect }: Props) {
 				<Subtitle>제출한 과제: {item.assignment.length}</Subtitle>
 			</Content>
 			<DownloadWrapper
+				color={item.color}
 				onClick={(e) => {
 					e.preventDefault();
 					e.stopPropagation();

@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { Todo } from "type";
-import ActionIcon from "./common/ActionIcon";
+import ActionIcon, { ActionIconContainer } from "./common/ActionIcon";
 import { useDispatch } from "react-redux";
 import { deleteTodo } from "../../features/lecture_reducer";
 import moment from "moment";
@@ -12,7 +12,6 @@ const Container = styled.div<{ color: string }>`
 	align-items: center;
 	justify-content: space-between;
 	width: 100%;
-	/* min-height: 63px; */
 	padding: 15px 20px;
 	background-color: ${(props) => props.color || "#F5F5F5"};
 	border-radius: 10px;
@@ -20,7 +19,15 @@ const Container = styled.div<{ color: string }>`
 	filter: brightness(100%);
 	transition: all 0.2s ease-in-out;
 
-	&:hover {
+	${ActionIconContainer} {
+		padding: 16px;
+		filter: brightness(80%);
+	}
+	${ActionIconContainer}:hover {
+		background-color: ${(props) => props.color || "#F5F5F5"};
+	}
+
+	&:hover:not(:has(${ActionIconContainer}:hover)) {
 		filter: brightness(80%);
 		cursor: pointer;
 	}
