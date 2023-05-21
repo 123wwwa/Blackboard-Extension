@@ -18,6 +18,6 @@ export const getAnnouncementDisplayText = (text: string) => {
 		case "Course or Organization Available":
 			return "코스 개설";
 		default:
-			return "기타";
+			return text;
 	}
 };

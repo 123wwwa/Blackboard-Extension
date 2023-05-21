@@ -105,7 +105,8 @@ const AlarmCard = (props: { alarm: BB_alarm }) => {
 					onMouseOver={handleMouseOver}
 					onMouseLeave={handleMouseLeave}
 				>
-					<div dangerouslySetInnerHTML={{ __html: props.alarm.detail }} />
+					<div dangerouslySetInnerHTML={{ __html: props.alarm.detail }} 
+					style={{maxWidth: "500px"}}/>
 				</Popover.Content>
 			</Popover>
 

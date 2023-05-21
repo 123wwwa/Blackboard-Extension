@@ -6,12 +6,16 @@ import {
 	faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { selectLectureList } from "../../../features/lecture_reducer";
+import { selectBB_alarmList, selectLectureList } from "../../../features/lecture_reducer";
 import { useSelector } from "react-redux";
 import { LectureList } from "type";
 import { announcements } from "../../../constants";
 import Popover from "../common/Popover";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Filter } from "./Filter";
+import DatePicker from "../common/DatePicker";
+import ReactDatePicker from "react-datepicker";
+import { RangeDatePicker } from "./RangeDatePicker";
 
 const styles = {
 	Wrapper: css({
@@ -53,16 +57,37 @@ const styles = {
 		backgroundColor: "rgba(0, 0, 0, 0.2)",
 	}),
 };
-
-function AlarmFooter() {
+type Props = {
+	setFilter: React.Dispatch<React.SetStateAction<Filter>>;
+	filter: Filter;
+};
+const AlarmFooter = ({ setFilter, filter }: Props) => {
 	const lectureList: LectureList = useSelector(selectLectureList);
 	const lectureNames = Object.entries(lectureList).map(
 		([_, lecture]) => lecture.name
 	);
+	useEffect(() => {
+		setFilter((prev) => ({ ...prev, lecture: lectureNames }));
+	}, []);
 	const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 	const [showSubjects, setShowSubjects] = useState<boolean>(false);
 	const [showAnnouncements, setShowAnnouncements] = useState<boolean>(false);
-
+	const alarmList = useSelector(selectBB_alarmList);
+	const alarmTypes = [...new Set(Object.entries(alarmList).map(([_, announcement]) => announcement.type))];
+	const setLectureFilter = (lecture: string) => {
+		if(filter.lecture.includes(lecture)){
+			setFilter((prev) => ({ ...filter, lecture: [...filter.lecture.filter((l) => l !== lecture)] }));
+			return;
+		}
+		setFilter((prev) => ({ ...filter, lecture: [...new Set([...filter.lecture, lecture])] }));
+	}
+	const setTypeFilter = (type: string) => {
+		if(filter.type.includes(type)){
+			setFilter((prev) => ({ ...filter, type: [...filter.type.filter((t) => t !== type)] }));
+			return;
+		}
+		setFilter((prev) => ({ ...filter, type: [...new Set([...filter.type, type])] }));
+	}
 	return (
 		<div css={styles.Wrapper}>
 			<Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
@@ -74,7 +99,9 @@ function AlarmFooter() {
 						<p>날짜 선택</p>
 					</div>
 				</Popover.Target>
-				<Popover.Content>Date Picker</Popover.Content>
+				<Popover.Content>
+					<RangeDatePicker filter={filter} setFilter={setFilter} />
+				</Popover.Content>
 			</Popover>
 			<div css={styles.Divider} />
 			<Popover open={showSubjects} onOpenChange={setShowSubjects}>
@@ -85,11 +112,14 @@ function AlarmFooter() {
 					</div>
 				</Popover.Target>
 				<Popover.Content css={css({ minWidth: "135px" })}>
-					{lectureNames.map((lecture) => (
-						<Popover.Item css={css({ fontSize: "12px" })}>
+					{lectureNames.map((lecture) => {
+						const isChecked = filter.lecture.includes(lecture);
+						return(<Popover.Item css={css({ fontSize: "12px", color: isChecked?"red":"black"})} onClick={setLectureFilter.bind(null, lecture)}
+						>
 							{lecture}
 						</Popover.Item>
-					))}
+						)
+					})}
 				</Popover.Content>
 			</Popover>
 			<div css={styles.Divider} />
@@ -103,9 +133,12 @@ function AlarmFooter() {
 					</div>
 				</Popover.Target>
 				<Popover.Content css={[css({ minWidth: "125px" })]}>
-					{announcements.map((ann) => (
-						<Popover.Item css={css({ fontSize: "12px" })}>{ann}</Popover.Item>
-					))}
+					{alarmTypes.map((ann) => {
+						const isChecked = filter.type.includes(ann);
+						return(<Popover.Item css={css({ fontSize: "12px", color: isChecked?"red":"black" })} onClick={setTypeFilter.bind(null, ann)}
+						>{ann}
+						</Popover.Item>)
+					})}
 				</Popover.Content>
 			</Popover>
 		</div>

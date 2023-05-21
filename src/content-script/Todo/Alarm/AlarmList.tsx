@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AlarmCard from "./AlarmCard";
 import styled from "@emotion/styled";
+import { Filter } from "./Filter";
 const AssignmentListWrapper = styled.article`
 	width: 100%;
 	height: 330px;
@@ -26,7 +27,10 @@ const AssignmentListWrapper = styled.article`
 		border-radius: 8px;
 	}
 `;
-const AlarmList = () => {
+type Props = {
+	filter: Filter;
+};
+const AlarmList = ({ filter }: Props) => {
 	const dispatch = useDispatch();
 	const BB_alarmList = useSelector(selectBB_alarmList);
 	useEffect(() => {
@@ -34,19 +38,21 @@ const AlarmList = () => {
 	}, [dispatch]);
 	return (
 		<AssignmentListWrapper>
-			{BB_alarmList.length !=0?Object.entries(
+			{BB_alarmList.length != 0 ? Object.entries(
 				BB_alarmList.slice().sort((a, b) => {
 					return b.date - a.date;
 				})
 			).map(([key, value]) => {
-				if (value.type === "Announcement Available") {
+				const isInDateRange = value.date >= filter.startDate && value.date <= filter.endDate;
+				const isCourseNameMatched = filter.lecture.includes(value.course_name);
+				if (filter.type.includes(value.type) && isInDateRange && isCourseNameMatched) {
 					return (
 						<div>
 							<AlarmCard alarm={value} />
 						</div>
 					);
 				}
-			}):<div>알림이 없습니다. 새로고침을 하시거나 로그인 상태인지 확인하세요.</div>}
+			}) : <div>알림이 없습니다. 새로고침을 하시거나 로그인 상태인지 확인하세요.</div>}
 		</AssignmentListWrapper>
 	);
 };
