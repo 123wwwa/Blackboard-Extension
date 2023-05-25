@@ -6,88 +6,25 @@ import { getLectureList ,reloadTodoList,selectLectureList, selectIsLectureLoaded
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { AppDispatch, RootState, store } from '../../features/store'
 import { LectureGrid } from './common/LectureGrid';
-import styled  from '@emotion/styled';
 import ActionIcon  from '../Todo/common/ActionIcon';
 import {
 	faRefresh,
 } from "@fortawesome/free-solid-svg-icons";
+import { LectureCard } from './LectureCard';
 const HeadHeight = 30;
-const TableHeight = 45;
-const TableWidth = 80;
 
 const RenderTableDay = () => {
   const dispatch: AppDispatch = useDispatch();
   //const lectureList = useSelector(selectLectureList);
   const isLectureListLoaded = useSelector(selectIsLectureLoaded);
   const shapedLectureList: any = useSelector<RootState>(selectShapedLectureList);
-
-  const LectureContent = styled.div<{marginTop?: string, height?: string, backgroundColor?: string}>`
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-top:${props=>props.marginTop};
-  background-color: ${props=>props.backgroundColor};
-  height: ${props=>props.height};
-  &:hover {
-    filter: brightness(80%);
-    cursor: pointer;
-  }
-  `;
-  const LectureTextArea = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  `
-  const LectureName = styled.span`
-  color: #00748b;
-  font: 700 .8em "Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 13px;
-  `
-  const LecturePlace = styled.span`
-  color:darkgray;
-  font-weight: bold;
-  font-size: 11px;
-  `
-  const LectureDiv2 = styled.div`
-  position: absolute;
-  width: 80px;
-  border: 1px solid transparent;
-  
-  text-align: center;
-  display: flex;
-  box-sizing: border-box;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  `
-  const LectureDiv = (props: any) => {
-    const marginTop: number = (props.item["timeplace"].start - (9 * 12)) / 12 * (TableHeight) + (HeadHeight); // minus 9 hour to start from 9 
-    const height: number = (props.item["timeplace"].end - props.item["timeplace"].start) / 12 * (TableHeight);
-    const place = props.item["timeplace"].place;
-    const link = props.item["link"];
-    return (
-      <LectureDiv2>
-        <LectureContent
-          marginTop={marginTop.toString()+"px"}
-          height={height.toString()+"px"}
-          backgroundColor={props.item["color"]}
-
-          onClick={() => {
-            window.open(link, "_blank");
-          }}>
-          <LectureTextArea>
-            <LectureName>{props.item["name"]}</LectureName>
-            <LecturePlace>{place}</LecturePlace>
-          </LectureTextArea>
-        </LectureContent>
-      </LectureDiv2>
-
-    )
-  }
+  const [tableHeight, setTableHeight] = useState<number>(40); 
+  const [tableWidth, setTableWidth] = useState<number>(70); // aspect ratio 16:9
+    useEffect(() => {
+        const vh_7 = window.innerHeight*0.7
+        setTableHeight(vh_7/13);
+        setTableWidth(vh_7/13*16/9);
+    },[])
   useEffect(() => {
     dispatch(getLectureList as any);
     dispatch(reloadBB_alarms as any);
@@ -115,7 +52,7 @@ const RenderTableDay = () => {
             <ActionIcon icon={faRefresh} onClick={emitRefresh}/>
             </LectureGrid>
             {[...Array(12)].map((x, j) => {
-              return (<LectureGrid width='20px' height={TableHeight.toString()+"px"} color={gridBgColor}>
+              return (<LectureGrid width='20px' height={tableHeight.toString()+"px"} color={gridBgColor}>
                 <span>
                   {j + 9}
                 </span>
@@ -126,15 +63,15 @@ const RenderTableDay = () => {
             return (<div>
               {shapedLectureList[i].map((item: any) => {
                 return (<>
-                  <LectureDiv item={item}></LectureDiv>
+                  <LectureCard item={item} tableHeight={tableHeight} tableWidth={tableWidth}></LectureCard>
                 </>)
               })}
-              <LectureGrid width={TableWidth.toString()+"px"} height={HeadHeight.toString()+"px"} color={gridBgColor}>
+              <LectureGrid width={tableWidth.toString()+"px"} height={HeadHeight.toString()+"px"} color={gridBgColor}>
                 {dayList[i]}
               </LectureGrid>
               {[...Array(12)].map(() => {
                 return (<LectureGrid
-                    width= {TableWidth.toString()+"px"} height= {TableHeight.toString()+"px"} color={gridBgColor}>                  
+                    width= {tableWidth.toString()+"px"} height= {tableHeight.toString()+"px"} color={gridBgColor}>                  
                 </LectureGrid>)
               })}
             </div>)

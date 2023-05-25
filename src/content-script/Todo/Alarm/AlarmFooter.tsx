@@ -9,12 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { selectBB_alarmList, selectLectureList } from "../../../features/lecture_reducer";
 import { useSelector } from "react-redux";
 import { LectureList } from "type";
-import { announcements } from "../../../constants";
 import Popover from "../common/Popover";
 import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
-import DatePicker from "../common/DatePicker";
-import ReactDatePicker from "react-datepicker";
 import { RangeDatePicker } from "./RangeDatePicker";
 
 const styles = {
@@ -114,7 +111,7 @@ const AlarmFooter = ({ setFilter, filter }: Props) => {
 				<Popover.Content css={css({ minWidth: "135px" })}>
 					{lectureNames.map((lecture) => {
 						const isChecked = filter.lecture.includes(lecture);
-						return(<Popover.Item css={css({ fontSize: "12px", color: isChecked?"red":"black"})} onClick={setLectureFilter.bind(null, lecture)}
+						return(<Popover.Item css={css({ fontSize: "12px", background: isChecked?"#E9E9E9":"#FFFFFF"})} onClick={setLectureFilter.bind(null, lecture)}
 						>
 							{lecture}
 						</Popover.Item>
@@ -135,7 +132,7 @@ const AlarmFooter = ({ setFilter, filter }: Props) => {
 				<Popover.Content css={[css({ minWidth: "125px" })]}>
 					{alarmTypes.map((ann) => {
 						const isChecked = filter.type.includes(ann);
-						return(<Popover.Item css={css({ fontSize: "12px", color: isChecked?"red":"black" })} onClick={setTypeFilter.bind(null, ann)}
+						return(<Popover.Item css={css({ fontSize: "12px", background: isChecked?"#E9E9E9":"#FFFFFF" })} onClick={setTypeFilter.bind(null, ann)}
 						>{ann}
 						</Popover.Item>)
 					})}

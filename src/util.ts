@@ -8,6 +8,7 @@ export const getAnnouncementDisplayText = (text: string) => {
 			return "디스커션";
 		case "Assignment Available":
 		case "Assignment Group Assignment Available":
+		case "Assignment Due":
 		case "Assignment Available Resend":
 			return "과제";
 		case "Manual Grade Updated":
