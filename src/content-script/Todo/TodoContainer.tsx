@@ -1,4 +1,4 @@
-import ImageButton, { ImageButtonContainer } from "./common/ImageButton";
+import ImageButton, { styles as ImageButtonStyles } from "./common/ImageButton";
 import TodoMenu from "./TodoMenu";
 import styled from "@emotion/styled";
 import { useEffect, useMemo, useState } from "react";
@@ -92,9 +92,6 @@ export const TodoTabs = ["과제", "다운로드", "알림"] as const;
 function TodoContainer({ show, setShow, position }: Props) {
 	const [tab, setTab] = useState<(typeof TodoTabs)[number]>("과제");
 	const todoList = useSelector(selectTodoList);
-	const [googleCalendarIcon, setGoogleCalendarIcon] = useState(
-		chrome.runtime.getURL("public/icons/icon-google-calendar.png")
-	);
 	const [isUpdated, setIsUpdated] = useState(true);
 	const dispatch = useDispatch();
 	const postTodoLists = () => {
@@ -136,13 +133,13 @@ function TodoContainer({ show, setShow, position }: Props) {
 					{isUpdated ? (
 						<ImageButton
 							title="구글 연동"
-							icon={googleCalendarIcon}
+							icon={"public/icons/icon-google-calendar.png"}
 							onClick={postTodoLists}
 						/>
 					) : (
-						<ImageButtonContainer>
+						<button css={ImageButtonStyles.Container}>
 							<ActionIcon icon={faSpinner} className="loading" />
-						</ImageButtonContainer>
+						</button>
 					)}
 					<div className="tabs">
 						{TodoTabs.map((tabName) => (
