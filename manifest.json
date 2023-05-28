@@ -12,7 +12,8 @@
     "alarms",
     "activeTab",
     "webRequest",
-    "identity"
+    "identity",
+    "identity.email"
   ],
   "oauth2": {
     "client_id": "380279767804-39su41apgh655gpl1omcu9106caob58h.apps.googleusercontent.com",
@@ -34,7 +35,7 @@
       "media": []
     },
     {
-      "matches": ["https://mylab.pearson.com/Student/*", "https://openvellum.ecollege.com/course.html*"],
+      "matches": ["https://mylab.pearson.com/Student/*", "https://openvellum.ecollege.com/course.html?courseId*"],
       "js": ["src/content-script/GetMylab/main.tsx"]
     },
     {

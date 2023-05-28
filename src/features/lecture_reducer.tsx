@@ -5,6 +5,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo, BB_alarm, AlignWith, FileUrl } from "type";
 import { AppDispatch, RootState } from "./store";
 import { RawAlarm, convertBB_alarm } from "./rawAlarmHandler";
+import { getChromeStorage, setChromeStorage, APIwithcatch } from "./handleChromeStoarge";
 interface LectureList {
     [key: string]: Lecture;
 }
@@ -89,27 +90,6 @@ export const lectureSlice = createSlice({
 });
 export const { setLecutureList, setShapedLectureList, setLectureAssignment, setTodoList, addTodo, addDeletedTodo, resetDeletedTodo, setBB_alarms, setAlignWith, addCheckedFile, setCheckedFiles, removeCheckedFile, deleteSelectedFiles} = lectureSlice.actions;
 
-export const setChromeStorage = async (key: string, value: any) => {
-    window.chrome.storage.sync.set({ [key]: value });
-}
-export const getChromeStorage: any = async (key: string, defaultValue: string) => {
-    const data = await window.chrome.storage.sync.get([key]);
-    //console.log(data);
-    if (!data[key]) {
-        console.log("no data");
-        return defaultValue;
-    }
-    return data[key];
-}
-const APIwithcatch = async (url: string, header: string) => {
-    try {
-        var response = await fetch(url, JSON.parse(header));
-        if (!response.ok) throw new Error(response.statusText);
-        return response.json();
-    } catch (e) {
-        return null;
-    }
-}
 export const getLectureList = async (dispatch: AppDispatch) => {
     let lectureInfoStr = await getChromeStorage("lectureInfo", "{}");
     let resLecturelist: LectureList = JSON.parse(lectureInfoStr);

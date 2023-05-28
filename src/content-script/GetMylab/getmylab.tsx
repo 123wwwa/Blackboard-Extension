@@ -28,21 +28,24 @@ const waitForElm = () => {
 const Child = (props: { data: Todo }) => {
     const dispatch = useDispatch(); 
     const updateTodo = async (json: any) => {
+        console.log(json);
+        if(!json.studentHomeData) return window.close();
+        if(json.status !== "success") return window.close();
         let homeworklist: any[] = json.studentHomeData.upcoming;
+        if(!homeworklist) return window.close();
+        if(homeworklist.length === 0) return window.close();
         let todoList = useSelector(selectTodoList);
-        const prevTodoList = todoList;
-        const addedHomeworkLength = homeworklist.length;
+        // const prevTodoList = todoList;
+        // const addedHomeworkLength = homeworklist.length;
         homeworklist.forEach((homework: any) => {
             let todo: Todo = {
                 content: homework.assignmentName,
                 date: new Date(homework.displayDate).getTime(),
                 color: "#E5E5E5",
             }
-            addTodoItem(dispatch)(todo);
+            console.log(todo);
+            //addTodoItem(dispatch)(todo);
         });
-        setTimeout(() => {
-            window.close();
-        }, 1000);
         // window.chrome.runtime.sendMessage({ action: "mylab", json: homeworklist },
         //     (response) => {
         //         //window.close();

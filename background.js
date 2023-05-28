@@ -1,6 +1,7 @@
+
 let calendarId;
 let todoList;
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action == 'updateTodo') {
         // check if todoList changed
         if (checkAlreadyExists(todoList, request.todoList)) {
@@ -8,52 +9,80 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             return;
         }
         todoList = request.todoList;
-        let token = await authorize();
-        const calendarEvents = await getEvents(token);
-        //let calendarId = await getCalendarId(token);
-        for (let i = 0; i < todoList.length; i++) {
-            let todo = todoList[i];
-            let event = {
-                "summary": todo.content,
-                "start": {
-                    "dateTime": new Date(todo.date).toISOString(),
-                    "timeZone": Intl.DateTimeFormat().resolvedOptions().timeZone
-                },
-                "end": {
-                    "dateTime": new Date(todo.date + 60 * 1000).toISOString(),
-                    "timeZone": Intl.DateTimeFormat().resolvedOptions().timeZone
+        (async () => {
+            let token = await authorize();
+            const calendarEvents = await getEvents(token);
+            //let calendarId = await getCalendarId(token);
+            let settings = await chrome.storage.sync.get("settings");
+            settings = settings.settings;
+            for (let i = 0; i < todoList.length; i++) {
+                let todo = todoList[i];
+                let event = {
+                    "summary": todo.content,
+                    "start": {
+                        "dateTime": new Date(todo.date).toISOString(),
+                        "timeZone": Intl.DateTimeFormat().resolvedOptions().timeZone
+                    },
+                    "end": {
+                        "dateTime": new Date(todo.date + 60 * 1000).toISOString(),
+                        "timeZone": Intl.DateTimeFormat().resolvedOptions().timeZone
+                    },
+                };
+                if (todo.linkcode) {
+                    event.description = "https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/" + todo.linkcode;
                 }
-            };
-            if(todo.linkcode){
-                event.description = "https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/"+todo.linkcode;
-            }
-            //console.log(calendarEvents);
-            //loop in calendar events and check if event already exists
-            if(!calendarEvents.items){
-                console.log('no events');
-                token = await authorize();
-                postEvent(token, event, calendarId);
-                continue;
-            }
-            let exists = false;
-            calendarEvents.items.forEach((element) => {               
-                if (compareEvent(element, event)) {
-                    //console.log('event already exists');
-                    exists = true;
+                if(settings.isAlarmSet){
+                    event.reminders = {
+                        "useDefault": false,
+                        "overrides": [
+                            { "method": "popup", "minutes": settings.alarmTime }
+                        ]
+                    }
                 }
-            });
-            
-            //post event
-            if (!exists) {
-                token = await authorize();
-                postEvent(token, event, calendarId);
+                //console.log(calendarEvents);
+                //loop in calendar events and check if event already exists
+                if (!calendarEvents.items) {
+                    //console.log('no events');
+                    token = await authorize();
+                    postEvent(token, event, calendarId);
+                    continue;
+                }
+                let exists = false;
+                calendarEvents.items.forEach((element) => {
+                    if (compareEvent(element, event)) {
+                        //console.log('event already exists');
+                        exists = true;
+                    }
+                });
+
+                //post event
+                if (!exists) {
+                    token = await authorize();
+                    postEvent(token, event, calendarId);
+                }
             }
-        }
-        //post message when done
-        sendDoneMessage();
+            //post message when done
+            sendDoneMessage();
+        })();
+
+    } else if (request.action == 'logout') {
+        (async () => {
+            // remove token
+            let token = await chrome.identity.getAuthToken({ interactive: false });
+            await chrome.identity.removeCachedAuthToken({ token: token });
+        })();
+    } else if (request.action == 'getEmail') {
+        // async response
+        // if use async in callback, it will return true immediately and sendResponse will not work
+        (async () => {
+            let userEmail = await chrome.identity.getProfileUserInfo();
+            userEmail = userEmail.email;
+            sendResponse(userEmail);
+        })();
+        return true;
     }
 })
-const sendDoneMessage = () =>{
+const sendDoneMessage = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         chrome.tabs.sendMessage(tabs[0].id, { action: 'calendarUpdateDone' });
     });
@@ -136,7 +165,7 @@ const postEvent = async (token, event, calendarId) => {
         body: JSON.stringify(event)
     };
     //https://content.googleapis.com/calendar/v3/calendars/primary/events?alt=json&key=AIzaSyAa8yy0GdcGPHdtD083HiGGx_S0vMPScDM
-    
+
     let url = `https://www.googleapis.com/calendar/v3/calendars/primary/events`
     const req = await fetch(url, init);
     const res = await req.json();

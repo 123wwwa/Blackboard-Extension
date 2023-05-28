@@ -1,8 +1,10 @@
 import { configureStore, combineReducers, getDefaultMiddleware } from "@reduxjs/toolkit";
 
 import { lectureSlice } from "./lecture_reducer";
+import { settingSlice } from "./setting_reducer";
 export const rootReducer = combineReducers({
     lectureSlice: lectureSlice.reducer,
+    settingSlice: settingSlice.reducer,
 });
 
 export const store = configureStore({

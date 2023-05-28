@@ -2,7 +2,8 @@
 /// <reference types="vite-plugin-svgr/client" />
 import { BB_alarm, Lecture, LectureList } from "type";
 import { eventTypeList } from "./eventType";
-import { getChromeStorage } from "./lecture_reducer";
+import { getChromeStorage } from "./handleChromeStoarge";
+
 export interface RawAlarm {
     se_id: string
     se_userId: any
