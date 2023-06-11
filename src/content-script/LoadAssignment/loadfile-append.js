@@ -1,7 +1,8 @@
-(function() {
+(()=> {
     if (window.gradeAssignment) {
         var proxied = window.gradeAssignment.init;
         window.gradeAssignment.init = function() {
+            console.log("gradeAssignment.init");
             // var fileUrl = "https://blackboard.unist.ac.kr"+JSON.parse(arguments[1]).downloadUrl
             var downloadBtns =  document.querySelectorAll('a[href*="webapps/assignment/download?"]');
             var fileUrl = [];
@@ -49,6 +50,7 @@
             storage[temp.content_id+"-"+temp.course_id] = temp;
             localStorage.setItem('fileInfo', JSON.stringify(storage));
             new BroadcastChannel('fileInfo').postMessage(JSON.stringify(storage));
+            console.log("fileInfo", storage);
             proxied.apply(this, [].slice.call(arguments));
         }
 

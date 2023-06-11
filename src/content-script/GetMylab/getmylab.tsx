@@ -43,7 +43,6 @@ const Child = (props: { data: Todo }) => {
                 date: new Date(homework.displayDate).getTime(),
                 color: "#E5E5E5",
             }
-            console.log(todo);
             //addTodoItem(dispatch)(todo);
         });
         // window.chrome.runtime.sendMessage({ action: "mylab", json: homeworklist },

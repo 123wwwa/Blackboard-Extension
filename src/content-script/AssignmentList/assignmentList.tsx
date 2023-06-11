@@ -33,25 +33,47 @@ window.chrome.storage.sync.get(["fileInfo"], (res) => {
         return;
     }
     let fileInfo: AssignmentList = JSON.parse(res.fileInfo);
+    let course_id = new URL(window.location.href).searchParams.get("course_id");
+    let filteredFileInfo: AssignmentList = {};
+    Object.entries(fileInfo).forEach(([key, value]) => {
+        let assignment: Assignment = value;
+        if(assignment.course_id == course_id){
+            filteredFileInfo[key] = value;
+        }
+    });
 
     waitForElm().then(() => {
         
         let AllaTag = document.querySelectorAll("a");
         // get a tag includes href "/webapps/assignment/uploadAssignment"
-        for (let i = 0; i < AllaTag.length; i++) {
-            let aTag = AllaTag[i];
-            if (aTag.href.includes("/webapps/assignment/uploadAssignment")) {
-                Object.entries(fileInfo).forEach(([key, value]) => {
-                    let assignment: Assignment = value;
-                    // check if course_id and content_id is same
-                    let course_id = new URL(aTag.href).searchParams.get("course_id");
-                    let content_id = new URL(aTag.href).searchParams.get("content_id");
-                    if (assignment.course_id == course_id && assignment.content_id == content_id) {
-                        appendWatchedSign(aTag);
-                    }
-                });
-            }
+        let aTags: NodeListOf<HTMLAnchorElement> =document.querySelectorAll('a[href*="/webapps/assignment/uploadAssignment"]');
+        if(aTags.length === 0) return;
+        for (let i = 0; i < aTags.length; i++) {
+            let aTag = aTags[i];
+            let content_id = new URL(aTag.href).searchParams.get("content_id");
+            Object.entries(filteredFileInfo).forEach(([key, value]) => {
+                let assignment: Assignment = value;
+                // check if course_id and content_id is same
+                console.log(assignment.content_id, content_id);
+                if (assignment.content_id == content_id) {
+                    appendWatchedSign(aTag);
+                }
+            });
         }
+        // for (let i = 0; i < AllaTag.length; i++) {
+        //     let aTag = AllaTag[i];
+        //     if (aTag.href.includes("/webapps/assignment/uploadAssignment")) {
+        //         Object.entries(fileInfo).forEach(([key, value]) => {
+        //             let assignment: Assignment = value;
+        //             // check if course_id and content_id is same
+        //             let course_id = new URL(aTag.href).searchParams.get("course_id");
+        //             let content_id = new URL(aTag.href).searchParams.get("content_id");
+        //             if (assignment.course_id == course_id && assignment.content_id == content_id) {
+        //                 appendWatchedSign(aTag);
+        //             }
+        //         });
+        //     }
+        // }
     
         
     });

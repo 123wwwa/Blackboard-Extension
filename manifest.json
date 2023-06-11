@@ -53,8 +53,7 @@
     },
     {
       "matches": ["https://blackboard.unist.ac.kr/webapps/blackboard/content/listContent.jsp*"],
-      "js": ["src/content-script/AssignmentList/assignmentList.tsx"]
-
+      "js": ["src/content-script/AssignmentList/assignmentList.tsx", "src/content-script/ContentDownloader/main.tsx"]
     }
   ],
   

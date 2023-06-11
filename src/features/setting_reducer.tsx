@@ -68,7 +68,6 @@ export const updateSetting = async (dispatch: AppDispatch, key: string, value: a
 }
 export const reloadUserEmail = async (dispatch: AppDispatch) => {
     const response = await window.chrome.runtime.sendMessage({ action: "getEmail" });
-    console.log(response);
     if (response){
         dispatch(setUserEmail(response));
         dispatch(setIsLogin(true));
