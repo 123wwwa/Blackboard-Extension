@@ -90,65 +90,67 @@ function DownloadCard({ item }: Props) {
 	const [parentChecked, setParentChecked] = useState(false);
 	const checkedFiles = useSelector(selectCheckedFiles);
 	const dispatch = useDispatch();
-	const checkParent = (event:any) => {
-		if(event.target.checked){
-			if(item?.Assignment_Files){
+	const checkParent = (event: any) => {
+		let checked = isParentChecked();
+		console.log(event);
+		if (checked) {
+			if (item?.Assignment_Files) {
 				item?.Assignment_Files.forEach((file) => {
-					dispatch(addCheckedFile(file)); 
+					dispatch(addCheckedFile(file));
 				});
 			}
-			if(item?.fileUrl){
+			if (item?.fileUrl) {
 				item?.fileUrl.forEach((file) => {
-					dispatch(addCheckedFile(file)); 
+					dispatch(addCheckedFile(file));
 				});
 			}
-		}else{
-			if(item?.Assignment_Files){
+		} else {
+			if (item?.Assignment_Files) {
 				item?.Assignment_Files.forEach((file) => {
-					dispatch(removeCheckedFile(file)); 
+					dispatch(removeCheckedFile(file));
 				});
 			}
-			if(item?.fileUrl){
+			if (item?.fileUrl) {
 				item?.fileUrl.forEach((file) => {
-					dispatch(removeCheckedFile(file)); 
+					dispatch(removeCheckedFile(file));
 				});
 			}
 		}
 
 	};
-	const isParentChecked = () => {
-		if(item?.Assignment_Files){
-			for(let i = 0; i < item?.Assignment_Files.length; i++){
-				if(!isChecked(item?.Assignment_Files[i]))
+	let isParentChecked = () => {
+		if (item?.Assignment_Files) {
+			for (let i = 0; i < item?.Assignment_Files.length; i++) {
+				if (!isChecked(item?.Assignment_Files[i]))
 					return false;
 			}
 		}
-		if(item?.fileUrl){
-			for(let i = 0; i < item?.fileUrl.length; i++){
-				if(!isChecked(item?.fileUrl[i]))
+		if (item?.fileUrl) {
+			for (let i = 0; i < item?.fileUrl.length; i++) {
+				if (!isChecked(item?.fileUrl[i]))
 					return false;
 			}
 		}
 		return true;
 	}
-	const isChecked = (file: FileUrl) =>{
-		if(checkedFiles.find((checkedFile) => checkedFile.fileURL === file.fileURL)){
+	let isChecked = (file: FileUrl) => {
+		if (checkedFiles.find((checkedFile) => checkedFile.fileURL === file.fileURL)) {
 			return true;
 		}
-		else{
+		else {
 			return false;
 		}
 	}
 	const checkChild = (event: any, file: FileUrl) => {
-		if(event.target.checked){
+		if (event.target.checked) {
 			dispatch(addCheckedFile(file));
-		}else{
+		} else {
 			dispatch(removeCheckedFile(file));
 		}
 	}
 	return (
 		<Container color={"#E9E9E9"}>
-			<Checkbox onClick={checkParent} checked={isParentChecked()}/>
+			<Checkbox onChange={checkParent} checked={isParentChecked()} />
 			<InnerContainer>
 				<Content onClick={() => window.open(item?.url, "_blank")}>
 					<Title>{item?.Name}</Title>

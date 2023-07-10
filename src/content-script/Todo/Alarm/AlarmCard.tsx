@@ -4,6 +4,8 @@ import moment from "moment";
 import { useState } from "react";
 import Popover from "../common/Popover";
 import { getAnnouncementDisplayText } from "../../../util";
+import ActionIcon from "../common/ActionIcon";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const Container = styled.div<{ color: string }>`
 	display: flex;
@@ -75,7 +77,8 @@ const AlarmCard = (props: { alarm: BB_alarm }) => {
 	const handleMouseLeave = () => {
 		setShow(false);
 	};
-
+	const onClickAdd = (e: React.MouseEvent) => {
+	}
 	return (
 		<Container
 			color={props.alarm.color}
@@ -105,6 +108,12 @@ const AlarmCard = (props: { alarm: BB_alarm }) => {
 					onMouseOver={handleMouseOver}
 					onMouseLeave={handleMouseLeave}
 				>
+					<div style={{ display: "flex", flexDirection: "row"}}>
+						<div style={{"height": "30px"}}>
+							<span style={{ fontSize: "14px"}}>{props.alarm.title}</span>
+						</div>
+						<ActionIcon icon={faPlus} onClick={onClickAdd} />
+					</div>
 					<div dangerouslySetInnerHTML={{ __html: props.alarm.detail }} 
 					style={{maxWidth: "500px"}}/>
 				</Popover.Content>

@@ -1,6 +1,5 @@
 import JSZip from "jszip";
 import { useState } from "react";
-//import mime
 import mime from "mime-types";
 const DownloadButton = () => {
     const [isDownloading, setIsDownloading] = useState(false);

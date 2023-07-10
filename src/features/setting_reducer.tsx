@@ -8,13 +8,17 @@ export interface InitialSetting {
     isAlarmSet: boolean;
     alarmTime: number;
     isLogin: boolean;
+    isAutoSave: boolean;
     userEmail: string;
+    apiKey: string;
 }
 export const defaultSetting: InitialSetting = {
     isAlarmSet: true,
     alarmTime: 0,
     isLogin: false,
+    isAutoSave: false,
     userEmail: "",
+    apiKey: ""
 };
 export const settingSlice = createSlice({
     name: "settingSlice",
@@ -40,11 +44,17 @@ export const settingSlice = createSlice({
             if (state[key] === undefined) return;
             // @ts-ignore
             state[key] = value;
+        },
+        setApiKey: (state, action) => {
+            state.apiKey = action.payload;
+        },
+        setIsAutoSave: (state, action) => {
+            state.isAutoSave = action.payload;
         }
 
     }
 });
-export const { setAlarm, setAlarmTime, setUserEmail, setIsLogin } = settingSlice.actions;
+export const { setAlarm, setAlarmTime, setUserEmail, setIsLogin, setApiKey, setIsAutoSave } = settingSlice.actions;
 
 export const reloadSetting = async (dispatch: AppDispatch) => {
     let settings = await getChromeStorage("settings", "{}");
@@ -55,6 +65,7 @@ export const reloadSetting = async (dispatch: AppDispatch) => {
     } else {
         dispatch(setAlarm(JSON.parse(settings).isAlarmSet));
         dispatch(setAlarmTime(JSON.parse(settings).alarmTime));
+        dispatch(setApiKey(JSON.parse(settings).apiKey));
     }
     settings = JSON.parse(settings);
 }
@@ -65,6 +76,7 @@ export const updateSetting = async (dispatch: AppDispatch, key: string, value: a
     setChromeStorage("settings", JSON.stringify(settings));
     dispatch(setAlarm(settings.isAlarmSet));
     dispatch(setAlarmTime(settings.alarmTime));
+    dispatch(setApiKey(settings.apiKey));
 }
 export const reloadUserEmail = async (dispatch: AppDispatch) => {
     const response = await window.chrome.runtime.sendMessage({ action: "getEmail" });
@@ -77,3 +89,4 @@ export const selectAlarm = (state: any) => state.settingSlice.isAlarmSet;
 export const selectAlarmTime = (state: any) => state.settingSlice.alarmTime;
 export const selectIsLogin = (state: any) => state.settingSlice.isLogin;
 export const selectUserEmail = (state: any) => state.settingSlice.userEmail;
+export const selectApiKey = (state: any) => state.settingSlice.apiKey;

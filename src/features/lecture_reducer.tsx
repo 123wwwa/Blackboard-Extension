@@ -93,8 +93,13 @@ export const { setLecutureList, setShapedLectureList, setLectureAssignment, setT
 export const getLectureList = async (dispatch: AppDispatch) => {
     let lectureInfoStr = await getChromeStorage("lectureInfo", "{}");
     let resLecturelist: LectureList = JSON.parse(lectureInfoStr);
-    let assignmentListStr = await getChromeStorage("fileInfo", "{}");
-    let assignmentList = JSON.parse(assignmentListStr);
+    //let assignmentListStr = await getChromeStorage("fileInfo", "{}");
+    let assignmentList:AssignmentList  = JSON.parse(localStorage.getItem('fileInfo') || "{}");
+    //check if fileinfo is empty
+    if(Object.keys(assignmentList).length == 0){
+        console.error("fileInfo is empty");
+        return;
+    }
     Object.entries(assignmentList).forEach(([key1, value1]) => {
         let course_id: string = key1.split("-")[1];
         Object.entries(resLecturelist).forEach(([key2, value]) => {

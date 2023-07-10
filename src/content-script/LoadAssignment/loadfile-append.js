@@ -50,7 +50,7 @@
             storage[temp.content_id+"-"+temp.course_id] = temp;
             localStorage.setItem('fileInfo', JSON.stringify(storage));
             new BroadcastChannel('fileInfo').postMessage(JSON.stringify(storage));
-            console.log("fileInfo", storage);
+            //console.log("fileInfo", storage);
             proxied.apply(this, [].slice.call(arguments));
         }
 

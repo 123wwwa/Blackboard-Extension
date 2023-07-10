@@ -1,92 +1,150 @@
-
-let calendarId;
-let todoList;
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action == 'updateTodo') {
-        // check if todoList changed
-        if (checkAlreadyExists(todoList, request.todoList)) {
-            sendDoneMessage();
-            return;
-        }
-        todoList = request.todoList;
-        (async () => {
-            let token = await authorize();
-            const calendarEvents = await getEvents(token);
-            //let calendarId = await getCalendarId(token);
-            let settings = await chrome.storage.sync.get("settings");
-            settings = settings.settings;
-            for (let i = 0; i < todoList.length; i++) {
-                let todo = todoList[i];
-                let event = {
-                    "summary": todo.content,
-                    "start": {
-                        "dateTime": new Date(todo.date).toISOString(),
-                        "timeZone": Intl.DateTimeFormat().resolvedOptions().timeZone
-                    },
-                    "end": {
-                        "dateTime": new Date(todo.date + 60 * 1000).toISOString(),
-                        "timeZone": Intl.DateTimeFormat().resolvedOptions().timeZone
-                    },
-                };
-                if (todo.linkcode) {
-                    event.description = "https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/" + todo.linkcode;
-                }
-                if(settings.isAlarmSet){
-                    event.reminders = {
-                        "useDefault": false,
-                        "overrides": [
-                            { "method": "popup", "minutes": settings.alarmTime }
-                        ]
-                    }
-                }
-                //console.log(calendarEvents);
-                //loop in calendar events and check if event already exists
-                if (!calendarEvents.items) {
-                    //console.log('no events');
-                    token = await authorize();
-                    postEvent(token, event, calendarId);
-                    continue;
-                }
-                let exists = false;
-                calendarEvents.items.forEach((element) => {
-                    if (compareEvent(element, event)) {
-                        //console.log('event already exists');
-                        exists = true;
-                    }
-                });
-
-                //post event
-                if (!exists) {
-                    token = await authorize();
-                    postEvent(token, event, calendarId);
-                }
+let todoList, calendarId;
+const authorize = async () => {
+    return new Promise((resolve, reject) => {
+        chrome.identity.getAuthToken({ interactive: true }, (token) => {
+            if (chrome.runtime.lastError) {
+                reject(chrome.runtime.lastError);
+            } else {
+                resolve(token);
             }
-            //post message when done
-            sendDoneMessage();
-        })();
+        });
+    });
+};
 
-    } else if (request.action == 'logout') {
-        (async () => {
-            // remove token
-            let token = await chrome.identity.getAuthToken({ interactive: false });
-            await chrome.identity.removeCachedAuthToken({ token: token });
-        })();
-    } else if (request.action == 'getEmail') {
-        // async response
-        // if use async in callback, it will return true immediately and sendResponse will not work
-        (async () => {
-            let userEmail = await chrome.identity.getProfileUserInfo();
-            userEmail = userEmail.email;
-            sendResponse(userEmail);
-        })();
-        return true;
+const getEvents = async (token) => {
+    var init = {
+        method: 'GET',
+        async: true,
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+        },
+        'contentType': 'json'
+    };
+    const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', init);
+    return response.json();
+};
+
+const postEvent = async (token, event) => {
+    var init = {
+        method: 'POST',
+        async: true,
+        headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json',
+            'origin': 'chrome-extension://' + chrome.runtime.id,
+            "Referer": location.href
+        },
+        body: JSON.stringify(event)
+    };
+    let url = `https://www.googleapis.com/calendar/v3/calendars/primary/events`
+    const response = await fetch(url, init);
+    return response.json();
+};
+const handleAskGpt = async (request, sendResponse) => {
+    const apiKey = (await chrome.storage.sync.get("settings")).settings.apiKey;
+    const prompt = request.prompt;
+    const response = await fetch("https://api.openai.com/v1/engines/davinci-codex/completions", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": apiKey // replace with your key
+        },
+        body: JSON.stringify({
+            prompt: prompt,
+            max_tokens: 60
+        })
+    });
+    const data = await response.json();
+    sendResponse(data.choices[0].text.trim());
+}
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    switch (request.action) {
+        case 'updateTodo':
+            handleUpdateTodo(request, sendResponse);
+            break;
+        case 'logout':
+            handleLogout(sendResponse);
+            break;
+        case 'askgpt':
+            handleAskGpt(request, sendResponse);
+            return true;
+        case 'getEmail':
+            handleGetEmail(sendResponse);
+            return true; // indicates we want to send a response asynchronously
     }
-})
+});
+
+async function handleUpdateTodo(request, sendResponse) {
+    if (checkAlreadyExists(todoList, request.todoList)) {
+        sendDoneMessage();
+        return;
+    }
+
+    todoList = request.todoList;
+    let token = await authorize();
+    const calendarEvents = await getEvents(token);
+    let settings = (await chrome.storage.sync.get("settings")).settings;
+
+    for (let todo of todoList) {
+        let event = createEventFromTodo(todo, settings);
+
+        let exists = false;
+        if (calendarEvents.items) {
+            exists = calendarEvents.items.some(existingEvent => compareEvent(existingEvent, event));
+        }
+
+        if (!exists) {
+            await postEvent(token, event);
+        }
+    }
+
+    sendDoneMessage();
+}
+
+async function handleLogout(sendResponse) {
+    let token = await chrome.identity.getAuthToken({ interactive: false });
+    await chrome.identity.removeCachedAuthToken({ token: token });
+}
+
+async function handleGetEmail(sendResponse) {
+    let userEmail = (await chrome.identity.getProfileUserInfo()).email;
+    sendResponse(userEmail);
+}
+
+function createEventFromTodo(todo, settings) {
+    let event = {
+        "summary": todo.content,
+        "start": {
+            "dateTime": new Date(todo.date).toISOString(),
+            "timeZone": Intl.DateTimeFormat().resolvedOptions().timeZone
+        },
+        "end": {
+            "dateTime": new Date(todo.date + 60 * 1000).toISOString(),
+            "timeZone": Intl.DateTimeFormat().resolvedOptions().timeZone
+        },
+    };
+
+    if (todo.linkcode) {
+        event.description = "https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/" + todo.linkcode;
+    }
+    if (settings.isAlarmSet) {
+        event.reminders = {
+            "useDefault": false,
+            "overrides": [
+                { "method": "popup", "minutes": settings.alarmTime }
+            ]
+        }
+    }
+    return event;
+}
+
 const sendDoneMessage = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         chrome.tabs.sendMessage(tabs[0].id, { action: 'calendarUpdateDone' });
     });
 }
+
 const checkAlreadyExists = (prevEvents, events) => {
     if (!prevEvents) {
         return false;
@@ -101,73 +159,7 @@ const checkAlreadyExists = (prevEvents, events) => {
     });
     return exists;
 }
+
 const compareEvent = (event1, event2) => {
-    if (event1.summary == event2.summary) {
-        return true;
-    }
-    return false;
-}
-const authorize = () => {
-    return new Promise((resolve, reject) => {
-        chrome.identity.getAuthToken({ interactive: true }, (token) => {
-            if (chrome.runtime.lastError) {
-                reject(chrome.runtime.lastError);
-            } else {
-                resolve(token);
-            }
-        });
-    });
-};
-const getCalendarId = async (token) => {
-    if (calendarId) {
-        return calendarId;
-    }
-    var init = {
-        method: 'GET',
-        async: true,
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json'
-        },
-        'contentType': 'json'
-    };
-    const req = await fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList', init);
-    const res = await req.json();
-    calendarId = res.items[0].id;
-    return res.items[0].id;
-}
-
-const getEvents = async (token) => {
-    var init = {
-        method: 'GET',
-        async: true,
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json'
-        },
-        'contentType': 'json'
-    };
-    const req = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', init);
-    const res = await req.json();
-    return res;
-
-}
-const postEvent = async (token, event, calendarId) => {
-    var init = {
-        method: 'POST',
-        async: true,
-        headers: {
-            'Authorization': 'Bearer ' + token,
-            'Content-Type': 'application/json',
-            'origin': 'chrome-extension://' + chrome.runtime.id,
-            "Referer": location.href
-        },
-        body: JSON.stringify(event)
-    };
-    //https://content.googleapis.com/calendar/v3/calendars/primary/events?alt=json&key=AIzaSyAa8yy0GdcGPHdtD083HiGGx_S0vMPScDM
-
-    let url = `https://www.googleapis.com/calendar/v3/calendars/primary/events`
-    const req = await fetch(url, init);
-    const res = await req.json();
-    //console.log(res);
+    return event1.summary === event2.summary;
 }

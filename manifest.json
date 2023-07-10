@@ -49,7 +49,7 @@
     },
     {
       "matches": ["https://blackboard.unist.ac.kr/webapps/assignment/uploadAssignment*"],
-      "js": ["src/content-script/LoadAssignment/loadfile.js"]
+      "js": ["src/content-script/LoadAssignment/loadfile.tsx"]
     },
     {
       "matches": ["https://blackboard.unist.ac.kr/webapps/blackboard/content/listContent.jsp*"],
