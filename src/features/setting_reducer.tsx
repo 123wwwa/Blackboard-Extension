@@ -77,6 +77,7 @@ export const updateSetting = async (dispatch: AppDispatch, key: string, value: a
     dispatch(setAlarm(settings.isAlarmSet));
     dispatch(setAlarmTime(settings.alarmTime));
     dispatch(setApiKey(settings.apiKey));
+    dispatch(setIsAutoSave(settings.isAutoSave));
 }
 export const reloadUserEmail = async (dispatch: AppDispatch) => {
     const response = await window.chrome.runtime.sendMessage({ action: "getEmail" });
@@ -90,3 +91,4 @@ export const selectAlarmTime = (state: any) => state.settingSlice.alarmTime;
 export const selectIsLogin = (state: any) => state.settingSlice.isLogin;
 export const selectUserEmail = (state: any) => state.settingSlice.userEmail;
 export const selectApiKey = (state: any) => state.settingSlice.apiKey;
+export const selectIsAutoSave = (state: any) => state.settingSlice.isAutoSave;

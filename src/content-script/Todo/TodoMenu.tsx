@@ -13,6 +13,7 @@ import {
 	faPowerOff,
 	faRefresh,
 	faUserCircle,
+	faNetworkWired,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -28,7 +29,7 @@ import ImageButton from "./common/ImageButton";
 import { faBell } from "@fortawesome/free-regular-svg-icons";
 import { css } from "@emotion/react";
 import * as Switch from "@radix-ui/react-switch";
-import { reloadSetting, reloadUserEmail, selectAlarm, selectAlarmTime, selectApiKey, selectUserEmail, updateSetting } from "../../features/setting_reducer";
+import { reloadSetting, reloadUserEmail, selectAlarm, selectAlarmTime, selectApiKey, selectIsAutoSave, selectUserEmail, updateSetting } from "../../features/setting_reducer";
 
 const Container = styled.div`
 	display: flex;
@@ -108,6 +109,7 @@ export const styles = {
 	TextInput: css({
 		width: "28px",
 		border: "0.5px solid #d9d9d9",
+		fontSize: "12px",
 		borderRadius: "4px",
 		padding: "2px",
 		"&:focus": {
@@ -135,6 +137,7 @@ function TodoMenu({ setShow, tab }: Props): JSX.Element {
 	const [showSortMenu, setShowSortMenu] = useState<boolean>(false);
 	const isAlarmSet = useSelector(selectAlarm);
 	const alarmTime = useSelector(selectAlarmTime);
+	const isAutoSave = useSelector(selectIsAutoSave);
 	const apiKey = useSelector(selectApiKey);
 	const userEmail = useSelector(selectUserEmail);
 	const dispatch = useDispatch();
@@ -155,6 +158,9 @@ function TodoMenu({ setShow, tab }: Props): JSX.Element {
 	}
 	const onChangeApiKey = (e: React.ChangeEvent<HTMLInputElement>) => {
 		updateSetting(dispatch, "apiKey", e.target.value);
+	}
+	const onChangeAutoSave = (e: boolean) => {
+		updateSetting(dispatch, "isAutoSave", e);
 	}
 	const refreshTodo = () => {
 		if (tab == "과제") {
@@ -221,31 +227,46 @@ function TodoMenu({ setShow, tab }: Props): JSX.Element {
 							leftIcon={<FontAwesomeIcon icon={faBell} opacity="0.4" />}
 						>
 							<span css={styles.SettingMenuItemLabel}>알림</span>
+							<div css={styles.SwitchContainer}>
+								<Switch.Root
+									id="alarm-label"
+									css={styles.SwitchRoot}
+									checked={isAlarmSet}
+									onCheckedChange={onAlarmChange}
+								>
+									<Switch.Thumb css={styles.SwitchThumb} />
+								</Switch.Root>
+								<label htmlFor="alarm-label" css={styles.SwitchLabel}>
+									<input onChange={onChangeAlarmTime} css={styles.TextInput} value={alarmTime} />
+									<span css={styles.SettingMenuItemLabel}>분전</span>
+								</label>
+							</div>
 						</Popover.Item>
+					</div>
+					<Popover.Item
+						leftIcon={<FontAwesomeIcon icon={faNetworkWired} opacity="0.4" />}
+					>
 						<div css={styles.SwitchContainer}>
+							<span css={styles.SettingMenuItemLabel}>자동 연동</span>
 							<Switch.Root
 								id="alarm-label"
 								css={styles.SwitchRoot}
-								checked={isAlarmSet}
-								onCheckedChange={onAlarmChange}
+								checked={isAutoSave}
+								onCheckedChange={onChangeAutoSave}
 							>
 								<Switch.Thumb css={styles.SwitchThumb} />
 							</Switch.Root>
-							<label htmlFor="alarm-label" css={styles.SwitchLabel}>
-								<input onChange={onChangeAlarmTime} css={styles.TextInput} value={alarmTime} />분전
-							</label>
 						</div>
-
-					</div>
+					</Popover.Item>
 					<Popover.Divider />
 					<div>
-					<ImageButton
-						icon="public/icons/ChatGPT_logo.svg.png"
-						title="Chatgpt API key"
-						labelProps={{ css: styles.ImageButtonLabel }}
-						imageProps={{ css: styles.ImageButtonImage }}
-						css={styles.ImageButton}
-					/>
+						<ImageButton
+							icon="public/icons/ChatGPT_logo.svg.png"
+							title="Chatgpt API key"
+							labelProps={{ css: styles.ImageButtonLabel }}
+							imageProps={{ css: styles.ImageButtonImage }}
+							css={styles.ImageButton}
+						/>
 					</div>
 					<label htmlFor="alarm-label" css={styles.SwitchLabel}>
 						<input onChange={onChangeApiKey} css={styles.TextInput2} value={apiKey} />

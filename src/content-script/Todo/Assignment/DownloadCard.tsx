@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { Assignment, FileUrl, Todo } from "type";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Popover from "../common/Popover";
 import Checkbox from "../common/Checkbox";
 import Menu from "../common/Menu";
 import { addCheckedFile, removeCheckedFile, selectCheckedFiles } from "../../../features/lecture_reducer";
@@ -21,8 +20,6 @@ const DownloadWrapper = styled.div`
 	gap: 25px;
 	padding: 4px 2px;
 	border-radius: 5px;
-	filter: brightness(100%);
-	transition: all 0.2s ease-in-out;
 	cursor: pointer;
 
 	&:hover {
@@ -40,7 +37,6 @@ const Container = styled.div<{ color: string }>`
 	background-color: ${(props) => props.color || "#F5F5F5"};
 	border-radius: 10px;
 	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.04));
-	transition: all 0.2s ease-in-out;
 `;
 
 const InnerContainer = styled.div`
@@ -90,135 +86,103 @@ function DownloadCard({ item }: Props) {
 	const [parentChecked, setParentChecked] = useState(false);
 	const checkedFiles = useSelector(selectCheckedFiles);
 	const dispatch = useDispatch();
-	const checkParent = (event: any) => {
-		let checked = isParentChecked();
-		console.log(event);
-		if (checked) {
-			if (item?.Assignment_Files) {
+	const checkParent = (event:any) => {
+		let checked = event.target.checked;
+		if(checked){
+			if(item?.Assignment_Files){
 				item?.Assignment_Files.forEach((file) => {
-					dispatch(addCheckedFile(file));
+					dispatch(addCheckedFile(file)); 
 				});
 			}
-			if (item?.fileUrl) {
+			if(item?.fileUrl){
 				item?.fileUrl.forEach((file) => {
-					dispatch(addCheckedFile(file));
+					dispatch(addCheckedFile(file)); 
 				});
 			}
-		} else {
-			if (item?.Assignment_Files) {
+		}else{
+			if(item?.Assignment_Files){
 				item?.Assignment_Files.forEach((file) => {
-					dispatch(removeCheckedFile(file));
+					dispatch(removeCheckedFile(file)); 
 				});
 			}
-			if (item?.fileUrl) {
+			if(item?.fileUrl){
 				item?.fileUrl.forEach((file) => {
-					dispatch(removeCheckedFile(file));
+					dispatch(removeCheckedFile(file)); 
 				});
 			}
 		}
 
 	};
-	let isParentChecked = () => {
-		if (item?.Assignment_Files) {
-			for (let i = 0; i < item?.Assignment_Files.length; i++) {
-				if (!isChecked(item?.Assignment_Files[i]))
+	const isParentChecked = () => {
+		//console.log(item?.Assignment_Files)
+		if(item?.Assignment_Files){
+			for(let i = 0; i < item?.Assignment_Files.length; i++){
+				if(!isChecked(item?.Assignment_Files[i]))
 					return false;
 			}
 		}
-		if (item?.fileUrl) {
-			for (let i = 0; i < item?.fileUrl.length; i++) {
-				if (!isChecked(item?.fileUrl[i]))
+		if(item?.fileUrl){
+			for(let i = 0; i < item?.fileUrl.length; i++){
+				if(!isChecked(item?.fileUrl[i]))
 					return false;
 			}
 		}
 		return true;
 	}
-	let isChecked = (file: FileUrl) => {
-		if (checkedFiles.find((checkedFile) => checkedFile.fileURL === file.fileURL)) {
+	const isChecked = (file: FileUrl) =>{
+		//console.log(checkedFiles);
+		if(checkedFiles.find((checkedFile) => checkedFile.fileURL === file.fileURL)){
 			return true;
 		}
-		else {
+		else{
 			return false;
 		}
 	}
 	const checkChild = (event: any, file: FileUrl) => {
-		if (event.target.checked) {
+		if(event.target.checked){
 			dispatch(addCheckedFile(file));
-		} else {
+		}else{
 			dispatch(removeCheckedFile(file));
 		}
 	}
 	return (
 		<Container color={"#E9E9E9"}>
-			<Checkbox onChange={checkParent} checked={isParentChecked()} />
+			<div>
+				<Checkbox onClick={checkParent} checked={isParentChecked()}/>
+			</div>
 			<InnerContainer>
-				<Content onClick={() => window.open(item?.url, "_blank")}>
+				<Content onClick={()=> window.open(item?.url,"_blank")}>
 					<Title>{item?.Name}</Title>
 					<DateText>{item?.Due_Date}</DateText>
 				</Content>
-				<Popover open={show} onOpenChange={setShow}>
-					<Popover.Target>
+
+				<Menu show={show} onChange={setShow}>
+					<Menu.Target>
 						<DownloadWrapper>
 							<DueDateText>과제 파일</DueDateText>
 							<FontAwesomeIcon icon={faDownload} opacity={0.4} />
 						</DownloadWrapper>
-					</Popover.Target>
-					<Popover.Content hideWhenDetached>
-						{item?.Assignment_Files ? (
-							<>
-								{item?.Assignment_Files.map((file) => (
-									<Popover.Item
-										leftIcon={
-											<div
-												onClick={(e) => {
-													e.preventDefault();
-													e.stopPropagation();
-												}}
-											>
-												<Checkbox />
-											</div>
-										}
-										rightIcon={
-											<FontAwesomeIcon icon={faDownload} opacity={0.4} />
-										}
-										onClick={() => window.open(file.fileURL, "_blank")}
-									>
-										<p>{file.fileName}</p>
-									</Popover.Item>
-								))}
-							</>
-						) : (
-							<></>
-						)}
-						<Popover.Divider />
-						{item?.fileUrl ? (
-							<>
-								{item?.fileUrl.map((file) => (
-									<Popover.Item
-										leftIcon={
-											<div
-												onClick={(e) => {
-													e.preventDefault();
-													e.stopPropagation();
-												}}
-											>
-												<Checkbox />
-											</div>
-										}
-										rightIcon={
-											<FontAwesomeIcon icon={faDownload} opacity={0.4} />
-										}
-										onClick={() => window.open(file.fileURL, "_blank")}
-									>
-										<p>{file.fileName}</p>
-									</Popover.Item>
-								))}
-							</>
-						) : (
-							<></>
-						)}
-					</Popover.Content>
-				</Popover>
+					</Menu.Target>
+					<Menu.Dropdown>
+						{item?.Assignment_Files?<>{item?.Assignment_Files.map((file) => (
+							<Menu.MenuItem
+								leftIcon={<Checkbox checked={isChecked(file)} onClick={(e)=>checkChild(e,file)} />}
+								rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} onClick={() => window.open(file.fileURL, "_blank")}/>}
+							>
+								<p>{file.fileName}</p>
+							</Menu.MenuItem>
+						))}</>:<></>}
+						<Menu.Divider />
+						{item?.fileUrl?<>{item?.fileUrl.map((file) => (
+							<Menu.MenuItem
+								leftIcon={<Checkbox checked={isChecked(file)} onClick={(e)=>checkChild(e,file)} />}
+								rightIcon={<FontAwesomeIcon icon={faDownload} opacity={0.4} onClick={() => window.open(file.fileURL, "_blank")}/>}
+							>
+								<p>{file.fileName}</p>
+							</Menu.MenuItem>
+						))}</>:<></>}
+					</Menu.Dropdown>
+				</Menu>
 			</InnerContainer>
 		</Container>
 	);
