@@ -1,11 +1,18 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
+<<<<<<< Updated upstream
 
 import { createSlice } from "@reduxjs/toolkit";
 import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo, BB_alarm, AlignWith, FileUrl } from "type";
 import { AppDispatch, RootState } from "./store";
 import { RawAlarm, convertBB_alarm } from "./rawAlarmHandler";
 import { getChromeStorage, setChromeStorage, APIwithcatch } from "./handleChromeStoarge";
+=======
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { Lecture, ShapedLecture, AssignmentList, Assignment} from "type";
+import { AppDispatch, RootState} from "./store";
+const colorlist = ["#eff9cc", "#dee8f6", "#ffe9e9", "#ffedda", "#dcf2e9", "#dceef2", "#fff8cc", "#ffe9e9"];
+>>>>>>> Stashed changes
 interface LectureList {
     [key: string]: Lecture;
 }
