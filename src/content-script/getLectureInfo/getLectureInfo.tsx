@@ -1,7 +1,24 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
-import logo from './logo.svg'
 import { Lecture, LectureList } from '../../type';
+let colorlist:string[] = ["#f2e8e8", "#ffe9e9", "#eff9cc", "#dcf2e9", "#dee8f6", "#fff8cc", "#ffedda","#dceef2","#ddd6fe","#e0e7ff"];
+function shuffle<T>(array: T[]): T[] {
+    let currentIndex = array.length,  randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+};
 const waitForElm = () => {
     return new Promise(resolve => {
         if (document.querySelector('div[id*="22_1termCourses"]')) {
@@ -24,8 +41,10 @@ const waitForElm = () => {
 
 const getLectureElement = () =>{
     var AllaTag = document.getElementsByTagName('a');
-    var lectureDiv = document.querySelector('ul[class*="portletList-img courseListing coursefakeclass"]')
+    var lectureDiv = document.querySelector('ul[class*="portletList-img courseListing coursefakeclass"]');
+
     var lecturelist:LectureList = {};
+    var j=0;
     for (var i = 0; i < AllaTag.length; i += 1) {
         const item = AllaTag[i] as HTMLElement;
         const itemparent = item.parentElement as HTMLElement;
@@ -34,6 +53,9 @@ const getLectureElement = () =>{
               const urlObj: any= new URL(AllaTag[i].href);
             var lecture:Lecture = {
                 name: AllaTag[i].text, 
+                isLecture: true,
+                color: colorlist[j%8],
+                engName: AllaTag[i].text.split(":")[1].trim(),
                 link: AllaTag[i].href, 
                 id: urlObj.searchParams.get('id'),
                 assignment: [],
@@ -43,26 +65,20 @@ const getLectureElement = () =>{
             // temp["name"] = AllaTag[i].text;
             // temp["link"] = AllaTag[i].href;
             // temp["id"] = (new URL(temp["link"])).searchParams.get('id')
-            lecturelist[AllaTag[i].text.split(":")[0].split("_")[1]] = lecture;
+            var lectureKey = AllaTag[i].text.split(":")[0].split("_")[1];
+            lecturelist[lectureKey] = lecture;
+            j++;
         }
     }
-    // var assignmentList= JSON.parse(localStorage.getItem("fileInfo") || "{}");
-    // for (var key in assignmentList) {
-    //     var assignment = assignmentList[key];
-    //     for(var key2 in lecturelist) {
-    //         var item2 = lecturelist[key2];
-    //         if (item2["id"] == assignment["id"]) {
-    //             lecturelist[key2]["assignment"].push(assignment);
-    //         }
-    //     }
-    // }
     
     fetch(window.chrome.runtime.getURL('public/assets/lectureInfo.json'))
         .then((resp) => resp.json())
         .then(function(jsonData) {
             for (var key in lecturelist) {
                 if (jsonData[key] == undefined) {
-                    delete lecturelist[key];
+                    //delete lecturelist[key];
+                    lecturelist[key].isLecture = false;
+
                 } else {
                     lecturelist[key]["name"] = jsonData[key]["name"]
                     lecturelist[key]["time"] = jsonData[key]["time"]
@@ -78,13 +94,29 @@ const getLectureElement = () =>{
                     }
                 }
             }
-            console.log(lecturelist);
             window.chrome.storage.sync.set({ 'lectureInfo': JSON.stringify(lecturelist) }, () =>{});
+            window.chrome.storage.sync.set({ 'lectureInfoLastUpdate': new Date() }, () =>{
+                new BroadcastChannel("lectureInfoLastUpdate").postMessage(new Date());
+            });
         });
 }
+new BroadcastChannel("reloadLectureList").addEventListener("message", (e) => {
+    shuffle(colorlist);
+    getLectureElement();
+});
 waitForElm().then((elm) => {
-    window.chrome.storage.sync.get(['lectureInfo'], function(res) {
-        getLectureElement();
+    window.chrome.storage.sync.get(['lectureInfo'], (res)=> {
+        // check if lectureInfo is empty
+        let lectureInfo = res.lectureInfo;
+        if(!lectureInfo) {
+            getLectureElement();
+            return;
+        }
+        if (Object.keys(lectureInfo).length === 0 && lectureInfo.constructor === Object) {
+            getLectureElement();
+        }
+
+        
     });
 });
 export {}
