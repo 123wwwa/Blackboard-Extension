@@ -25,7 +25,7 @@ const LectureTextArea = styled.div`
 const LectureName = styled.span`
   color: #00748b;
   font: 700 .8em "Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   `
 const LecturePlace = styled.span`
   color:darkgray;

@@ -10,7 +10,8 @@
   "permissions": [
     "storage",
     "activeTab",
-    "identity"
+    "identity",
+    "identity.email"
   ],
   "oauth2": {
     "client_id": "342264675239-crqs9j8rl0nk4eth2um683vkjmcb6hu2.apps.googleusercontent.com",

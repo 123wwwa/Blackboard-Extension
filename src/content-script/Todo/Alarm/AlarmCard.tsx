@@ -6,6 +6,7 @@ import Popover from "../common/Popover";
 import { getAnnouncementDisplayText } from "../../../util";
 import ActionIcon from "../common/ActionIcon";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { askgpt } from "../../../features/chatgpt";
 
 const Container = styled.div<{ color: string }>`
 	display: flex;
@@ -78,6 +79,7 @@ const AlarmCard = (props: { alarm: BB_alarm }) => {
 		setShow(false);
 	};
 	const onClickAdd = (e: React.MouseEvent) => {
+		askgpt(props.alarm.detail);
 	}
 	return (
 		<Container
