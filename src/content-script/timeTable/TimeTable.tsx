@@ -1,53 +1,45 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 
-import React, { useEffect, useRef, useState } from 'react'
-import './App.css'
-import { Lecture, ShapedLecture } from '../../type'
-import { reloadLectureList, selectLectureList, selectIsLectureLoaded, selectShapedLectureList } from '../../features/lecture_reducer';
+import React, { useEffect, useState } from 'react'
+import { getLectureList ,reloadTodoList,selectLectureList, selectIsLectureLoaded, selectShapedLectureList, getBB_alarms, reloadBB_alarms } from '../../features/lecture_reducer';
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { AppDispatch, RootState, store } from '../../features/store'
+import { LectureGrid } from './common/LectureGrid';
+import ActionIcon  from '../Todo/common/ActionIcon';
+import {
+	faRefresh,
+} from "@fortawesome/free-solid-svg-icons";
+import { LectureCard } from './LectureCard';
 const HeadHeight = 30;
-const TableHeight = 45;
-const TableWidth = 80;
+
 const RenderTableDay = () => {
-  const [logoURL, setLogoURL] = useState<string>("");
   const dispatch: AppDispatch = useDispatch();
-  const lectureList = useSelector(selectLectureList);
+  //const lectureList = useSelector(selectLectureList);
   const isLectureListLoaded = useSelector(selectIsLectureLoaded);
-  const shapedLectureList:any = useSelector<RootState>(selectShapedLectureList);
-
-
-
-  const LectureDiv = (props: any) => {
-    const marginTop: number = (props.item["timeplace"].start - (9 * 12)) / 12 * (TableHeight + 2) + (HeadHeight + 3); // minus 9 hour to start from 9 
-    // add 2 to consider margin.
-    const height: number = (props.item["timeplace"].end - props.item["timeplace"].start) / 12 * (TableHeight + 2);
-    const place = props.item["timeplace"].place;
-    const link = props.item["link"];
-    return (
-      <div>
-        <div
-          id="lectureDiv"
-          style={{
-            backgroundColor: props.item["color"],
-            marginTop: marginTop + 'px',
-            height: height + 'px',
-          }}
-          onClick={() => {
-            window.open(link, "_blank");
-          }}>
-          <span id="lectureName">{props.item["name"]}</span>
-          <span id="lecturePlace">{place}</span>
-        </div>
-      </div>
-    )
-  }
+  const shapedLectureList: any = useSelector<RootState>(selectShapedLectureList);
+  const [tableHeight, setTableHeight] = useState<number>(40); 
+  const [tableWidth, setTableWidth] = useState<number>(70); // aspect ratio 16:9
+    useEffect(() => {
+        const vh_7 = window.innerHeight*0.7
+        setTableHeight(vh_7/13);
+        setTableWidth(vh_7/13*16/9);
+    },[])
   useEffect(() => {
-    dispatch(reloadLectureList as any);
-    setLogoURL(chrome.runtime.getURL("public/assets/HeXA_logo.png"));
+    dispatch(getLectureList as any);
+    dispatch(reloadBB_alarms as any);
+
+    new BroadcastChannel("lectureInfoLastUpdate").onmessage = (e) => {
+      dispatch(getLectureList as any);
+      dispatch(reloadTodoList as any);
+    }
   }, [dispatch])
+  const emitRefresh = () => {
+    new BroadcastChannel("reloadLectureList").postMessage("reloadLectureList");
+  }
   const dayList = ["월", "화", "수", "목", "금"];
+  const bgColordiv = document.getElementsByClassName("portlet clearfix")[1] as HTMLElement;
+  const [gridBgColor, setGridBgColor] = useState(window.getComputedStyle(bgColordiv,null).getPropertyValue('background-color')); 
   return (
     <>
 
@@ -56,45 +48,31 @@ const RenderTableDay = () => {
       }}>
         {isLectureListLoaded && <>
           <div>
-            <div id="lectureGrid"
-              style={{
-                width: "20px", height: HeadHeight,
-              }}>
-              <img src={logoURL}
-                style={{
-                  width: "20px", height: "20px",
-                }} />
-            </div>
+            <LectureGrid width='20px' height={HeadHeight.toString()+"px"} color={gridBgColor}>
+            <ActionIcon icon={faRefresh} onClick={emitRefresh}/>
+            </LectureGrid>
             {[...Array(12)].map((x, j) => {
-              return (<div id="lectureGrid"
-                style={{
-                  width: "20px", height: TableHeight,
-                }}>
+              return (<LectureGrid width='20px' height={tableHeight.toString()+"px"} color={gridBgColor}>
                 <span>
                   {j + 9}
                 </span>
-              </div>)
+              </LectureGrid>)
             })}
           </div>
           {[...Array(5)].map((x, i) => {
             return (<div>
               {shapedLectureList[i].map((item: any) => {
                 return (<>
-                  <LectureDiv item={item}></LectureDiv>
+                  <LectureCard item={item} tableHeight={tableHeight} tableWidth={tableWidth}></LectureCard>
                 </>)
               })}
-              <div id="lectureGrid"
-                style={{
-                  width: TableWidth, height: HeadHeight,
-                }}>
+              <LectureGrid width={tableWidth.toString()+"px"} height={HeadHeight.toString()+"px"} color={gridBgColor}>
                 {dayList[i]}
-              </div>
+              </LectureGrid>
               {[...Array(12)].map(() => {
-                return (<div id="lectureGrid"
-                  style={{
-                    width: TableWidth, height: TableHeight,
-                  }}>
-                </div>)
+                return (<LectureGrid
+                    width= {tableWidth.toString()+"px"} height= {tableHeight.toString()+"px"} color={gridBgColor}>                  
+                </LectureGrid>)
               })}
             </div>)
           })}
@@ -109,7 +87,7 @@ const TimeTable = () => {
       style={{
         height: "440px",
         width: "100%",
-
+        marginLeft: "5px"
       }}>
       <Provider store={store}>
         <RenderTableDay />
