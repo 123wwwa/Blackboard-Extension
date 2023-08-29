@@ -1,10 +1,10 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
-import React from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from '../../features/store';
-import DownloadButton from './DownloadButton';
+import DownloadArea from './DownloadButton';
 
 
 const urlRegex = /^https:\/\/blackboard\.unist\.ac\.kr\/webapps\/blackboard\/content\/listContent\.jsp\?course_id=[\d_]+&content_id=[\d_]+/;
@@ -32,6 +32,44 @@ waitForElm().then(() => {
     if(!urlRegex.test(window.location.href)) return;
     let allLinks: NodeListOf<HTMLAnchorElement> =document.querySelectorAll('a[href*="/bbcswebdav"]');
     if(allLinks.length === 0) return;  
+    const checkIsAllChecked = () => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const listContainer = document.getElementById("content_listContainer") as HTMLElement;
+        let checkedCount = 0;
+        for(let i=0; i<listContainer.children.length; i++){
+            const item = listContainer.children[i] as HTMLElement;
+            const checkbox = item.querySelector('.downloadCheckBox') as HTMLInputElement;
+            if(checkbox.checked) checkedCount++;
+        }
+        if(checkedCount === listContainer.children.length) {
+            const selectAll = document.querySelector("#selectAll") as HTMLInputElement;
+            selectAll.checked = true;
+        }
+        if(checkedCount == 0) {
+            const selectAll = document.querySelector("#selectAll") as HTMLInputElement;
+            selectAll.checked = false;
+        }
+    }
+    const listContainer = document.getElementById("content_listContainer") as HTMLElement;
+    // loop in listContainer
+    for(let i=0; i<listContainer.children.length; i++){
+        const item = listContainer.children[i] as HTMLElement;
+        //remove firstchild
+        item?.children[0].remove();
+        const div = document.createElement("div");
+        div.style.width = "50px";
+        div.style.height = "50px";
+        div.style.position = "absolute";
+        div.style.display = "flex";
+        div.style.justifyContent = "center";
+        item.prepend(div!);
+        const divRoot = createRoot(div!);
+        const id = item.id.split(":")[1];
+        divRoot.render(
+            <React.StrictMode>
+                <input type="checkbox" className='downloadCheckBox' id={"item:"+id} onChange={checkIsAllChecked()}/>
+            </React.StrictMode>
+        )
+    }
     const container =  document.querySelector("#pageTitleDiv") as HTMLElement;
     //edit style of container to flex
     container.style.display = "flex";
@@ -43,7 +81,7 @@ waitForElm().then(() => {
     root.render(
         <React.StrictMode>
             <Provider store={store}>
-                <DownloadButton />
+                <DownloadArea/>
             </Provider>
         </React.StrictMode>
     )

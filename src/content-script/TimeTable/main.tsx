@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import TimeTable from './TimeTable';
+import TimeTable from './Timetable';
 
 // const body = document.querySelector('body')
 

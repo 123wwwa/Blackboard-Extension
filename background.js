@@ -103,12 +103,15 @@ async function handleUpdateTodo(request, sendResponse) {
 
         if (!exists) {
             await postEvent(token, event);
+            await delay(200);
         }
     }
 
     sendDoneMessage();
 }
-
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 async function handleLogout(sendResponse) {
     let token = await chrome.identity.getAuthToken({ interactive: false });
     await chrome.identity.removeCachedAuthToken({ token: token });

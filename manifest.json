@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
   "name": "BlackBoard Extension",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "action": {
     "default_title": "Popup",
     "default_popup": "index.html",
-    "default_icon": "logo192.png"
+    "default_icon": "public/logo192.png"
   },
   "permissions": [
     "storage",
@@ -79,6 +79,14 @@
       "js": [
         "src/content-script/AssignmentList/assignmentList.tsx",
         "src/content-script/ContentDownloader/main.tsx"
+      ]
+    },
+    {
+      "matches" :[
+        "https://blackboard.unist.ac.kr/webapps/assessment/take/launch.jsp*"
+      ],
+      "js": [
+        "src/content-script/Quiz/main.tsx"
       ]
     }
   ],
