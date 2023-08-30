@@ -80,14 +80,6 @@
         "src/content-script/AssignmentList/assignmentList.tsx",
         "src/content-script/ContentDownloader/main.tsx"
       ]
-    },
-    {
-      "matches" :[
-        "https://blackboard.unist.ac.kr/webapps/assessment/take/launch.jsp*"
-      ],
-      "js": [
-        "src/content-script/Quiz/main.tsx"
-      ]
     }
   ],
   "host_permissions": [
