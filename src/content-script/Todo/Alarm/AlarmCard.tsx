@@ -1,4 +1,4 @@
-import { BB_alarm } from "type";
+import { BB_alarm, Todo } from "type";
 import styled from "@emotion/styled";
 import moment from "moment";
 import { useState } from "react";
@@ -6,7 +6,9 @@ import Popover from "../common/Popover";
 import { getAnnouncementDisplayText } from "../../../util";
 import ActionIcon from "../common/ActionIcon";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { askgpt } from "../../../features/chatgpt";
+import { extractTodo } from "../../../features/chatgpt";
+import { useDispatch } from "react-redux";
+import { addTodoItem } from "../../../features/lecture_reducer";
 
 const Container = styled.div<{ color: string }>`
 	display: flex;
@@ -70,7 +72,7 @@ const Type = styled.div`
 
 const AlarmCard = (props: { alarm: BB_alarm }) => {
 	const [show, setShow] = useState(false);
-
+	const dispatch = useDispatch();
 	const handleMouseOver = () => {
 		setShow(true);
 	};
@@ -78,8 +80,17 @@ const AlarmCard = (props: { alarm: BB_alarm }) => {
 	const handleMouseLeave = () => {
 		setShow(false);
 	};
-	const onClickAdd = (e: React.MouseEvent) => {
-		askgpt(props.alarm.detail);
+	const onClickAdd = async(e: React.MouseEvent) => {
+		let resJSON = await extractTodo(props.alarm);
+		if (resJSON) {
+			// addtodo action
+			const todo:Todo = {
+				content: resJSON.title,
+				color: "#F5F5F5",
+				date: new Date(resJSON.date).getTime()
+			}
+			addTodoItem(dispatch)(todo);
+		}
 	}
 	return (
 		<Container

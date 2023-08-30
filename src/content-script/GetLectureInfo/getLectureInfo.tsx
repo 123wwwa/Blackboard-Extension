@@ -1,7 +1,7 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 import { Lecture, LectureList } from '../../type';
-let colorlist:string[] = ["#f2e8e8", "#ffe9e9", "#eff9cc", "#dcf2e9", "#dee8f6", "#fff8cc", "#ffedda","#dceef2","#ddd6fe","#e0e7ff"];
+let colorlist:string[] = ["#f2e8e8", "#ffe9e9", "#eff9cc", "#dcf2e9", "#dee8f6", "#fff8cc", "#ffedda","#dceef2","#ddd6fe","#e0e7ff","#f0abfc","#7dd3fc"];
 function shuffle<T>(array: T[]): T[] {
     let currentIndex = array.length,  randomIndex;
 

@@ -44,14 +44,15 @@ const postEvent = async (token, event) => {
 const handleAskGpt = async (request, sendResponse) => {
     const apiKey = JSON.parse((await chrome.storage.sync.get("settings")).settings).apiKey;
     const prompt = request.prompt;
-    console.log(prompt);
-    const response = await fetch("https://api.openai.com/v1/engines/davinci/completions", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${apiKey}` // replace with your key
         },
         body: JSON.stringify({
+            messages: [{"role": "user", "content":prompt}],
+            max_tokens: 64,
             model : "gpt-3.5-turbo",
             temperature: 0.7,
             n: 1,
@@ -63,7 +64,9 @@ const handleAskGpt = async (request, sendResponse) => {
         sendResponse({"error": data.error.message});
         return;
     }
-    sendResponse({"message":data.choices[0].text.trim()});
+    //console.log(data.choices[0].message.content);
+    sendResponse({"content":data.choices[0].message.content});
+    return;
 }
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     switch (request.action) {
