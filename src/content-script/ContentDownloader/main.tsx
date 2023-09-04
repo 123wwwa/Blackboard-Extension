@@ -30,10 +30,12 @@ const waitForElm = () => {
 const changeCSS = () => {
     let container = document.querySelector("#pageTitleText") as HTMLElement;
     let container2 = document.querySelector("#pageTitleBar") as HTMLElement;
+    let container3 = document.querySelector("#pageTitleDiv") as HTMLElement;
     container.style.display = "flex";
     container.style.alignItems = "center";
     container2.style.display = "flex";
     container2.style.alignItems = "center";
+    container3.style.gap = "15px";
 }
 waitForElm().then(() => {
     if(!urlRegex.test(window.location.href)) return;

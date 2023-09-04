@@ -93,7 +93,7 @@ const DownloadArea = () => {
     }
 
     return (
-        <div style={{display:"flex", flexDirection:"row", justifyContent: "center", alignItems: "center"}}>
+        <div style={{display:"flex", flexDirection:"row", justifyContent: "center", alignItems: "center", gap: "15px"}}>
             <SelectAllArea>
                 <label htmlFor="selectAll">전체선택</label>
                 <input type="checkbox" id="selectAll" onClick={checkAll}/>
