@@ -4,14 +4,15 @@ import mime from "mime-types";
 import { faDownload, faSpinner} from "@fortawesome/free-solid-svg-icons";
 import ActionIcon from "../Todo/common/ActionIcon";
 import styled from "@emotion/styled";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const DownloadButton = styled.button`
-    background-color: #00748b;
+    background-color: #4A90E2;
     color: white;
     border: none;
-    border-radius: 5px;
-    height: 40px;
-    width: 110px;
+    border-radius: 2.5px;
+    height: 32px;
+    width: 120px;
     padding: 5px;
     margin: 5px;
     display: flex;
@@ -22,6 +23,13 @@ const DownloadButton = styled.button`
         cursor: pointer;
         filter: brightness(80%);
     }
+`;
+const SelectAllArea = styled.div`
+    width: 50px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `;
 const DownloadArea = () => {
     const [isDownloading, setIsDownloading] = useState(false);
@@ -47,14 +55,6 @@ const DownloadArea = () => {
                 zip.file(link[j].text.trim() + fileFormat, blob, { binary: true });
             }
         }
-        // for (const link of allLinks) {
-        //     //check if checked
-        //     const parent = link.parentElement?.parentElement?.parentElement;
-        //     const checkbox = parent?.children[0].children[0] as HTMLInputElement;
-        //     if(!checkbox.checked) continue;
-        //     const { blob, fileFormat } = await urlToFileType(link.href);
-        //     zip.file(link.text.trim() + fileFormat, blob, { binary: true });
-        // }
         let lectureName = document.querySelector("#crumb_1")?.textContent?.trim();
         let fileName = document.querySelector("#pageTitleText")?.textContent?.trim();
         zip.generateAsync({ type: "blob" }).then((content) => {
@@ -93,19 +93,19 @@ const DownloadArea = () => {
     }
 
     return (
-        <div style={{display:"flex", flexDirection:"row"}}>
-            <div style={{width:"50px", height: "50px"}}>
+        <div style={{display:"flex", flexDirection:"row", justifyContent: "center", alignItems: "center"}}>
+            <SelectAllArea>
                 <label htmlFor="selectAll">전체선택</label>
                 <input type="checkbox" id="selectAll" onClick={checkAll}/>
-            </div>
+            </SelectAllArea>
             { !isDownloading ? 
             <DownloadButton onClick={downloadAll}>
+                <FontAwesomeIcon icon={faDownload} />
                 선택 다운로드
-                <ActionIcon icon={faDownload} />
             </DownloadButton> :
             <DownloadButton onClick={downloadAll}>
+                <FontAwesomeIcon icon={faSpinner} spin/>
                 다운로드 중
-                <ActionIcon icon={faSpinner} />
             </DownloadButton>
             }
             

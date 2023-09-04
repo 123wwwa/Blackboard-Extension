@@ -80,6 +80,14 @@
         "src/content-script/AssignmentList/assignmentList.tsx",
         "src/content-script/ContentDownloader/main.tsx"
       ]
+    },
+    {
+      "matches": [
+        "*://bb.unist.ac.kr/*"
+      ],
+      "js": [
+        "src/content-script/Redirect.js"
+      ]
     }
   ],
   "host_permissions": [

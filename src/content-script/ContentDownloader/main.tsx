@@ -27,11 +27,19 @@ const waitForElm = () => {
         });
     });
 };
-  
+const changeCSS = () => {
+    let container = document.querySelector("#pageTitleText") as HTMLElement;
+    let container2 = document.querySelector("#pageTitleBar") as HTMLElement;
+    container.style.display = "flex";
+    container.style.alignItems = "center";
+    container2.style.display = "flex";
+    container2.style.alignItems = "center";
+}
 waitForElm().then(() => {
     if(!urlRegex.test(window.location.href)) return;
     let allLinks: NodeListOf<HTMLAnchorElement> =document.querySelectorAll('a[href*="/bbcswebdav"]');
     if(allLinks.length === 0) return;  
+    changeCSS();
     const checkIsAllChecked = () => (e: React.ChangeEvent<HTMLInputElement>) => {
         const listContainer = document.getElementById("content_listContainer") as HTMLElement;
         let checkedCount = 0;
