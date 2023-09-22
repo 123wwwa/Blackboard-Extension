@@ -1,11 +1,12 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { faPalette, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPalette, faPlus, faLink } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { SketchPicker } from "react-color";
 import ActionIcon from "./common/ActionIcon";
 import DatePicker from "./common/DatePicker";
 import TextInput from "./common/TextInput";
+import LinkField from "./common/LinkFleid";
 import SketchColorPicker from "./common/ColorPicker";
 import { Todo } from "type";
 import { useDispatch } from "react-redux";
@@ -68,8 +69,12 @@ const styles = {
 function TodoFooter({ color, setColor }: Props) {
 	const [currentDate, setCurrentDate] = React.useState<Date>(new Date());
 	const [title, setTitle] = React.useState<string>("");
+	const [link, setLink] = React.useState<string>("");
 	const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTitle(e.target.value);
+	};
+	const onChangeLink = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setLink(e.target.value);
 	};
 	const dispatch = useDispatch();
 	const onClickAdd = () => {
@@ -79,10 +84,12 @@ function TodoFooter({ color, setColor }: Props) {
 			content: title,
 			color: color,
 			date: +currentDate,
+			linkcode: link,
 		};
 		addTodoItem(dispatch)(todo);
 		setTitle("");
 		setColor("#F5F5F5");
+		setLink("");
 		setCurrentDate(new Date());
 	};
 
@@ -104,6 +111,11 @@ function TodoFooter({ color, setColor }: Props) {
 						css={styles.DatePicker}
 					/>
 				</div>
+				<LinkField 
+					onChange={onChangeLink} 
+					value={link}
+					placeholder="링크 입력"
+				/>
 			</div>
 			<ActionIcon icon={faPlus} onClick={onClickAdd} />
 		</TodoFooterWrapper>

@@ -54,7 +54,7 @@ const getLectureElement = () =>{
             var lecture:Lecture = {
                 name: AllaTag[i].text, 
                 isLecture: true,
-                color: colorlist[j%8],
+                color: colorlist[j%colorlist.length],
                 engName: AllaTag[i].text.split(":")[1].trim(),
                 link: AllaTag[i].href, 
                 id: urlObj.searchParams.get('id'),

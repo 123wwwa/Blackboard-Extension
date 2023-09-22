@@ -8,7 +8,6 @@ import {
     selectLectureList,
     selectIsLectureLoaded,
     selectShapedLectureList,
-    getBB_alarms,
     reloadBB_alarms,
 } from "../../features/lecture_reducer";
 import { useSelector, useDispatch, Provider } from "react-redux";

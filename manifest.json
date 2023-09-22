@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BlackBoard Extension",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "action": {
     "default_title": "Popup",
     "default_popup": "index.html",
@@ -79,6 +79,15 @@
       "js": [
         "src/content-script/AssignmentList/assignmentList.tsx",
         "src/content-script/ContentDownloader/main.tsx"
+      ]
+    },
+
+    {
+      "matches" : [
+        "https://blackboard.unist.ac.kr/courses/1/2023_human_rights_edu/content*"
+      ],
+      "js": [
+        "src/content-script/Video/main.tsx"
       ]
     },
     {

@@ -113,8 +113,8 @@ function TodoContainer({ show, setShow, position }: Props) {
 		});
 	}, [dispatch]);
 
-	const TabListComponent = useMemo(() => {
-		switch (tab) {
+	const TabListComponent = (tab: any) => {
+		switch (tab.tab) {
 			case "과제":
 				return <TodoLayout />;
 			case "다운로드":
@@ -124,7 +124,7 @@ function TodoContainer({ show, setShow, position }: Props) {
 			default:
 				return <TodoLayout />;
 		}
-	}, [tab]);
+	};
 
 	return (
 		<Container show={show} position={position}>
@@ -155,7 +155,7 @@ function TodoContainer({ show, setShow, position }: Props) {
 				</div>
 				<TodoMenu setShow={setShow} tab={tab} />
 			</header>
-			{TabListComponent}
+			<TabListComponent tab={tab} />
 		</Container>
 	);
 }

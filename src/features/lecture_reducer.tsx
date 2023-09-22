@@ -282,12 +282,6 @@ export const addTodoItem = (dispatch: AppDispatch) => async (todo: Todo) => {
     todoList.push(todo);
     setChromeStorage("todoList", JSON.stringify(todoList));
 };
-export const getBB_alarms = async (dispatch: AppDispatch) => {
-    let bb_alarmsStr = await getChromeStorage("BB_alarms", "[]");
-    let bb_alarms: BB_alarm[] = JSON.parse(bb_alarmsStr);
-    console.log(bb_alarms);
-    dispatch(setBB_alarms(bb_alarms));
-};
 export const reloadBB_alarms = async (dispatch: AppDispatch) => {
     const url = "https://blackboard.unist.ac.kr/webapps/streamViewer/streamViewer";
     const fetchdata = await fetch(url, {
@@ -313,23 +307,19 @@ export const reloadBB_alarms = async (dispatch: AppDispatch) => {
         credentials: "include",
     });
     if (!fetchdata.ok) {
-        dispatch(getBB_alarms);
         return;
     }
 
     let alarmListStr = await fetchdata.text();
     if (!alarmListStr) {
-        dispatch(getBB_alarms);
         return;
     }
     let rawAlarmList = JSON.parse(alarmListStr).sv_streamEntries;
-    if (rawAlarmList.length == 0) {
-        //dispatch(getBB_alarms);
-        //console.log("no alarm");
+    if (rawAlarmList.length === 0) {
+        console.log("failed to fetch alarm");
         return;
     }
     let BB_alarms = await convertBB_alarm(alarmListStr);
-    setChromeStorage("BB_alarms", JSON.stringify(BB_alarms));
     dispatch(setBB_alarms(BB_alarms));
 };
 export const postTodoList = async (todoList: Todo[]) => {

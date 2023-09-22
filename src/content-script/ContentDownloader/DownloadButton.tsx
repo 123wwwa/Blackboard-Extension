@@ -47,7 +47,10 @@ const DownloadArea = () => {
         let zip = new JSZip();
         for(let i = 0; i < listContainer.children.length; i++) {
             const item = listContainer.children[i];
-            const link = item.querySelectorAll('a[href*="/bbcswebdav"]') as NodeListOf<HTMLAnchorElement>;
+            let link = item.querySelectorAll('a[href*="/bbcswebdav"]') as NodeListOf<HTMLAnchorElement>;
+            if(link.length === 0) link = item.querySelectorAll('a[href*="/webapps/assignment/uploadAssignment"]') as NodeListOf<HTMLAnchorElement>;
+            // push link2 to link
+
             const checkbox = item.querySelector('.downloadCheckBox') as HTMLInputElement;
             if(!checkbox.checked) continue;
             for(let j = 0; j < link.length; j++) {

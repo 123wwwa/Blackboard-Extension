@@ -40,7 +40,8 @@ const changeCSS = () => {
 waitForElm().then(() => {
     if(!urlRegex.test(window.location.href)) return;
     let allLinks: NodeListOf<HTMLAnchorElement> =document.querySelectorAll('a[href*="/bbcswebdav"]');
-    if(allLinks.length === 0) return;  
+    let allLinks2: NodeListOf<HTMLAnchorElement> =document.querySelectorAll('a[href*="/webapps/assignment/uploadAssignment"]');
+    if(allLinks.length === 0 && allLinks2.length ===0) return;  
     changeCSS();
     const checkIsAllChecked = () => (e: React.ChangeEvent<HTMLInputElement>) => {
         const listContainer = document.getElementById("content_listContainer") as HTMLElement;
@@ -63,6 +64,14 @@ waitForElm().then(() => {
     // loop in listContainer
     for(let i=0; i<listContainer.children.length; i++){
         const item = listContainer.children[i] as HTMLElement;
+        let links = item.querySelectorAll('a[href*="/bbcswebdav"]') as NodeListOf<HTMLAnchorElement>;
+        //loop in links
+        for(let j=0; j<links.length; j++){
+            const link = links[j];
+            const onclickStr = `window.open('${link.href}', '_blank'); return false;`;
+            link.setAttribute("onclick", onclickStr);
+            //link.setAttribute("href", "javascript:;");
+        }
         //remove firstchild
         item?.children[0].remove();
         const div = document.createElement("div");

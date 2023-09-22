@@ -83,8 +83,12 @@ function TodoCard({ item, time }: Props) {
 			color={item.color}
 			onClick={(e) => {
 				if (!item.linkcode) return;
-				// check e.target is <path> or not
-				if (e.target instanceof SVGPathElement) return;
+				let parent = document.querySelector("#deleteTodo") as HTMLElement;
+				if (parent.contains(e.target as Node)) return;
+				if(item.linkcode.includes("https://") || item.linkcode.includes("http://")) {
+					window.open(item.linkcode, "_blank");
+					return;
+				}
 				window.open(
 					`https://blackboard.unist.ac.kr/webapps/calendar/launch/attempt/${item.linkcode}`,
 					"_blank"
@@ -112,7 +116,7 @@ function TodoCard({ item, time }: Props) {
 				)}
 			</DueDateContainer>
 
-			<ActionIcon icon={faTrash} onClick={() => deleteTodoItem(item)} />
+			<ActionIcon icon={faTrash} onClick={() => deleteTodoItem(item)} id="deleteTodo" />
 		</Container>
 	);
 }

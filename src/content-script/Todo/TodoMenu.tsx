@@ -18,7 +18,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
 	reloadBB_alarms,
-	reloadTodoList,
 	resetTodoList,
 	setAlignWith,
 } from "../../features/lecture_reducer";
