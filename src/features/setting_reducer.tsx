@@ -72,6 +72,8 @@ export const reloadSetting = async (dispatch: AppDispatch) => {
         dispatch(setAlarm(JSON.parse(settings).isAlarmSet));
         dispatch(setAlarmTime(JSON.parse(settings).alarmTime));
         dispatch(setApiKey(JSON.parse(settings).apiKey));
+        dispatch(setIsAutoSave(JSON.parse(settings).isAutoSave));
+        dispatch(setIsPreviousVersion(JSON.parse(settings).isPreviousVersion));
     }
     settings = JSON.parse(settings);
 }
