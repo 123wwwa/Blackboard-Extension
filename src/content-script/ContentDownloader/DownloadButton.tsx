@@ -34,12 +34,19 @@ const SelectAllArea = styled.div`
 const DownloadArea = () => {
     const [isDownloading, setIsDownloading] = useState(false);
     const [urlItems, setUrlItems] = useState([] as string[]);
-    const urlToFileType = async (url: string): Promise<{ blob: Blob, fileFormat: string }> => {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        //const fileFormat = "." + blob.type.split("/")[1];
-        const fileFormat = mime.extension(blob.type) ? "." + mime.extension(blob.type) : "";
-        return { blob, fileFormat };
+    const [progress, setProgress] = useState(0);
+    const urlToFileType = async (url: string): Promise<{ blob: Blob, fileFormat: string, status: boolean }> => {
+        try {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const fileFormat = mime.extension(blob.type) ? "." + mime.extension(blob.type) : "";
+            //console.log(fileFormat);
+            return { blob, fileFormat , status: true};
+        } catch (error) {
+            // Log the error if needed
+            console.error('Fetch failed:', error);
+            return { blob: new Blob(), fileFormat: "" , status: false};
+        }
     };
     const downloadAll = async() => {
         const listContainer = document.getElementById("content_listContainer") as HTMLElement;
@@ -54,7 +61,9 @@ const DownloadArea = () => {
             const checkbox = item.querySelector('.downloadCheckBox') as HTMLInputElement;
             if(!checkbox.checked) continue;
             for(let j = 0; j < link.length; j++) {
-                const { blob, fileFormat } = await urlToFileType(link[j].href);
+                const { blob, fileFormat, status } = await urlToFileType(link[j].href);
+                if(!status) continue;
+                setProgress((i*link.length + j) / (listContainer.children.length * link.length) * 100);
                 zip.file(link[j].text.trim() + fileFormat, blob, { binary: true });
             }
         }
@@ -108,7 +117,7 @@ const DownloadArea = () => {
             </DownloadButton> :
             <DownloadButton onClick={downloadAll}>
                 <FontAwesomeIcon icon={faSpinner} spin/>
-                다운로드 중
+                다운로드 중 ({progress.toFixed(2)}%)
             </DownloadButton>
             }
             

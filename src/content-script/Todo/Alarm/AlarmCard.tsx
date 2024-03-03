@@ -50,6 +50,7 @@ const Subtitle = styled.p`
 	font-size: 12px;
 	font-weight: 400;
 	color: rgba(0, 0, 0, 0.7);
+	margin-block: auto;
 `;
 
 const Detail = styled.div`
@@ -86,8 +87,9 @@ const AlarmCard = (props: { alarm: BB_alarm }) => {
 			// addtodo action
 			const todo:Todo = {
 				content: resJSON.title,
-				color: "#F5F5F5",
-				date: new Date(resJSON.date).getTime()
+				color: props.alarm.color,
+				date: new Date(resJSON.date).getTime(),
+				linkcode: "https://blackboard.unist.ac.kr/" +props.alarm.url
 			}
 			addTodoItem(dispatch)(todo);
 		}

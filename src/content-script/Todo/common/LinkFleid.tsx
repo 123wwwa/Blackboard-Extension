@@ -15,7 +15,7 @@ const InputContainer = styled.input<{ icon?: ReactNode }>`
     padding: 4px 9px;
     font-size: 13px;
     font-weight: 400;
-    width: 300px;
+    width: 405px;
 `;
 const LinkField = ({ wrapperProps, ...props }: Props) => {
     const [link, setLink] = useState("");

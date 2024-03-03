@@ -6,7 +6,6 @@ import { Provider } from "react-redux";
 import { store } from "../../features/store";
 import { theme } from "./styles/theme";
 import GlobalStyle from "./global";
-
 const waitForElm = () => {
 	return new Promise((resolve) => {
 		if (document.body) {
@@ -32,9 +31,11 @@ waitForElm().then(() => {
 	document.body.prepend(rootEl);
 	//const container = document.body as HTMLElement;
 	const root: any = createRoot(rootEl!);
+	
 
 	root.render(
 		<React.StrictMode>
+			
 			<ThemeProvider theme={theme}>
 				<Provider store={store}>
 					<GlobalStyle />

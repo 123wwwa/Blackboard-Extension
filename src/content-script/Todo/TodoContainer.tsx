@@ -57,7 +57,7 @@ const Container = styled.div<{
 			align-items: center;
 			gap: 33px;
 
-			.tabs {
+			.content-tabs {
 				display: flex;
 				align-items: center;
 				color: rgba(0, 0, 0, 0.4);
@@ -88,7 +88,14 @@ const Container = styled.div<{
 `;
 
 export const TodoTabs = ["과제", "다운로드", "알림"] as const;
-
+export const TabListText = styled.p`
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-weight: inherit;
+	font-style: inherit;
+	font-family: inherit;
+`;
 function TodoContainer({ show, setShow, position }: Props) {
 	const [tab, setTab] = useState<(typeof TodoTabs)[number]>("과제");
 	const todoList = useSelector(selectTodoList);
@@ -141,15 +148,16 @@ function TodoContainer({ show, setShow, position }: Props) {
 							<ActionIcon icon={faSpinner} className="loading" />
 						</button>
 					)}
-					<div className="tabs">
+					<div className="content-tabs">
 						{TodoTabs.map((tabName) => (
-							<p
+							<TabListText
+
 								key={tabName}
 								className={`${tab === tabName ? "active" : ""}`}
 								onClick={() => setTab(tabName)}
 							>
 								{tabName}
-							</p>
+							</TabListText>
 						))}
 					</div>
 				</div>

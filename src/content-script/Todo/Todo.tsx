@@ -46,7 +46,7 @@ function Todo() {
 			position: "fixed",
 			left: calcWrapperPosition().x,
 			top: calcWrapperPosition().y,
-			fontSize: "16px",
+			fontSize: "14px",
 			fontFamily: "Pretendard-Regular",
 			transition: "all 200ms",
 			zIndex: 9999,

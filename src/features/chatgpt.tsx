@@ -8,21 +8,23 @@ export const extractTodo = async (alarm:BB_alarm) => {
     let date = new Date(alarm.date);
     let subject = alarm.course_name;
     let title = alarm.title;
-    let trimText = title + "\n Uploaded:" + date + "\n Course:" + subject + "\n";
+    let trimText = title + "\n Uploaded At:" + date + "\n Course:" + subject + "\n";
     trimText += text.replace(/(<([^>]+)>)/g, "").trim();
-    let prompt = "extract JSON key with one title and date(use timestamp and korean standard time) from the context you just only reply with JSON\n";
+    let prompt = `create JSON(should be parsed by JSON.parse) key with one title and date(korean standard time, 
+        deadline or start time of the schedule it should be date(converted by new Date(date).getTime() ) ) from the context. you just only reply with JSON\n 
+        ex) {"title":"title", "date":"date"}\n`;
     prompt += trimText;
-    alert(prompt);
+    //alert(prompt);
     let res = await window.chrome.runtime.sendMessage({ action: "askgpt", prompt: prompt });
     if(res.error){
         alert(res.error);
         return;
     }
-    alert(res.content);
+    console.log(res.content);
     let todo = res.content;
     // trim the result
     let regExp = /\{([^)]+)\}/;
-    todo = regExp.exec(todo)![0];
+    //todo = regExp.exec(todo)![0];
     todo = JSON.parse(todo);
     return todo;
 };

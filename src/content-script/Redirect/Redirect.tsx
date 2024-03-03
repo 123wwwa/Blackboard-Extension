@@ -4,3 +4,4 @@
 (()=>{
     window.location.href = window.location.href.replace("bb.unist.ac.kr", "blackboard.unist.ac.kr");
 })();
+export {}

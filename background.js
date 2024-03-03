@@ -42,7 +42,7 @@ const postEvent = async (token, event) => {
     return response.json();
 };
 const handleAskGpt = async (request, sendResponse) => {
-    const apiKey = JSON.parse((await chrome.storage.sync.get("settings")).settings).apiKey;
+    const apiKey = JSON.parse((await chrome.storage.local.get("settings")).settings).apiKey;
     const prompt = request.prompt;
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
@@ -53,8 +53,8 @@ const handleAskGpt = async (request, sendResponse) => {
         body: JSON.stringify({
             messages: [{"role": "user", "content":prompt}],
             max_tokens: 64,
-            model : "gpt-3.5-turbo",
-            temperature: 0.7,
+            model : "gpt-4",
+            temperature: 0.1,
             n: 1,
         })
     });
@@ -94,7 +94,7 @@ async function handleUpdateTodo(request, sendResponse) {
     todoList = request.todoList;
     let token = await authorize();
     const calendarEvents = await getEvents(token);
-    let settings = (await chrome.storage.sync.get("settings")).settings;
+    let settings = (await chrome.storage.local.get("settings")).settings;
 
     for (let todo of todoList) {
         let event = createEventFromTodo(todo, settings);

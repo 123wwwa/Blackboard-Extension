@@ -34,7 +34,9 @@ const Container = styled.div<{ color: string }>`
 	filter: brightness(100%);
 	cursor: pointer;
 	transition: all 0.2s ease-in-out;
-
+	font-weight: inherit;
+	font-style: inherit;
+	font-family: inherit;
 	&:hover:not(:has(${DownloadWrapper}:hover)) {
 		filter: brightness(80%);
 	}

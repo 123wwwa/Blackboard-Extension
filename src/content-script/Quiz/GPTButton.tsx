@@ -49,10 +49,10 @@ const GPTButton = ({prompt, index}: Props) => {
         }
     }
     const handleOnClick = async () => {
-        alert(prompt.replace("Just only write down choice number with choice ex)1.your choice", ""));
+        //alert(prompt.replace("Just only write down choice number with choice ex)1.your choice", ""));
         let expectedAnswer = await askPrompt(prompt);
         if(expectedAnswer === "") {
-            alert("GPT-3가 답을 찾지 못했습니다.");
+            alert("GPT-4가 답을 찾지 못했습니다.");
             return;
         }
         handleClick(expectedAnswer);

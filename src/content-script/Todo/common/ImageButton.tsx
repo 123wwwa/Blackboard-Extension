@@ -36,6 +36,7 @@ export const styles = {
 		fontSize: "0.75em",
 		fontWeight: 600,
 		marginLeft: "9px",
+		whiteSpace: "nowrap",
 	}),
 
 	Image: css({

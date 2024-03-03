@@ -5,7 +5,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo, BB_alarm, AlignWith, FileUrl } from "type";
 import { AppDispatch, RootState } from "./store";
 import { RawAlarm, convertBB_alarm } from "./rawAlarmHandler";
-import { getChromeStorage, setChromeStorage, APIwithcatch } from "./handleChromeStoarge";
+import { getChromeStorage, setChromeStorage, APIwithcatch, setChromeStorageList, getChromeStorageList } from "./handleChromeStoarge";
+import { get } from "https";
 interface LectureList {
     [key: string]: Lecture;
 }
@@ -29,12 +30,12 @@ let initialState: InitialState = {
     alignWith: "date",
     checkedFiles: [],
 };
-
+let colorlist: string[] = ["#f2e8e8", "#ffe9e9", "#eff9cc", "#dcf2e9", "#dee8f6", "#fff8cc", "#ffedda", "#dceef2", "#ddd6fe", "#e0e7ff", "#f0abfc", "#7dd3fc"];
 export const lectureSlice = createSlice({
     name: "lectureSlice",
     initialState: initialState,
     reducers: {
-        setLecutureList: (state, action) => {
+        setLectureList: (state, action) => {
             state.lectureSlice = action.payload;
         },
         setShapedLectureList: (state, action) => {
@@ -58,7 +59,6 @@ export const lectureSlice = createSlice({
         },
         setBB_alarms: (state, action) => {
             state.bb_alarmList = action.payload;
-            //console.log(state.bb_alarmList);
         },
         setAlignWith: (state, action) => {
             state.alignWith = action.payload;
@@ -94,7 +94,7 @@ export const lectureSlice = createSlice({
     },
 });
 export const {
-    setLecutureList,
+    setLectureList,
     setShapedLectureList,
     setLectureAssignment,
     setTodoList,
@@ -108,33 +108,106 @@ export const {
     removeCheckedFile,
     deleteSelectedFiles,
 } = lectureSlice.actions;
+export const getMemberShip = async (dispatch: AppDispatch) => {
+    const reqURL = "https://blackboard.unist.ac.kr/learn/api/v1/users/_41025_1/memberships?expand=course.effectiveAvailability,course.permissions,courseRole&includeCount=true&limit=10000";
+    const fetchdata = await fetch(reqURL, {
+        method: "GET",
+        headers: {
+            "accept": "application/json, text/plain, */*",
+            "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+            "sec-ch-ua": "\"Not A(Brand\";v=\"99\", \"Google Chrome\";v=\"121\", \"Chromium\";v=\"121\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"macOS\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+            "x-blackboard-xsrf": "cb981051-c915-4e15-912d-ad3eb268f7da"
+        },
+        referrer: "https://blackboard.unist.ac.kr/ultra/course",
+        referrerPolicy: "strict-origin-when-cross-origin",
+        body: null,
+        mode: "cors",
+    });
+    let alarmListStr = await fetchdata.text();
+    let alarmList = JSON.parse(alarmListStr).results;
+    let lectureList = await convertMemberShip(alarmList);
+    lectureList = await updateFileInfo(lectureList);
+    dispatch(setLectureList(lectureList));
+    getShapedLectureList(dispatch, lectureList);
+    setChromeStorage("lectureInfo", JSON.stringify(lectureList));
+};
+function shuffle<T>(array: T[]): T[] {
+    let currentIndex = array.length,  randomIndex;
 
-export const getLectureList = async (dispatch: AppDispatch) => {
-    let lectureInfoStr = await getChromeStorage("lectureInfo", "{}");
-    let resLecturelist: LectureList = JSON.parse(lectureInfoStr);
-    //let assignmentListStr = await getChromeStorage("fileInfo", "{}");
-    let assignmentList: AssignmentList = JSON.parse(localStorage.getItem("fileInfo") || "{}");
-    //check if fileinfo is empty
-    if (Object.keys(assignmentList).length == 0) {
-        console.error("fileInfo is empty");
-    } else {
-        Object.entries(assignmentList).forEach(([key1, value1]) => {
-            let course_id: string = key1.split("-")[1];
-            Object.entries(resLecturelist).forEach(([key2, value]) => {
-                let lecture: any = value;
-                if (lecture.id == course_id) {
-                    resLecturelist[key2].assignment.push(value1 as Assignment);
-                }
-            });
-        });
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+};
+const convertMemberShip = async (alarmList: any): Promise<LectureList> => {
+    let lectureList: LectureList = {};
+    for (let i = 0; i < alarmList.length; i++) {
+        const course = alarmList[i].course;
+        let lecture: Lecture = {
+            id: course.id,
+            name: "",
+            engName: course.displayName,
+            link: course.externalAccessUrl,
+            isLecture: true,
+            color: "",
+            assignment: [],
+            time: "",
+            professor: "",
+            calendarId: course.courseId,
+        };
+        const lectureKey = course.displayId.split("_")[1]
+        if (course.effectiveAvailability) {
+            lectureList[lectureKey] = lecture;
+        }
+    }
+    const response = await fetch(window.chrome.runtime.getURL('public/assets/lectureInfo.json'));
+    const jsonData = await response.json();
+
+    let c = 0;
+    for (let key in lectureList) {
+        if (jsonData[key] === undefined) {
+            lectureList[key].isLecture = false;
+        } else {
+            c++;
+            lectureList[key].name = jsonData[key].name;
+            lectureList[key].time = jsonData[key].time;
+            lectureList[key].professor = jsonData[key].professor;
+            lectureList[key].color = colorlist[c % colorlist.length];
+            if (jsonData[key].timeplace0) {
+                lectureList[key].timeplace0 = jsonData[key].timeplace0;
+            }
+            if (jsonData[key].timeplace1) {
+                lectureList[key].timeplace1 = jsonData[key].timeplace1;
+            }
+            if (jsonData[key].timeplace2) {
+                lectureList[key].timeplace2 = jsonData[key].timeplace2;
+            }
+        }
     }
 
-    dispatch(setLecutureList(resLecturelist));
+    return lectureList;
+
+}
+const getShapedLectureList = (dispatch:AppDispatch, lectureList: LectureList) => {
     let l: ShapedLecture[][] = [[], [], [], [], []];
     let i = 0;
     let key: string;
-    for (key in resLecturelist) {
-        let item: any = resLecturelist[key];
+    for (key in lectureList) {
+        let item: any = lectureList[key];
         i += 1;
         for (let c = 0; c < 3; c++) {
             if (item["timeplace" + c]) {
@@ -151,10 +224,36 @@ export const getLectureList = async (dispatch: AppDispatch) => {
         }
     }
     dispatch(setShapedLectureList(l));
+}
+const updateFileInfo = async (lectureList: LectureList) => {
+    let assignmentList: AssignmentList = JSON.parse(localStorage.getItem("fileInfo") || "{}");
+    //check if fileinfo is empty
+    if (Object.keys(assignmentList).length == 0) {
+        console.error("fileInfo is empty");
+        return lectureList;
+    } else {
+        Object.entries(assignmentList).forEach(([key1, value1]) => {
+            let course_id: string = key1.split("-")[1];
+            Object.entries(lectureList).forEach(([key2, value]) => {
+                let lecture: any = value;
+                if (lecture.id == course_id) {
+                    lectureList[key2].assignment.push(value1 as Assignment);
+                }
+            });
+        });
+        return lectureList;
+    }
+}
+export const getLectureList = async (dispatch: AppDispatch) => {
+    let lectureInfoStr = await getChromeStorage("lectureInfo", "{}");
+    let resLecturelist: LectureList = JSON.parse(lectureInfoStr);
+    resLecturelist = await updateFileInfo(resLecturelist);
+    dispatch(setLectureList(resLecturelist));
+    getShapedLectureList(dispatch, resLecturelist);
 };
 export const getTodoList = async (dispatch: AppDispatch) => {
-    let todoListStr = await getChromeStorage("todoList", "[]");
-    let todoList: Todo[] = JSON.parse(todoListStr);
+    let todoList: Todo[] = await getChromeStorageList("todoList");
+    
     dispatch(setTodoList(todoList));
     //postTodoList(todoList);
 };
@@ -163,8 +262,7 @@ export const resetTodoList = async (dispatch: AppDispatch) => {
     dispatch(reloadTodoList);
 };
 export const reloadTodoList = async (dispatch: AppDispatch) => {
-    let todoListStr = await getChromeStorage("todoList", "[]");
-    let todoList: Todo[] = JSON.parse(todoListStr);
+    let todoList:Todo[] = await getChromeStorageList("todoList");
     // splice todolist if linkcode is exist
     for (let key in todoList) {
         let todo: Todo = todoList[key];
@@ -200,11 +298,13 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
         }
     }
     for (let key in fetchData) {
-        let letureColor: string = "";
+        let lectureColor: string = "";
+        let korLectureName: string = "";
         Object.entries(resLecturelist).forEach(([key2, value]) => {
             let lecture: Lecture = value;
-            if (lecture.engName == fetchData[key]["calendarName"]) {
-                letureColor = lecture.color;
+            if (lecture.calendarId == fetchData[key]["calendarId"]) {
+                lectureColor = lecture.color;
+                korLectureName = lecture.name;
             }
         });
         let newStartString = fetchData[key]["start"];
@@ -212,17 +312,19 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
         let assignName = fetchData[key]["title"];
         let link = "";
         if (fetchData[key]["calendarName"] !== "Personal") {
-            assignName = fetchData[key]["calendarName"] + ": " + assignName;
+            assignName = korLectureName + ": " + assignName;
             link = fetchData[key]["id"];
         }
         let todo: Todo = {
             course_name: fetchData[key]["calendarName"],
             content: assignName,
             date: newDate.getTime(),
-            color: letureColor,
+            color: lectureColor,
             linkcode: link,
         };
-        todoList.push(todo);
+        if(todo.color != "") {
+            todoList.push(todo);
+        }
     }
     // remove duplicated todo
     let newTodoList: Todo[] = [];
@@ -239,7 +341,7 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
             newTodoList.push(todo);
         }
     }
-    setChromeStorage("todoList", JSON.stringify(newTodoList));
+    setChromeStorageList("todoList", newTodoList);
     dispatch(setTodoList(newTodoList));
     //postTodoList(newTodoList);
 };
@@ -252,8 +354,7 @@ export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
         deletedTodoList.push(todo);
         setChromeStorage("deletedTodoList", JSON.stringify(deletedTodoList));
     }
-    let todoListStr = await getChromeStorage("todoList", "[]");
-    let todoList: Todo[] = JSON.parse(todoListStr);
+    let todoList:Todo[] = await getChromeStorageList("todoList");
     let newTodoList: Todo[] = [];
     //delete todo
     for (let key in todoList) {
@@ -263,14 +364,14 @@ export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
         }
         newTodoList.push(newTodo);
     }
-    setChromeStorage("todoList", JSON.stringify(newTodoList));
+    setChromeStorageList("todoList", newTodoList);
+    //setChromeStorage("todoList", JSON.stringify(newTodoList));
     dispatch(setTodoList(newTodoList));
     //postTodoList(newTodoList);
 };
 export const addTodoItem = (dispatch: AppDispatch) => async (todo: Todo) => {
     // check if duplicated
-    let todoListStr = await getChromeStorage("todoList", "[]");
-    let todoList: Todo[] = JSON.parse(todoListStr);
+    let todoList: Todo[]  = await getChromeStorageList("todoList");
     for (let key in todoList) {
         let newTodo: Todo = todoList[key];
         if (todo.content == newTodo.content && todo.date == newTodo.date && todo.linkcode == newTodo.linkcode) {
@@ -280,7 +381,7 @@ export const addTodoItem = (dispatch: AppDispatch) => async (todo: Todo) => {
 
     dispatch(addTodo(todo));
     todoList.push(todo);
-    setChromeStorage("todoList", JSON.stringify(todoList));
+    setChromeStorageList("todoList", todoList);
 };
 export const reloadBB_alarms = async (dispatch: AppDispatch) => {
     const url = "https://blackboard.unist.ac.kr/webapps/streamViewer/streamViewer";

@@ -6,13 +6,15 @@ import {
 	faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { selectBB_alarmList, selectLectureList } from "../../../features/lecture_reducer";
+import { selectBB_alarmList} from "../../../features/lecture_reducer";
 import { useSelector } from "react-redux";
 import { LectureList } from "type";
 import Popover from "../common/Popover";
 import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
 import { RangeDatePicker } from "./RangeDatePicker";
+import { Console } from "console";
+import { selectLectureList } from "../../../features/lecture_reducer";
 
 const styles = {
 	Wrapper: css({
@@ -60,9 +62,9 @@ type Props = {
 };
 const AlarmFooter = ({ setFilter, filter }: Props) => {
 	const lectureList: LectureList = useSelector(selectLectureList);
-	const lectureNames = Object.entries(lectureList).map(
+	const lectureNames = Array.from(new Set(Object.entries(lectureList).map(
 		([_, lecture]) => lecture.name
-	);
+	)));
 	useEffect(() => {
 		setFilter((prev) => ({ ...prev, lecture: lectureNames }));
 	}, []);
@@ -73,6 +75,8 @@ const AlarmFooter = ({ setFilter, filter }: Props) => {
 	const alarmTypes = [...new Set(Object.entries(alarmList).map(([_, announcement]) => announcement.type))];
 	const setLectureFilter = (lecture: string) => {
 		if(filter.lecture.includes(lecture)){
+
+			// check if isLecture is in filter.lecture
 			setFilter((prev) => ({ ...filter, lecture: [...filter.lecture.filter((l) => l !== lecture)] }));
 			return;
 		}

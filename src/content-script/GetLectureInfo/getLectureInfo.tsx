@@ -94,8 +94,8 @@ const getLectureElement = () =>{
                     }
                 }
             }
-            window.chrome.storage.sync.set({ 'lectureInfo': JSON.stringify(lecturelist) }, () =>{});
-            window.chrome.storage.sync.set({ 'lectureInfoLastUpdate': new Date() }, () =>{
+            window.chrome.storage.local.set({ 'lectureInfo': JSON.stringify(lecturelist) }, () =>{});
+            window.chrome.storage.local.set({ 'lectureInfoLastUpdate': new Date() }, () =>{
                 new BroadcastChannel("lectureInfoLastUpdate").postMessage(new Date());
             });
         });
@@ -105,7 +105,7 @@ new BroadcastChannel("reloadLectureList").addEventListener("message", (e) => {
     getLectureElement();
 });
 waitForElm().then((elm) => {
-    window.chrome.storage.sync.get(['lectureInfo'], (res)=> {
+    window.chrome.storage.local.get(['lectureInfo'], (res)=> {
         // check if lectureInfo is empty
         let lectureInfo = res.lectureInfo;
         if(!lectureInfo) {

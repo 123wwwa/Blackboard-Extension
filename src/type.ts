@@ -44,8 +44,10 @@ export interface Lecture {
 	isLecture: boolean;
 	link: string;
 	id: string;
+	calendarId?: string;
 	color: string;
 	time?: string;
+	uuid?: string;
 	professor?: string;
 	timeplace0?: Timeplace;
 	timeplace1?: Timeplace;

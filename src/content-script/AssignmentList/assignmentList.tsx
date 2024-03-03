@@ -1,7 +1,6 @@
 /// <reference types="chrome" />
 /// <reference types="vite-plugin-svgr/client" />
 import { FileUrl, Assignment, AssignmentList } from "type";
-import { retrieveData } from "../../features/handleChromeStoarge";
 const waitForElm = () => {
     return new Promise(resolve => {
         if (document.getElementById("content_listContainer")) {

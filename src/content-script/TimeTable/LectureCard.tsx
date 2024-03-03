@@ -50,6 +50,7 @@ type Props = {
     tableHeight: number;
     tableWidth: number;
 }
+
 export const LectureCard = ({item, tableHeight, tableWidth}: Props) => {
     const marginTop: number = (item["timeplace"].start - (9 * 12)) / 12 * (tableHeight) + (HeadHeight); // minus 9 hour to start from 9 
     const height: number = (item["timeplace"].end - item["timeplace"].start) / 12 * (tableHeight);

@@ -3,6 +3,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import GPTButton from './GPTButton';
+const PROD = true;
 const waitForElm = () => {
     return new Promise(resolve => {
         if (document.querySelector("#dataCollectionContainer")) {
@@ -85,6 +86,7 @@ const trimQuizText = (text: string) => {
     return text.replace(/\n/g, '').trim();
 }
 waitForElm().then(() => {
+    if(PROD) return;
     const targetNode = document.querySelector("#dataCollectionContainer") as HTMLElement;
     for (let i = 0; i < targetNode.children.length; i++) {
         const target = targetNode.children[i] as HTMLElement;

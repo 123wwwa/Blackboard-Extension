@@ -2,8 +2,9 @@
     if (window.gradeAssignment) {
         var proxied = window.gradeAssignment.init;
         window.gradeAssignment.init = function() {
-            console.log("gradeAssignment.init");
-            // var fileUrl = "https://blackboard.unist.ac.kr"+JSON.parse(arguments[1]).downloadUrl
+            //console.log("gradeAssignment.init");
+            console.log(arguments);
+            var arg1 = JSON.parse(arguments[1]);
             var downloadBtns =  document.querySelectorAll('a[href*="webapps/assignment/download?"]');
             var fileUrl = [];
             downloadBtns.forEach(item => {
@@ -17,8 +18,10 @@
             var temp = {};
             temp.content_id = new URL(document.URL).searchParams.get('content_id');
             temp.course_id = new URL(document.URL).searchParams.get('course_id');
+            if(!temp.content_id || !temp.course_id) return;
             temp.last_update = new Date().toLocaleString();
-
+            temp.downloadUrl = arg1.downloadUrl;
+            temp.viewUrl = arg1.viewUrl;
             var content_info = `content_id=${temp.content_id}&course_id=${temp.course_id}`;
             temp.url = `https://blackboard.unist.ac.kr/webapps/assignment/uploadAssignment?${content_info}`;
             temp.fileUrl = [...new Set(fileUrl)]; // replace duplicate keys : https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array

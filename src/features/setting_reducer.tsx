@@ -3,12 +3,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getChromeStorage, setChromeStorage } from "./handleChromeStoarge";
 import { AppDispatch } from "./store";
+import exp from "constants";
 
 export interface InitialSetting {
     isAlarmSet: boolean;
     alarmTime: number;
     isLogin: boolean;
     isAutoSave: boolean;
+    isPreviousVersion: boolean;
     userEmail: string;
     apiKey: string;
 }
@@ -17,6 +19,7 @@ export const defaultSetting: InitialSetting = {
     alarmTime: 0,
     isLogin: false,
     isAutoSave: false,
+    isPreviousVersion: false,
     userEmail: "",
     apiKey: ""
 };
@@ -50,11 +53,14 @@ export const settingSlice = createSlice({
         },
         setIsAutoSave: (state, action) => {
             state.isAutoSave = action.payload;
+        },
+        setIsPreviousVersion: (state, action) => {
+            state.isPreviousVersion = action.payload;
         }
 
     }
 });
-export const { setAlarm, setAlarmTime, setUserEmail, setIsLogin, setApiKey, setIsAutoSave } = settingSlice.actions;
+export const { setAlarm, setAlarmTime, setUserEmail, setIsLogin, setApiKey, setIsAutoSave, setIsPreviousVersion } = settingSlice.actions;
 
 export const reloadSetting = async (dispatch: AppDispatch) => {
     let settings = await getChromeStorage("settings", "{}");
@@ -78,6 +84,7 @@ export const updateSetting = async (dispatch: AppDispatch, key: string, value: a
     dispatch(setAlarmTime(settings.alarmTime));
     dispatch(setApiKey(settings.apiKey));
     dispatch(setIsAutoSave(settings.isAutoSave));
+    dispatch(setIsPreviousVersion(settings.isPreviousVersion));
 }
 export const reloadUserEmail = async (dispatch: AppDispatch) => {
     const response = await window.chrome.runtime.sendMessage({ action: "getEmail" });
@@ -91,4 +98,5 @@ export const selectAlarmTime = (state: any) => state.settingSlice.alarmTime;
 export const selectIsLogin = (state: any) => state.settingSlice.isLogin;
 export const selectUserEmail = (state: any) => state.settingSlice.userEmail;
 export const selectApiKey = (state: any) => state.settingSlice.apiKey;
+export const selectIsPreviousVersion = (state: any) => state.settingSlice.isPreviousVersion;
 export const selectIsAutoSave = (state: any) => state.settingSlice.isAutoSave;

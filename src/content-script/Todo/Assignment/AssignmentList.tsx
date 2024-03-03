@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { LectureList } from "type";
 import {
 	getLectureList,
-	selectLectureList,
 	setCheckedFiles,
+	selectLectureList
 } from "../../../features/lecture_reducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -83,21 +83,23 @@ function AssignmentList({ activeLectureId, setActiveLectureId }: Props) {
 			<ListContainer>
 				{!activeLectureId ? (
 					Object.entries(lectureList).map(([key, value]) => {
-						return (
-							<AssignmentCard
-								item = {value}
-								onSelect={() => setActiveLectureId(key)}
-							/>
-						);
+						if (value.isLecture) {
+							return (
+								<AssignmentCard
+									item={value}
+									onSelect={() => setActiveLectureId(key)}
+								/>
+							);
+						}
 					})
 				) : (
 					<>
 						{lectureList[activeLectureId].assignment ? <>
-						{lectureList[activeLectureId].assignment.slice().sort((a,b)=>{
-							return new Date(b.Due_Date).getTime() - new Date(a.Due_Date).getTime();
-						}).map((item) => {
-							return <DownloadCard item={item} />;
-						})}
+							{lectureList[activeLectureId].assignment.slice().sort((a, b) => {
+								return new Date(b.Due_Date).getTime() - new Date(a.Due_Date).getTime();
+							}).map((item) => {
+								return <DownloadCard item={item} />;
+							})}
 						</> : <></>}
 					</>
 				)}

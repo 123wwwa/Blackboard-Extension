@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BlackBoard Extension",
-  "version": "1.0.8",
+  "version": "1.1.6",
   "action": {
     "default_title": "Popup",
     "default_popup": "index.html",
@@ -60,7 +60,8 @@
       "js": [
         "src/content-script/TimeTable/main.tsx",
         "src/content-script/Todo/main.tsx",
-        "src/content-script/CancelLogout/CancelLogout.js"
+        "src/content-script/CancelLogout/CancelLogout.js",
+        "src/content-script/Redirect/VersionRedirect.tsx"
       ],
       "media": []
     },
@@ -81,7 +82,14 @@
         "src/content-script/ContentDownloader/main.tsx"
       ]
     },
-
+    {
+      "matches": [
+        "https://blackboard.unist.ac.kr/webapps/assessment/take/*"
+      ],
+      "js": [
+        "src/content-script/Quiz/main.tsx"
+      ]
+    },
     {
       "matches" : [
         "https://blackboard.unist.ac.kr/courses/1/2023_human_rights_edu/content*"
@@ -95,7 +103,15 @@
         "*://bb.unist.ac.kr/*"
       ],
       "js": [
-        "src/content-script/Redirect.js"
+        "src/content-script/Redirect/Redirect.tsx"
+      ]
+    },
+    {
+      "matches": [
+        "https://blackboard.unist.ac.kr/ultra/institution-page*"
+      ],
+      "js": [
+        "src/content-script/TimeTable/main.tsx"
       ]
     }
   ],
