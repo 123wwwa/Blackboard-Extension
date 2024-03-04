@@ -60,10 +60,18 @@
       "js": [
         "src/content-script/TimeTable/main.tsx",
         "src/content-script/Todo/main.tsx",
-        "src/content-script/CancelLogout/CancelLogout.js",
+        "src/content-script/Injector/CancelLogout/CancelLogout.js",
         "src/content-script/Redirect/VersionRedirect.tsx"
       ],
       "media": []
+    },
+    {
+      "matches": [
+        "https://blackboard.unist.ac.kr/ultra/institution-page"
+      ],
+      "js": [
+        "src/content-script/Injector/IntercepMembership/InterceptMembership.js"
+      ]
     },
     {
       "matches": [
@@ -136,7 +144,8 @@
     {
       "resources": [
         "src/content-script/LoadAssignment/loadfile-append.js",
-        "src/content-script/CancelLogout/CancelLogout-append.js"
+        "src/content-script/Injector/CancelLogout/CancelLogout-append.js",
+        "src/content-script/Injector/IntercepMembership/InterceptMembership-append.js"
       ],
       "matches": [
         "https://blackboard.unist.ac.kr/*"

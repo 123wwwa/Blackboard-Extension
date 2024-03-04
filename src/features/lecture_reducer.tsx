@@ -109,28 +109,12 @@ export const {
     deleteSelectedFiles,
 } = lectureSlice.actions;
 export const getMemberShip = async (dispatch: AppDispatch) => {
-    const reqURL = "https://blackboard.unist.ac.kr/learn/api/v1/users/_41025_1/memberships?expand=course.effectiveAvailability,course.permissions,courseRole&includeCount=true&limit=10000";
-    const fetchdata = await fetch(reqURL, {
-        method: "GET",
-        headers: {
-            "accept": "application/json, text/plain, */*",
-            "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-            "sec-ch-ua": "\"Not A(Brand\";v=\"99\", \"Google Chrome\";v=\"121\", \"Chromium\";v=\"121\"",
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": "\"macOS\"",
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            "x-blackboard-xsrf": "cb981051-c915-4e15-912d-ad3eb268f7da"
-        },
-        referrer: "https://blackboard.unist.ac.kr/ultra/course",
-        referrerPolicy: "strict-origin-when-cross-origin",
-        body: null,
-        mode: "cors",
-    });
-    let alarmListStr = await fetchdata.text();
-    let alarmList = JSON.parse(alarmListStr).results;
-    let lectureList = await convertMemberShip(alarmList);
+    let storedMemberShip = localStorage.getItem("memberships");
+    if (!storedMemberShip) {
+        return;
+    }
+    storedMemberShip = JSON.parse(storedMemberShip);
+    let lectureList = await convertMemberShip(storedMemberShip);
     lectureList = await updateFileInfo(lectureList);
     dispatch(setLectureList(lectureList));
     getShapedLectureList(dispatch, lectureList);
