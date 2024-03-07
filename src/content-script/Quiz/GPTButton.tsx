@@ -21,7 +21,11 @@ const styles = {
     `
 }
 const GPTButton = ({prompt, index}: Props) => {
-    const quizArea = document.querySelector("#dataCollectionContainer")?.children[index];
+    let isUltra = window.location.href.includes("ultra");
+    let quizArea = document.querySelector("#dataCollectionContainer")?.children[index];
+    if(isUltra) {
+        quizArea = document.querySelector(".question-list.attempt-question-list")?.children[index];
+    }
     const handleClick = (answer:string) => {
         let optionList = quizArea?.querySelectorAll("input") as NodeListOf<HTMLInputElement>;
         //loop in optionList

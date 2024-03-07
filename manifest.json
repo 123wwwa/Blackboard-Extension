@@ -99,6 +99,14 @@
       ]
     },
     {
+      "matches": [
+        "https://blackboard.unist.ac.kr/ultra/courses/*"
+      ],
+      "js": [
+        "src/content-script/Quiz/Ultra/main.tsx"
+      ]
+    },
+    {
       "matches" : [
         "https://blackboard.unist.ac.kr/courses/1/2023_human_rights_edu/content*"
       ],

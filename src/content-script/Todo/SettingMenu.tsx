@@ -140,6 +140,7 @@ export const SettingMenu = () => {
                 <label htmlFor="alarm-label" css={styles.SwitchLabel}>
                     <input onChange={onChangeApiKey} css={styles.TextInput2} value={apiKey} />
                 </label>
+                <Popover.Divider />
                 <div css={styles.SwitchContainer}>
                     <span css={styles.SettingMenuItemLabel}>이전 버전 사용</span>
                     <Switch.Root
