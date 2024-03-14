@@ -111,6 +111,7 @@ export const {
 export const getMemberShip = async (dispatch: AppDispatch) => {
     let storedMemberShip = localStorage.getItem("memberships");
     if (!storedMemberShip) {
+        storedMemberShip = await getChromeStorage("lectureInfo", "[]");
         return;
     }
     storedMemberShip = JSON.parse(storedMemberShip);
@@ -402,10 +403,13 @@ export const reloadBB_alarms = async (dispatch: AppDispatch) => {
     let rawAlarmList = JSON.parse(alarmListStr).sv_streamEntries;
     if (rawAlarmList.length === 0) {
         console.log("failed to fetch alarm");
+        let BB_alarms = await getChromeStorage("BB_alarms", "[]");
+        dispatch(setBB_alarms(JSON.parse(BB_alarms)));
         return;
     }
     let BB_alarms = await convertBB_alarm(alarmListStr);
     dispatch(setBB_alarms(BB_alarms));
+    await setChromeStorage("BB_alarms", JSON.stringify(BB_alarms));
 };
 export const postTodoList = async (todoList: Todo[]) => {
     window.chrome.runtime.sendMessage({ action: "updateTodo", todoList: todoList });

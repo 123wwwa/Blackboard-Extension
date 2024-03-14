@@ -12,11 +12,13 @@
         if (url.includes("memberships?")) {
             let interval = setInterval(() => {
                 let res = this.responseText;
-
+                
                 if (res) {
                     let result = JSON.parse(res).results;
-                    localStorage.setItem("memberships", JSON.stringify(result));
-                    clearInterval(interval);
+                    if (result.length > 0) {
+                        localStorage.setItem("memberships", JSON.stringify(result));
+                        clearInterval(interval);
+                    }
                 }
             }, 100);
         }

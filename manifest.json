@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BlackBoard Extension",
-  "version": "1.1.6",
+  "version": "1.1.8",
   "action": {
     "default_title": "Popup",
     "default_popup": "index.html",

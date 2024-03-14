@@ -7,6 +7,7 @@ import {
     selectIsLectureLoaded,
     selectShapedLectureList,
     reloadBB_alarms,
+    getLectureList,
 } from "../../features/lecture_reducer";
 import { useSelector, useDispatch, Provider } from "react-redux";
 import { AppDispatch, RootState, store } from "../../features/store";
@@ -31,7 +32,11 @@ const RenderTableDay = () => {
     }, []);
     useEffect(() => {
         dispatch(reloadBB_alarms as any);
-        dispatch(getMemberShip as any);
+        if(window.location.href.includes("ultra")) {
+            dispatch(getMemberShip as any);
+        }else{
+            dispatch(getLectureList as any);
+        }
     }, [dispatch]);
     const shuffleColor = () => {
         dispatch(getMemberShip as any);

@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import GPTButton from "../GPTButton";
 import React from "react";
 import { observeElementPresence } from "../../../content-script/SPA_Observer/SPA_Observer";
+import { PROD } from "../main";
 
 const waitForElm = () => {
     return new Promise(resolve => {
@@ -58,7 +59,7 @@ const handleTrueFalse = (target: HTMLElement) => {
     return prompt;
 }
 let url = window.location.href;
-if (url.includes("assessment")) {
+if (url.includes("assessment") && !PROD) {
     console.log("assessment");
     const handleAfterElementPresence = () => {
         const targetNode = document.querySelector(".question-list.attempt-question-list") as HTMLElement;
