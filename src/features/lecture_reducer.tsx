@@ -369,6 +369,11 @@ export const addTodoItem = (dispatch: AppDispatch) => async (todo: Todo) => {
     setChromeStorageList("todoList", todoList);
 };
 export const reloadBB_alarms = async (dispatch: AppDispatch) => {
+    // check if last fetch is within 5 minutes
+    let lastAlarmFetch = await getChromeStorage("lastAlarmFetch", "0");
+    if (Date.now() - parseInt(lastAlarmFetch) < 300000) {
+        return;
+    }
     const url = "https://blackboard.unist.ac.kr/webapps/streamViewer/streamViewer";
     const fetchdata = await fetch(url, {
         headers: {
@@ -410,6 +415,8 @@ export const reloadBB_alarms = async (dispatch: AppDispatch) => {
     let BB_alarms = await convertBB_alarm(alarmListStr);
     dispatch(setBB_alarms(BB_alarms));
     await setChromeStorage("BB_alarms", JSON.stringify(BB_alarms));
+    await setChromeStorage("lastAlarmFetch", Date.now().toString());
+    
 };
 export const postTodoList = async (todoList: Todo[]) => {
     window.chrome.runtime.sendMessage({ action: "updateTodo", todoList: todoList });

@@ -49,6 +49,9 @@ const AlarmList = ({ filter, BB_alarmList }: Props) => {
 	}, [filter, BB_alarmList]);
 	useEffect(() => {
 		setTimeout(() => {
+			if (firstLoad) {
+				return;
+			}
 			dispatch(reloadBB_alarms as any);
 			setFirstLoad(true);
 		}, 500);

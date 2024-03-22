@@ -6490,6 +6490,10 @@ function convertToTargetFormat(courses) {
         }
 
         const sessions = [];
+        const fixedTimetable = timetable.replace(/&nbsp;/g, ' ').trim();
+        if (!fixedTimetable) {
+            return course; // 시간표가 비어있는 경우 바로 반환
+        }
         timetable.split('<br>').forEach(sessionStr => {
             const [dayTimePart, placePart] = sessionStr.split(' (');
             if (!dayTimePart || !placePart) return; // Skip if split failed

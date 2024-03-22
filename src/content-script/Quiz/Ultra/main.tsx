@@ -3,7 +3,6 @@
 import { createRoot } from "react-dom/client";
 import GPTButton from "../GPTButton";
 import React from "react";
-import { observeElementPresence } from "../../../content-script/SPA_Observer/SPA_Observer";
 import { PROD } from "../main";
 
 const waitForElm = () => {
