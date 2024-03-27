@@ -14,7 +14,6 @@ export const extractTodo = async (alarm:BB_alarm) => {
         deadline or start time of the schedule it should be date(converted by new Date(date).getTime() ) ) from the context. you just only reply with JSON\n 
         ex) {"title":"title", "date":"date"}\n`;
     prompt += trimText;
-    //alert(prompt);
     let res = await window.chrome.runtime.sendMessage({ action: "askgpt", prompt: prompt });
     if(res.error){
         alert(res.error);
@@ -34,7 +33,6 @@ export const askPrompt = async (text: string) => {
         alert(req.error);
         return;
     }
-    alert(req.content);
     let res = req.content;
     // trim the result
     //res.replace("choice", "").trim();

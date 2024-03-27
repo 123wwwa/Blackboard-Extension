@@ -19,10 +19,9 @@ import ImageButton from "./common/ImageButton";
 import { faBell } from "@fortawesome/free-regular-svg-icons";
 import { css } from "@emotion/react";
 import * as Switch from "@radix-ui/react-switch";
-import { reloadSetting, reloadUserEmail, selectAlarm, selectAlarmTime, selectApiKey, selectIsAutoSave, selectIsPreviousVersion, selectUserEmail, updateSetting } from "../../features/setting_reducer";
+import { selectAlarm, selectAlarmTime, selectApiKey, selectIsAutoSave, selectIsPreviousVersion, selectUsePreviousViewer, selectUserEmail, updateSetting } from "../../features/setting_reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { styles } from "./TodoMenu";
-import { on } from "events";
 
 export const SettingMenu = () => {
     const [showSettingMenu, setShowSettingMenu] = useState<boolean>(false);
@@ -32,6 +31,7 @@ export const SettingMenu = () => {
     const isAutoSave = useSelector(selectIsAutoSave);
     const apiKey = useSelector(selectApiKey);
     const isPreviousVersion = useSelector(selectIsPreviousVersion);
+    const usePreviousViewer = useSelector(selectUsePreviousViewer);
     const dispatch = useDispatch();
     const logoutOauth = () => {
         window.chrome.runtime.sendMessage({ action: "logout" }, (response) => {
@@ -55,6 +55,9 @@ export const SettingMenu = () => {
     }
     const onChangePreviousVersion = (e: boolean) => {
         updateSetting(dispatch, "isPreviousVersion", e);
+    }
+    const onChangeUsePreviousViewer = (e: boolean) => {
+        updateSetting(dispatch, "usePreviousViewer", e);
     }
     const getFormattedDate = (date: Date, time: string) => {
         let day = date.getDate().toString().padStart(2, '0');
@@ -152,7 +155,18 @@ export const SettingMenu = () => {
                         <Switch.Thumb css={styles.SwitchThumb} />
                     </Switch.Root>
                 </div>
-                <Popover.Divider />
+                <div css={styles.SwitchContainer}>
+                    <span css={styles.SettingMenuItemLabel}>이전 뷰어 사용</span>
+                    <Switch.Root
+                        id="isPrevVer-label"
+                        css={styles.SwitchRoot}
+                        checked={usePreviousViewer}
+                        onCheckedChange={onChangeUsePreviousViewer}
+                    >
+                        <Switch.Thumb css={styles.SwitchThumb} />
+                    </Switch.Root>
+                </div>
+                {/* <Popover.Divider />
                 <ImageButton
                     icon="public/icons/icon-mylab.png"
                     title="Mylab 일정 연동"
@@ -160,7 +174,7 @@ export const SettingMenu = () => {
                     imageProps={{ css: styles.ImageButtonImage }}
                     css={styles.ImageButton}
                     onClick={openMylab}
-                />
+                /> */}
             </Popover.Content>
         </Popover>
     )

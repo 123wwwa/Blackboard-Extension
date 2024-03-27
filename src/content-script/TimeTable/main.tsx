@@ -3,6 +3,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import TimeTable from './Timetable';
+import { observeElementPresence, observeUrlChange } from '../../content-script/SPA_Observer/SPA_Observer';
 // const body = document.querySelector('body')
 
 // const app = document.createElement('div')
@@ -44,7 +45,7 @@ const waitForElm = (selector: string) => {
   });
 }
 
-const renderTable = (containerSelector:string) => {
+const renderTable = (containerSelector: string) => {
   const container = document.querySelector(containerSelector);
   if (container) {
     const root = createRoot(container);
@@ -57,52 +58,47 @@ const renderTable = (containerSelector:string) => {
     console.log('React 컨테이너를 찾을 수 없습니다.');
   }
 }
-const observeElementPresence = (selector: string, callback: (exists: boolean) => void): void => {
-  const observerCallback: MutationCallback = (mutationsList, observer) => {
-    const elementExists = document.querySelector(selector) !== null;
-    callback(elementExists);
-  };
-  const observer = new MutationObserver(observerCallback);
 
-  const config = { childList: true, subtree: true };
-
-  observer.observe(document.body, config);
-
-  observerCallback([], observer);
-};
 const handleElementPresence = (exists: boolean): void => {
   if (exists) {
-    if(document.querySelector("#timeTable")) return;
+    if (document.querySelector("#timeTable")) return;
     renderTable('.module-section');
   }
 };
+const handleUrlChange = (url: string): void => {
+  if (window.location.href.includes("https://blackboard.unist.ac.kr/ultra/")) {
+    observeElementPresence('.module-wrapper', handleElementPresence);
+  } else {
+    waitForElm('div[id*="22_1termCourses"]').then(() => {
+      const container = document.getElementById('column2') as HTMLElement;
+      const root: any = createRoot(container!);
+      root.render(
+        <React.StrictMode>
+          <TimeTable />
+        </React.StrictMode>
+      );
+      const paneTabs = document.querySelector('#paneTabs') as HTMLElement;
+      // loop in streamNames
+      for (const [key, value] of Object.entries(streamNames)) {
+        //appendchild at paneTabs
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        // a inside li
+        a.href = value;
+        a.innerHTML = key;
+        li.appendChild(a);
+        paneTabs.appendChild(li);
 
+      }
+    });
+  }
+};
 //https://blackboard.unist.ac.kr/webapps/streamViewer/streamViewer?cmd=view&streamName=mygrades&globalNavigation=false
-if (window.location.href.includes("https://blackboard.unist.ac.kr/ultra/")) {
-  observeElementPresence('.module-wrapper', handleElementPresence);
-} else {
-  waitForElm('div[id*="22_1termCourses"]').then(() => {
-    const container = document.getElementById('column2') as HTMLElement;
-    const root: any = createRoot(container!);
-    root.render(
-      <React.StrictMode>
-        <TimeTable />
-      </React.StrictMode>
-    );
-    const paneTabs = document.querySelector('#paneTabs') as HTMLElement;
-    // loop in streamNames
-    for (const [key, value] of Object.entries(streamNames)) {
-      //appendchild at paneTabs
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      // a inside li
-      a.href = value;
-      a.innerHTML = key;
-      li.appendChild(a);
-      paneTabs.appendChild(li);
-
-    }
-  });
-}
+(() => {
+observeUrlChange((url: string) => {
+  console.log(url);
+  handleUrlChange(url);
+});
+})();
 
 
