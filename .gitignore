@@ -6,10 +6,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+src/content-script/Quiz/Ultra/main.tsx
+src/content-script/Quiz/GPTButton.tsx
 .env
 node_modules
 dist
-src/content-script/Quiz/*
 dist-ssr
 *.local
 *.zip

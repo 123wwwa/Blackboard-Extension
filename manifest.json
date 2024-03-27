@@ -70,7 +70,7 @@
         "https://blackboard.unist.ac.kr/ultra/institution-page"
       ],
       "js": [
-        "src/content-script/Injector/InterceptMembership/InterceptMembership.js"
+        "src/content-script/Injector/IntercepMembership/InterceptMembership.js"
       ]
     },
     {
@@ -100,7 +100,7 @@
     },
     {
       "matches": [
-        "https://blackboard.unist.ac.kr/ultra/*"
+        "https://blackboard.unist.ac.kr/ultra/courses/*"
       ],
       "js": [
         "src/content-script/Quiz/Ultra/main.tsx"
@@ -153,7 +153,7 @@
       "resources": [
         "src/content-script/LoadAssignment/loadfile-append.js",
         "src/content-script/Injector/CancelLogout/CancelLogout-append.js",
-        "src/content-script/Injector/InterceptMembership/InterceptMembership-append.js"
+        "src/content-script/Injector/IntercepMembership/InterceptMembership-append.js"
       ],
       "matches": [
         "https://blackboard.unist.ac.kr/*"

@@ -3,7 +3,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getChromeStorage, setChromeStorage } from "./handleChromeStoarge";
 import { AppDispatch } from "./store";
-
+import exp from "constants";
 
 export interface InitialSetting {
     isAlarmSet: boolean;
@@ -11,7 +11,6 @@ export interface InitialSetting {
     isLogin: boolean;
     isAutoSave: boolean;
     isPreviousVersion: boolean;
-    usePreviousViewer: boolean;
     userEmail: string;
     apiKey: string;
 }
@@ -21,7 +20,6 @@ export const defaultSetting: InitialSetting = {
     isLogin: false,
     isAutoSave: false,
     isPreviousVersion: false,
-    usePreviousViewer: false,
     userEmail: "",
     apiKey: ""
 };
@@ -29,16 +27,6 @@ export const settingSlice = createSlice({
     name: "settingSlice",
     initialState: defaultSetting,
     reducers: {
-        updateSettings: (state, action) => {
-            // update every settings in chrome storage
-            let settings = action.payload;
-            // loop in settings
-            for (let key in settings) {
-                // @ts-ignore
-                state[key] = settings[key];
-            }
-
-        },
         setAlarm: (state, action) => {
             state.isAlarmSet = action.payload;
         },
@@ -68,14 +56,11 @@ export const settingSlice = createSlice({
         },
         setIsPreviousVersion: (state, action) => {
             state.isPreviousVersion = action.payload;
-        },
-        setUsePreviousViewer: (state, action) => {
-            state.usePreviousViewer = action.payload;
         }
 
     }
 });
-export const { setAlarm, setAlarmTime, setUserEmail, setIsLogin, setApiKey, setIsAutoSave, setIsPreviousVersion, setUsePreviousViewer, updateSettings } = settingSlice.actions;
+export const { setAlarm, setAlarmTime, setUserEmail, setIsLogin, setApiKey, setIsAutoSave, setIsPreviousVersion } = settingSlice.actions;
 
 export const reloadSetting = async (dispatch: AppDispatch) => {
     let settings = await getChromeStorage("settings", "{}");
@@ -84,7 +69,11 @@ export const reloadSetting = async (dispatch: AppDispatch) => {
         setChromeStorage("settings", JSON.stringify(defaultSetting));
         settings = JSON.stringify(defaultSetting);
     } else {
-        dispatch(updateSettings(JSON.parse(settings)));
+        dispatch(setAlarm(JSON.parse(settings).isAlarmSet));
+        dispatch(setAlarmTime(JSON.parse(settings).alarmTime));
+        dispatch(setApiKey(JSON.parse(settings).apiKey));
+        dispatch(setIsAutoSave(JSON.parse(settings).isAutoSave));
+        dispatch(setIsPreviousVersion(JSON.parse(settings).isPreviousVersion));
     }
     settings = JSON.parse(settings);
 }
@@ -93,7 +82,11 @@ export const updateSetting = async (dispatch: AppDispatch, key: string, value: a
     settings = JSON.parse(settings);
     settings[key] = value;
     setChromeStorage("settings", JSON.stringify(settings));
-    dispatch(updateSettings(settings));
+    dispatch(setAlarm(settings.isAlarmSet));
+    dispatch(setAlarmTime(settings.alarmTime));
+    dispatch(setApiKey(settings.apiKey));
+    dispatch(setIsAutoSave(settings.isAutoSave));
+    dispatch(setIsPreviousVersion(settings.isPreviousVersion));
 }
 export const reloadUserEmail = async (dispatch: AppDispatch) => {
     const response = await window.chrome.runtime.sendMessage({ action: "getEmail" });
@@ -109,4 +102,3 @@ export const selectUserEmail = (state: any) => state.settingSlice.userEmail;
 export const selectApiKey = (state: any) => state.settingSlice.apiKey;
 export const selectIsPreviousVersion = (state: any) => state.settingSlice.isPreviousVersion;
 export const selectIsAutoSave = (state: any) => state.settingSlice.isAutoSave;
-export const selectUsePreviousViewer = (state: any) => state.settingSlice.usePreviousViewer;

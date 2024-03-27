@@ -6,6 +6,7 @@ import { Lecture, ShapedLecture, AssignmentList, Assignment, Todo, BB_alarm, Ali
 import { AppDispatch, RootState } from "./store";
 import { RawAlarm, convertBB_alarm } from "./rawAlarmHandler";
 import { getChromeStorage, setChromeStorage, APIwithcatch, setChromeStorageList, getChromeStorageList } from "./handleChromeStoarge";
+import { get } from "https";
 interface LectureList {
     [key: string]: Lecture;
 }
@@ -370,8 +371,7 @@ export const addTodoItem = (dispatch: AppDispatch) => async (todo: Todo) => {
 export const reloadBB_alarms = async (dispatch: AppDispatch) => {
     // check if last fetch is within 5 minutes
     let lastAlarmFetch = await getChromeStorage("lastAlarmFetch", "0");
-    let BB_alarms = await getChromeStorage("BB_alarms", "[]");
-    if (Date.now() - parseInt(lastAlarmFetch) < 300000 && BB_alarms.length > 0) {
+    if (Date.now() - parseInt(lastAlarmFetch) < 300000) {
         return;
     }
     const url = "https://blackboard.unist.ac.kr/webapps/streamViewer/streamViewer";
@@ -408,12 +408,13 @@ export const reloadBB_alarms = async (dispatch: AppDispatch) => {
     let rawAlarmList = JSON.parse(alarmListStr).sv_streamEntries;
     if (rawAlarmList.length === 0) {
         console.log("failed to fetch alarm");
+        let BB_alarms = await getChromeStorage("BB_alarms", "[]");
         dispatch(setBB_alarms(JSON.parse(BB_alarms)));
         return;
     }
-    let new_BB_alarms = await convertBB_alarm(alarmListStr);
-    dispatch(setBB_alarms(new_BB_alarms));
-    await setChromeStorage("BB_alarms", JSON.stringify(new_BB_alarms));
+    let BB_alarms = await convertBB_alarm(alarmListStr);
+    dispatch(setBB_alarms(BB_alarms));
+    await setChromeStorage("BB_alarms", JSON.stringify(BB_alarms));
     await setChromeStorage("lastAlarmFetch", Date.now().toString());
     
 };
