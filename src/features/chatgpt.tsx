@@ -34,7 +34,6 @@ export const askPrompt = async (text: string) => {
         alert(req.error);
         return;
     }
-    alert(req.content);
     let res = req.content;
     // trim the result
     //res.replace("choice", "").trim();

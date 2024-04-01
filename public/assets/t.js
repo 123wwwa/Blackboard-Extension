@@ -1,3 +1,4 @@
+const fs = require("fs");
 let courses = [
     {
         "tracks": "인공지능대학원",
@@ -6479,63 +6480,144 @@ let courses = [
         "subject": " "
     }
 ]
-function convertToTargetFormat(courses) {
 
-    function processTimetable(timetable) {
-        const dayMap = { '월': 0, '화': 1, '수': 2, '목': 3, '금': 4 };
 
-        function convertTimeToNumber(time) {
-            const [hour, minute] = time.split(':').map(Number);
-            return (hour * 12) + minute / 5;
-        }
 
-        const sessions = [];
-        const fixedTimetable = timetable.replace(/&nbsp;/g, ' ').trim();
-        if (!fixedTimetable) {
-            return course; // 시간표가 비어있는 경우 바로 반환
-        }
-        timetable.split('<br>').forEach(sessionStr => {
-            const [dayTimePart, placePart] = sessionStr.split(' (');
-            if (!dayTimePart || !placePart) return; // Skip if split failed
+let isSecondExist = false;
+let secondDay;
 
-            const place = placePart.slice(0, -1); // Remove closing parenthesis
-            const matches = dayTimePart.match(/([월화수목금](\s\s?[월화수목금])*) (\d{2}:\d{2})-(\d{2}:\d{2})/);
-            if (!matches) return; // Skip if pattern doesn't match
-
-            const [_, days, startTimeStr, endTimeStr] = matches;
-            console.log(days, startTimeStr, endTimeStr);
-            const startTime = convertTimeToNumber(startTimeStr);
-            const endTime = convertTimeToNumber(endTimeStr);
-            days.split(' ').forEach(dayChar => {
-                const day = dayMap[dayChar];
-                sessions.push({ day, start: startTime, end: endTime, place });
-            });
-        });
-
-        // Remove overlapping sessions
-        const uniqueSessions = sessions.reduce((acc, session) => {
-            const key = `${session.day}-${session.start}-${session.end}-${session.place}`;
-            acc[key] = session; // This ensures unique time-place combinations
-            return acc;
-        }, {});
-
-        return Object.values(uniqueSessions).reduce((acc, session, index) => {
-            acc[`timeplace${index}`] = session;
-            return acc;
-        }, {});
+function convertTime(timetable) {
+    if (!timetable) {
+        return ''; // 빈 문자열 반환
     }
 
-    return courses.reduce((acc, course) => {
-        const { code, name, prof, timetable } = course;
-        acc[code] = {
-            id: code, // Assuming `id` should be the same as `code`
-            name: name,
-            professor: prof,
-            time: timetable,
-            ...processTimetable(timetable)
-        };
-        return acc;
-    }, {});
+    // timetable에서 <br>을 기준으로 분리하여 시간을 추출하고 줄바꿈 제거
+    const times = timetable.split('<br>').map(time => time.replace(/\n/g, ''));
+
+    return times;
 }
-const result = convertToTargetFormat(courses);
-console.log(result);
+
+function convertTimePlace(time) {
+    const dayMap = {
+        '월': 0,
+        '화': 1,
+        '수': 2,
+        '목': 3,
+        '금': 4
+    };
+
+    if (!time) {
+        // time 변수가 존재하지 않으면 빈 배열을 반환
+        return [];
+    }
+
+    const parts = time.split(' '); // 공백을 기준으로 분리
+    const day = dayMap[parts[0]]; // 요일을 숫자로 변환
+
+    if (parts.length < 2) {
+        return [];
+    }
+
+    let timeSpace;
+
+    const days = ["월", "화", "수", "목", "금"];
+    if (days.includes(parts[1])) {
+        isSecondExist = true;
+        secondDay = dayMap[parts[1]];
+        timeSpace = parts[2];
+    }
+    else {
+        isSecondExist = false;
+        timeSpace = parts[1];
+    }
+
+    const timeInfo = timeSpace.split('-'); // 시작 시간과 종료 시간을 '-'로 분리
+    let start = 0;
+    let end = 0;
+    if (timeInfo.length === 2) {
+        const startTime = timeInfo[0].split(':'); // 시작 시간을 시와 분으로 분리
+        const endTime = timeInfo[1].split(':'); // 종료 시간을 시와 분으로 분리
+
+        // 시작 시간과 종료 시간을 정수로 변환하여 계산
+        start = parseInt(startTime[0]) * 12 + parseInt(startTime[1]) / 5;
+        end = parseInt(endTime[0]) * 12 + parseInt(endTime[1]) / 5;
+    }
+
+    let placeParts = parts.slice(2).join(' ').replace(/[()]/g, '').split(" ");
+    let place = placeParts.length > 1 ? placeParts[placeParts.length - 1] : placeParts[0];
+    // 추출한 정보를 배열로 반환
+    return [day, start, end, place];
+}
+
+
+
+function modifyJSONArray(jsonArray) {
+    const modifiedObject = {}; // 수정된 객체를 담을 변수
+
+    // 주어진 JSON 배열의 각 요소에 대해 반복
+    jsonArray.forEach((item) => {
+        const key = item['code']; // 키로 사용할 코드 가져오기
+        modifiedObject[key] = {}; // 새로운 객체 생성
+        modifiedObject[key]["id"] = item["code"].trim();
+        modifiedObject[key]["name"] = item["name"].trim();
+        modifiedObject[key]["professor"] = item["prof"].trim();
+        let array = "";
+        for (let i = 0; i < convertTime(item["timetable"]).length; i++) {
+            array += convertTime(item["timetable"])[i]
+
+            modifiedObject[key]["time"] = array;
+        }
+        let timeplaceList = [];
+        for (let i = 0; i < convertTime(item["timetable"]).length; i++) {
+            const timeplace = convertTimePlace(convertTime(item["timetable"])[i]);
+            // 시작시간이 일치하는 값이 있으면 제거
+            let isDuplicate = false;
+            for (let j = 0; j < timeplaceList.length; j++) {
+                if (timeplaceList[j][1] == timeplace[1] && timeplaceList[j][0] == timeplace[0]) {
+                    isDuplicate = true;
+                    break; // 중복을 찾았으므로 더 이상의 검사는 필요 없음
+                }
+            }
+            // 중복되지 않는 경우에만 추가
+            if (!isDuplicate) {
+                timeplaceList.push(timeplace);
+            }
+        }
+        for (let i = 0; i < timeplaceList.length; i++) {
+            let trimmedPlace = timeplaceList[i][3];
+            if (trimmedPlace && trimmedPlace.includes(" ")) {
+                // 공백을 기준으로 분리 후 마지막 부분 사용
+                trimmedPlace = trimmedPlace.split(" ").pop();
+            }
+            modifiedObject[key][`timeplace${i}`] = {
+                "day": timeplaceList[i][0],
+                "start": timeplaceList[i][1],
+                "end": timeplaceList[i][2],
+                "place": trimmedPlace // 수정된 장소 값 사용
+            };
+        }
+
+        if (isSecondExist == true) {
+            const timeplace = convertTimePlace(convertTime(item["timetable"])[convertTime(item["timetable"]).length - 1]); // 시간 및 장소 정보 추출
+            let trimedPlace = timeplace[3]
+            if(timeplace[3] && timeplace[3].includes(" ")){
+                trimedPlace = timeplace[3].split(" ")[1];
+            }
+            modifiedObject[key][`timeplace${timeplaceList.length}`]
+                = {
+                "day": secondDay,
+                "start": timeplace[1],
+                "end": timeplace[2],
+                "place": trimedPlace
+            };
+        }
+    });
+
+    return modifiedObject;
+}
+
+// 함수를 사용하여 수정된 객체 생성
+const modifiedArray = modifyJSONArray(courses);
+
+// 결과 확인
+console.log(modifiedArray);
