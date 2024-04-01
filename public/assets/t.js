@@ -6621,3 +6621,13 @@ const modifiedArray = modifyJSONArray(courses);
 
 // 결과 확인
 console.log(modifiedArray);
+const filePath = './data.json'; // 저장할 파일 경로와 이름
+const jsonData = JSON.stringify(modifiedArray, null, 2); // 객체를 JSON 문자열로 변환. null과 2는 포맷팅 옵션입니다.
+
+fs.writeFile(filePath, jsonData, (err) => {
+    if (err) {
+        console.error('An error occurred:', err);
+        return;
+    }
+    console.log('JSON data has been saved to', filePath);
+});

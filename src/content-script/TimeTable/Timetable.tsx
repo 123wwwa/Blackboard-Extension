@@ -32,89 +32,85 @@ const RenderTableDay = () => {
     }, []);
     useEffect(() => {
         dispatch(reloadBB_alarms as any);
-        if(window.location.href.includes("ultra")) {
+        if (window.location.href.includes("ultra")) {
             dispatch(getMemberShip as any);
-        }else{
+        } else {
             dispatch(getLectureList as any);
         }
     }, [dispatch]);
     const shuffleColor = () => {
         dispatch(getMemberShip as any);
     }
-    const dayList = ["월", "화", "수", "목", "금"];
-    const bgColordiv = document.getElementsByClassName("portlet clearfix")[1] as HTMLElement;
+    const dayList = ["월", "화", "수", "목", "금", "토"];
     const [gridBgColor, setGridBgColor] = useState(
         'rgba(0, 0, 0, 0)'
     );
+    if (!isLectureListLoaded) {
+        return <div>Loading...</div>
+    }
     return (
-
         <div
             style={{
                 display: "flex",
                 flexDirection: "row",
             }}
-            id = "timeTable"
+            id="timeTable"
         >
-            {isLectureListLoaded && (
-                <>
-                    <div>
+
+            <div>
+                <LectureGrid
+                    width="20px"
+                    height={HeadHeight.toString() + "px"}
+                    color={gridBgColor}
+                >
+                    <ActionIcon
+                        icon={faRefresh}
+                        onClick={shuffleColor}
+                    />
+                </LectureGrid>
+                {[...Array(12)].map((x, j) => {
+                    return (
                         <LectureGrid
                             width="20px"
+                            height={tableHeight.toString() + "px"}
+                            color={gridBgColor}
+                        >
+                            <span>{j + 9}</span>
+                        </LectureGrid>
+                    );
+                })}
+            </div>
+            {[...Array(dayList.length)].map((x, i) => {
+                return (
+                    <div>
+                        {shapedLectureList[i].map((item: any) => {
+                            return (
+                                <LectureCard
+                                    item={item}
+                                    tableHeight={tableHeight}
+                                    tableWidth={tableWidth}
+                                ></LectureCard>
+                            );
+                        })}
+                        <LectureGrid
+                            width={tableWidth.toString() + "px"}
                             height={HeadHeight.toString() + "px"}
                             color={gridBgColor}
                         >
-                            <ActionIcon
-                                icon={faRefresh}
-                                onClick={shuffleColor}
-                            />
+                            {dayList[i]}
                         </LectureGrid>
-                        {[...Array(12)].map((x, j) => {
+                        {[...Array(12)].map(() => {
                             return (
                                 <LectureGrid
-                                    width="20px"
+                                    width={tableWidth.toString() + "px"}
                                     height={tableHeight.toString() + "px"}
                                     color={gridBgColor}
-                                >
-                                    <span>{j + 9}</span>
-                                </LectureGrid>
+                                ></LectureGrid>
                             );
                         })}
                     </div>
-                    {[...Array(5)].map((x, i) => {
-                        return (
-                            <div>
-                                {shapedLectureList[i].map((item: any) => {
-                                    return (
-                                        <>
-                                            <LectureCard
-                                                item={item}
-                                                tableHeight={tableHeight}
-                                                tableWidth={tableWidth}
-                                            ></LectureCard>
-                                        </>
-                                    );
-                                })}
-                                <LectureGrid
-                                    width={tableWidth.toString() + "px"}
-                                    height={HeadHeight.toString() + "px"}
-                                    color={gridBgColor}
-                                >
-                                    {dayList[i]}
-                                </LectureGrid>
-                                {[...Array(12)].map(() => {
-                                    return (
-                                        <LectureGrid
-                                            width={tableWidth.toString() + "px"}
-                                            height={tableHeight.toString() + "px"}
-                                            color={gridBgColor}
-                                        ></LectureGrid>
-                                    );
-                                })}
-                            </div>
-                        );
-                    })}
-                </>
-            )}
+                );
+            })}
         </div>
     );
 };

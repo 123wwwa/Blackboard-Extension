@@ -22,7 +22,7 @@ export interface InitialState {
 }
 let initialState: InitialState = {
     lectureSlice: {},
-    shapedLectureList: [[], [], [], [], []],
+    shapedLectureList: [[], [], [], [], [], []],
     isLectureLoaded: false,
     todoList: [],
     deletedTodoList: [],
@@ -122,20 +122,20 @@ export const getMemberShip = async (dispatch: AppDispatch) => {
     setChromeStorage("lectureInfo", JSON.stringify(lectureList));
 };
 function shuffle<T>(array: T[]): T[] {
-    let currentIndex = array.length,  randomIndex;
+    let currentIndex = array.length, randomIndex;
 
     // While there remain elements to shuffle.
     while (currentIndex != 0) {
-  
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
+
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
     }
-  
+
     return array;
 };
 const convertMemberShip = async (alarmList: any): Promise<LectureList> => {
@@ -187,8 +187,8 @@ const convertMemberShip = async (alarmList: any): Promise<LectureList> => {
     return lectureList;
 
 }
-const getShapedLectureList = (dispatch:AppDispatch, lectureList: LectureList) => {
-    let l: ShapedLecture[][] = [[], [], [], [], []];
+const getShapedLectureList = (dispatch: AppDispatch, lectureList: LectureList) => {
+    let l: ShapedLecture[][] = [[], [], [], [], [], []];
     let i = 0;
     let key: string;
     for (key in lectureList) {
@@ -238,7 +238,7 @@ export const getLectureList = async (dispatch: AppDispatch) => {
 };
 export const getTodoList = async (dispatch: AppDispatch) => {
     let todoList: Todo[] = await getChromeStorageList("todoList");
-    
+
     dispatch(setTodoList(todoList));
     //postTodoList(todoList);
 };
@@ -247,7 +247,7 @@ export const resetTodoList = async (dispatch: AppDispatch) => {
     dispatch(reloadTodoList);
 };
 export const reloadTodoList = async (dispatch: AppDispatch) => {
-    let todoList:Todo[] = await getChromeStorageList("todoList");
+    let todoList: Todo[] = await getChromeStorageList("todoList");
     // splice todolist if linkcode is exist
     for (let key in todoList) {
         let todo: Todo = todoList[key];
@@ -307,7 +307,7 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
             color: lectureColor,
             linkcode: link,
         };
-        if(todo.color != "") {
+        if (todo.color != "") {
             todoList.push(todo);
         }
     }
@@ -339,7 +339,7 @@ export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
         deletedTodoList.push(todo);
         setChromeStorage("deletedTodoList", JSON.stringify(deletedTodoList));
     }
-    let todoList:Todo[] = await getChromeStorageList("todoList");
+    let todoList: Todo[] = await getChromeStorageList("todoList");
     let newTodoList: Todo[] = [];
     //delete todo
     for (let key in todoList) {
@@ -356,7 +356,7 @@ export const deleteTodo = (dispatch: AppDispatch) => async (todo: Todo) => {
 };
 export const addTodoItem = (dispatch: AppDispatch) => async (todo: Todo) => {
     // check if duplicated
-    let todoList: Todo[]  = await getChromeStorageList("todoList");
+    let todoList: Todo[] = await getChromeStorageList("todoList");
     for (let key in todoList) {
         let newTodo: Todo = todoList[key];
         if (todo.content == newTodo.content && todo.date == newTodo.date && todo.linkcode == newTodo.linkcode) {
@@ -416,7 +416,7 @@ export const reloadBB_alarms = async (dispatch: AppDispatch) => {
     dispatch(setBB_alarms(BB_alarms));
     await setChromeStorage("BB_alarms", JSON.stringify(BB_alarms));
     await setChromeStorage("lastAlarmFetch", Date.now().toString());
-    
+
 };
 export const postTodoList = async (todoList: Todo[]) => {
     window.chrome.runtime.sendMessage({ action: "updateTodo", todoList: todoList });
