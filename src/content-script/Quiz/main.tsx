@@ -3,7 +3,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import GPTButton from './GPTButton';
-export const PROD = true;
+export const PROD = false;
 const waitForElm = () => {
     return new Promise(resolve => {
         if (document.querySelector("#dataCollectionContainer")) {

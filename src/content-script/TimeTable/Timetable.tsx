@@ -56,7 +56,6 @@ const RenderTableDay = () => {
             }}
             id="timeTable"
         >
-
             <div>
                 <LectureGrid
                     width="20px"
