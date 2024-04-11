@@ -43,7 +43,11 @@ const postEvent = async (token, event) => {
 };
 const handleAskGpt = async (request, sendResponse) => {
     const apiKey = JSON.parse((await chrome.storage.local.get("settings")).settings).apiKey;
-    const prompt = request.prompt;
+    console.log(request.options)
+    const prompt = request.options.prompt;
+    const maxTokens = request.options.maxTokens;
+    const model = request.options.model;
+    const temperature = request.options.temperature;
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -52,9 +56,9 @@ const handleAskGpt = async (request, sendResponse) => {
         },
         body: JSON.stringify({
             messages: [{"role": "user", "content":prompt}],
-            max_tokens: 64,
-            model : "gpt-4",
-            temperature: 0.1,
+            max_tokens: maxTokens,
+            model : model,
+            temperature: temperature,
             n: 1,
         })
     });

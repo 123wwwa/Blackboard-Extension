@@ -76,7 +76,8 @@ const observeElementPresenceOnce = (callback: (exists: boolean) => void): void =
   };
 (async () => {
     observeUrlChange((url) => {
-        if (url.includes("assessment") && !PROD) {
+        if(PROD) return;
+        if (url.includes("assessment")) {
             const handleAfterElementPresence = (exist: boolean) => {
                 if (!exist) return;
                 // check if className is gpt-button

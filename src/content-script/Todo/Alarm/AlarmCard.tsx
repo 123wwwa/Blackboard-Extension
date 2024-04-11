@@ -7,8 +7,9 @@ import { getAnnouncementDisplayText } from "../../../util";
 import ActionIcon from "../common/ActionIcon";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { extractTodo } from "../../../features/chatgpt";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addTodoItem } from "../../../features/lecture_reducer";
+import { selectIsPreviousVersion } from "../../../features/setting_reducer";
 
 const Container = styled.div<{ color: string }>`
 	display: flex;
@@ -74,6 +75,7 @@ const Type = styled.div`
 const AlarmCard = (props: { alarm: BB_alarm }) => {
 	const [show, setShow] = useState(false);
 	const dispatch = useDispatch();
+	const isPreviousVersion = useSelector(selectIsPreviousVersion);
 	const handleMouseOver = () => {
 		setShow(true);
 	};
@@ -94,6 +96,7 @@ const AlarmCard = (props: { alarm: BB_alarm }) => {
 			addTodoItem(dispatch)(todo);
 		}
 	}
+	
 	return (
 		<Container
 			color={props.alarm.color}

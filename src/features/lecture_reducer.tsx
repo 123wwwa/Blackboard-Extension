@@ -283,6 +283,9 @@ export const reloadTodoList = async (dispatch: AppDispatch) => {
         }
     }
     for (let key in fetchData) {
+        if (fetchData[key]["calendarName"] == "Personal" || fetchData[key]["calendarName"].includes("ULP")) {
+            continue;
+        }
         let lectureColor: string = "";
         let korLectureName: string = "";
         Object.entries(resLecturelist).forEach(([key2, value]) => {

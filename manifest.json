@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "BlackBoard Extension",
-  "version": "1.2.2",
+  "version": "1.2.6",
   "action": {
     "default_title": "Popup",
     "default_popup": "index.html",
@@ -58,12 +58,21 @@
         "https://blackboard.unist.ac.kr/*"
       ],
       "js": [
-        "src/content-script/TimeTable/main.tsx",
         "src/content-script/Todo/main.tsx",
-        "src/content-script/Injector/CancelLogout/CancelLogout.js",
-        "src/content-script/Redirect/VersionRedirect.tsx"
+        "src/content-script/Injector/CancelLogout/CancelLogout.js"
       ],
       "media": []
+    },
+    {
+      "matches": [
+        "https://blackboard.unist.ac.kr/*"
+      ],
+      "js": [
+        "src/content-script/Redirect/VersionRedirect.tsx",
+        "src/content-script/Pdf/main.tsx",
+        "src/content-script/TimeTable/main.tsx"
+      ],
+      "run_at": "document_start"
     },
     {
       "matches": [
@@ -143,7 +152,8 @@
       "resources": [
         "public/assets/lectureInfo.json",
         "public/assets/HeXA_logo.png",
-        "public/icons/*.png"
+        "public/icons/*.png",
+        "public/pdf.worker.mjs"
       ],
       "matches": [
         "<all_urls>"

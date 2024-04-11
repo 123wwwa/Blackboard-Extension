@@ -14,6 +14,7 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import AssignmentLayout from "./Assignment/AssignmentLayout";
 import AlarmLayout from "./Alarm/AlarmLayout";
 import ActionIcon from "./common/ActionIcon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type Props = {
 	show: boolean;
@@ -145,13 +146,12 @@ function TodoContainer({ show, setShow, position }: Props) {
 						/>
 					) : (
 						<button css={ImageButtonStyles.Container}>
-							<ActionIcon icon={faSpinner} className="loading" />
+							<FontAwesomeIcon icon={faSpinner} spin />
 						</button>
 					)}
 					<div className="content-tabs">
 						{TodoTabs.map((tabName) => (
 							<TabListText
-
 								key={tabName}
 								className={`${tab === tabName ? "active" : ""}`}
 								onClick={() => setTab(tabName)}

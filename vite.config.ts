@@ -6,6 +6,9 @@ import manifest from './manifest.json'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    target: 'es2022',
+  },
   plugins: [
     react({
       jsxImportSource: "@emotion/react",
@@ -18,6 +21,7 @@ export default defineConfig({
         icon: true,
         // ...svgr options (https://react-svgr.com/docs/options/)
       },
+      
     }),
     // Build Chrome Extension
     crx({ manifest }),
