@@ -36,6 +36,7 @@ const PdfContainer = styled.div`
         width: 100%;
         height: 100%;
         overflow: auto;
+        overflow-x: hidden;
         .flex-wrapper {
             display: flex;
             flex-direction: column;

@@ -41,6 +41,7 @@ export const SummaryTab = styled.div`
         width: 100%;
         height: 100%;
         overflow: auto;
+        overflow-x: hidden;
         .summary-container {
             display: flex;
             flex-direction: column;

@@ -70,9 +70,17 @@
       "js": [
         "src/content-script/Redirect/VersionRedirect.tsx",
         "src/content-script/Pdf/main.tsx",
-        "src/content-script/TimeTable/main.tsx"
+        "src/content-script/TimeTable/ultra/main.tsx"
       ],
       "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://blackboard.unist.ac.kr/webapps/portal/execute/tabs/tabAction?tab_tab_group_id=_2_1"
+      ],
+      "js": [
+        "src/content-script/TimeTable/main.tsx"
+      ]
     },
     {
       "matches": [

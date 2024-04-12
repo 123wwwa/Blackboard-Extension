@@ -8,7 +8,6 @@ import React from "react";
 import { pdfToText, pdfToTextList } from "../../features/chatgpt";
 import { PdfContainer } from "./PdfGpt/PdfContainer";
 observeUrlChange(async(url) => {
-    console.log("pdf content script");
     const urlPattern = /https:\/\/blackboard\.unist\.ac\.kr\/ultra\/courses\/(_\d+_\d+)\/outline\/file\/(_\d+_\d+)/;
     if (urlPattern.test(url)) {
         await waitForElement('iframe[src*="bbcswebdav"]');
@@ -31,7 +30,8 @@ observeUrlChange(async(url) => {
         pageTitleContainer.remove();
         const pageHeader = document.querySelector('div[class^="panel-header"]') as HTMLElement;
         pageHeader.style.height = 'auto';
-
+        const navigatorContainer = document.querySelector('.content-navigator-content-display') as HTMLElement;
+        if(navigatorContainer) navigatorContainer.remove();
         const iframe = document.querySelector('iframe[src*="bbcswebdav"]') as HTMLIFrameElement;
         if(!iframe) return;
         let iframeUrl = iframe.src.split("?")[0];

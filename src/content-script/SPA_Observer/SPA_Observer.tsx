@@ -18,17 +18,23 @@ export const waitForElement = (selector:string) => {
 
 export const observeUrlChange = (callback: (url: string) => void): void => {
   let previousUrl = window.location.href;
-
-  // 페이지 로드 또는 새로고침 시 현재 URL을 callback으로 전달하여 호출
-  // window.addEventListener('DOMContentLoaded', () => {
-  //   previousUrl = window.location.href;
-  //   callback(previousUrl);
-  // });
-  window.addEventListener('load', () => {
-    previousUrl = window.location.href;
-    callback(previousUrl);
+  let isCallbackCalled = false;
+  const triggerCallbackIfNotCalled = () => {
+    if (!isCallbackCalled) {
+      callback(window.location.href);
+      isCallbackCalled = true; // Callback이 호출되었음을 표시
+    }
+  };
+  window.addEventListener('load', triggerCallbackIfNotCalled);
+  window.addEventListener('DOMContentLoaded', triggerCallbackIfNotCalled);
+  window.addEventListener('popstate', () => {
+    const currentUrl = window.location.href;
+    if (currentUrl !== previousUrl) {
+      previousUrl = currentUrl;
+      callback(currentUrl);
+    }
   });
-  // URL 변경 감지 콜백
+
   const observerCallback = () => {
     const url = window.location.href;
     if (url !== previousUrl) {
@@ -40,5 +46,7 @@ export const observeUrlChange = (callback: (url: string) => void): void => {
   // MutationObserver 설정
   const observer = new MutationObserver(observerCallback);
   const config = { childList: true, subtree: true };
+
+  // document.body is now guaranteed to be available
   observer.observe(document.body, config);
 }
