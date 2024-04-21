@@ -17,7 +17,7 @@ observeUrlChange(async(url) => {
         const target = document.querySelector("#content-tab-panel-content") as HTMLElement;
         target.style.display = "flex";
         target.style.flexDirection = "row";
-        const rootContainer = document.querySelector('div[data-base-state-name="base.recentActivity.peek.course.outline.peek"]') as HTMLElement;
+        const rootContainer = document.querySelector('div[data-base-state-name*="base."]') as HTMLElement;
         rootContainer.style.maxWidth = "100%";
         const closeBtn = document.querySelector('button[analytics-id="bb-close.course.content.file"]') as HTMLElement;
         closeBtn.style.marginLeft = "20px";

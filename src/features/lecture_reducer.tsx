@@ -216,18 +216,17 @@ const updateFileInfo = async (lectureList: LectureList) => {
     if (Object.keys(assignmentList).length == 0) {
         console.error("fileInfo is empty");
         return lectureList;
-    } else {
-        Object.entries(assignmentList).forEach(([key1, value1]) => {
-            let course_id: string = key1.split("-")[1];
-            Object.entries(lectureList).forEach(([key2, value]) => {
-                let lecture: any = value;
-                if (lecture.id == course_id) {
-                    lectureList[key2].assignment.push(value1 as Assignment);
-                }
-            });
-        });
-        return lectureList;
     }
+    Object.entries(assignmentList).forEach(([key1, value1]) => {
+        let course_id: string = key1.split("-")[1];
+        Object.entries(lectureList).forEach(([key2, value]) => {
+            let lecture: any = value;
+            if (lecture.id == course_id) {
+                lectureList[key2].assignment.push(value1 as Assignment);
+            }
+        });
+    });
+    return lectureList;
 }
 export const getLectureList = async (dispatch: AppDispatch) => {
     let lectureInfoStr = await getChromeStorage("lectureInfo", "{}");

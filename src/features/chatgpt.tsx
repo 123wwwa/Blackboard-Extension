@@ -5,10 +5,11 @@ import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import { BB_alarm } from "type";
 GlobalWorkerOptions.workerSrc = window.chrome.runtime.getURL('public/pdf.worker.mjs')
 type AskGptOptions = {
-    prompt: string;
+    messages?: any[];
     max_tokens: number;
     model: string;
-    temperature: number;
+    temperature?: number;
+    n?: number;
 }
 export const extractTodo = async (alarm: BB_alarm) => {
     let text = alarm.detail;
@@ -23,7 +24,7 @@ export const extractTodo = async (alarm: BB_alarm) => {
     prompt += trimText;
     //alert(prompt);
     let options: AskGptOptions = {
-        prompt: prompt,
+        messages: [{"role": "user", "content":prompt}],
         max_tokens: 100,
         model: "gpt-4",
         temperature: 0.1
@@ -100,10 +101,11 @@ export const summarizePDF = async (url: string) => {
     // prompt += `####핵심: {강의 내용의 핵심 문장 제공을 ${numPages*20}자 이내로 요약하라}`;
     prompt += `${text}`;
     let options: AskGptOptions = {
-        prompt: prompt,
-        max_tokens: 100*numPages,
-        model: "gpt-3.5-turbo",
-        temperature: 0.1
+        messages: [{"role": "user", "content":prompt}],
+        model: "gpt-4",
+        temperature: 0.7,
+        max_tokens: 1024,
+        n:1
     }
     let message = {
         action: "askgpt",
@@ -118,7 +120,7 @@ export const summarizePDF = async (url: string) => {
 }
 export const askPrompt = async (text: string) => {
     let options: AskGptOptions = {
-        prompt: text,
+        messages: [{"role": "user", "content":text}],
         max_tokens: 10,
         model: "gpt-4",
         temperature: 0.1

@@ -44,6 +44,7 @@ const postEvent = async (token, event) => {
 const handleAskGpt = async (request, sendResponse) => {
     const apiKey = JSON.parse((await chrome.storage.local.get("settings")).settings).apiKey;
     console.log(request.options)
+    const options = request.options;
     const prompt = request.options.prompt;
     const maxTokens = request.options.maxTokens;
     const model = request.options.model;
@@ -54,13 +55,7 @@ const handleAskGpt = async (request, sendResponse) => {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${apiKey}` // replace with your key
         },
-        body: JSON.stringify({
-            messages: [{"role": "user", "content":prompt}],
-            max_tokens: maxTokens,
-            model : model,
-            temperature: temperature,
-            n: 1,
-        })
+        body: JSON.stringify(options)
     });
     const data = await response.json();
     // handle error message
