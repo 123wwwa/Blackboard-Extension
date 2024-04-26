@@ -1,54 +1,65 @@
 {
-  "name": "react-content-script",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
+  "name": "plasmo-migrate",
+  "displayName": "Plasmo migrate",
+  "version": "0.0.1",
+  "description": "BlackBoard-Extension",
+  "author": "123wwwa",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "plasmo dev",
+    "build": "plasmo build",
+    "package": "plasmo package"
   },
   "dependencies": {
-    "@emotion/babel-plugin": "^11.10.6",
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.6",
-    "@fortawesome/fontawesome-svg-core": "^6.4.0",
-    "@fortawesome/free-regular-svg-icons": "^6.4.0",
-    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@radix-ui/react-checkbox": "^1.0.3",
-    "@radix-ui/react-popover": "1.0.5",
+    "@plasmohq/messaging": "^0.6.2",
+    "@plasmohq/storage": "^1.10.0",
+    "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-switch": "^1.0.3",
-    "@reduxjs/toolkit": "^1.9.5",
-    "@types/mime-types": "^2.1.1",
-    "@types/pdfjs-dist": "^2.10.378",
-    "@types/react-color": "^3.0.6",
-    "@types/react-redux": "^7.1.25",
-    "emotion-normalize": "^11.0.1",
+    "date-fns": "^3.6.0",
+    "emotions": "^0.0.1",
     "jszip": "^3.10.1",
-    "jszip-utils": "^0.1.0",
-    "mime-types": "^2.1.35",
-    "moment": "^2.29.4",
-    "pdfjs-dist": "^4.0.379",
-    "react": "^18.2.0",
+    "locale": "link:date-fns/esm/locale",
+    "moment": "^2.30.1",
+    "pdfjs-dist": "^4.1.392",
+    "plasmo": "0.85.2",
+    "react": "18.2.0",
     "react-color": "^2.19.3",
-    "react-datepicker": "^4.11.0",
-    "react-dom": "^18.2.0",
-    "react-markdown": "^9.0.1",
-    "react-redux": "^8.0.5",
-    "url": "^0.11.0",
-    "web-vitals": "^3.0.3"
+    "react-datepicker": "^6.9.0",
+    "react-dom": "18.2.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@crxjs/vite-plugin": "^1.0.14",
-    "@types/chrome": "^0.0.197",
-    "@types/node": "^18.8.3",
-    "@types/react": "^18.0.17",
-    "@types/react-datepicker": "^4.10.0",
-    "@types/react-dom": "^18.0.6",
-    "@vitejs/plugin-react": "^2.1.0",
-    "typescript": "^4.6.4",
-    "vite": "^3.1.0",
-    "vite-plugin-svgr": "^2.2.1"
+    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
+    "@types/chrome": "0.0.258",
+    "@types/node": "20.11.5",
+    "@types/react": "18.2.48",
+    "@types/react-dom": "18.2.18",
+    "prettier": "3.2.4",
+    "typescript": "5.3.3"
+  },
+  "manifest": {
+    "host_permissions": [
+      "https://*/*"
+    ],
+    "permissions": [
+      "scripting"
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "assets/lectureInfo.json",
+          "assets/HeXA_logo.png",
+          "icons/*.png",
+          "pdf.worker.mjs"
+        ],
+        "matches": [
+          "<all_urls>"
+        ]
+      }
+    ]
   }
 }
