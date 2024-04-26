@@ -5,9 +5,11 @@
   ],
   "include": [
     ".plasmo/index.d.ts",
+    ".emotion.d.ts",
     "./**/*.ts",
     "./**/*.tsx",
-    "contents/injectMembership.js"
+    "**/*.tsx",
+    "contents/timetable/main.tsx",
   ],
   "compilerOptions": {
     "paths": {

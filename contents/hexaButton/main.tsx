@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { waitForElement } from "~shared/observer";
-import GlobalStyle, { theme } from "./global";
+import GlobalStyle, { theme } from "~contents/hexaButton/global";
 import HexaButton from "~components/hexaButton/HexaButton";
 import type { PlasmoCSConfig } from "plasmo";
 import { ThemeProvider } from "@emotion/react";

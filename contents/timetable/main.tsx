@@ -5,7 +5,7 @@ import TimeTable from "~components/timetable/TimeTable";
 import { observeUrlChange, waitForElement } from "~shared/observer"
 
 export const config: PlasmoCSConfig = {
-    matches: ["https://blackboard.unist.ac.k/*"],
+    matches: ["https://blackboard.unist.ac.kr/*"],
     run_at: "document_start",
 }
 const renderTable = (containerSelector: string) => {

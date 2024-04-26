@@ -35,6 +35,7 @@ dist/
 # plasmo - https://www.plasmo.com
 .plasmo
 .idea
+.vscode
 # bpp - http://bpp.browser.market/
 keys.json
 
