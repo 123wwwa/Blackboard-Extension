@@ -3,11 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-import type { BB_alarm } from "~shared/types/blackboardTypes";
 import { updateAlarmList } from "~features/events/alarms/alarmListUtils";
 import ActionIcon from "~components/common/ActionIcon";
 import type { AlarmFilter } from "~components/hexaButton/alarm/alramFilter";
 import AlarmCard from "~components/hexaButton/alarm/AlarmCard";
+import useLectureStore from "~shared/stores/lectureStore";
 const AssignmentListWrapper = styled.article`
 	width: 100%;
 	height: 330px;
@@ -30,20 +30,20 @@ const AssignmentListWrapper = styled.article`
 `;
 type Props = {
 	filter: AlarmFilter;
-	BB_alarmList: BB_alarm[];
 };
-const AlarmList = ({ filter, BB_alarmList }: Props) => {
+const AlarmList = ({ filter }: Props) => {
 	const [firstLoad, setFirstLoad] = useState<boolean>(false);
+	const { alarmList } = useLectureStore();
 	let refreshAlarmList = () => {
 		updateAlarmList();
 	};
 	const filteredBB_alarmList = useMemo(() => {
-		return BB_alarmList.filter((alarm) => {
+		return alarmList.filter((alarm) => {
 			let isInDateRange = alarm.date >= filter.startDate && alarm.date <= filter.endDate;
 			let isCourseNameMatched = filter.lecture.includes(alarm.course_name);
 			return filter.type.includes(alarm.type) && isInDateRange && isCourseNameMatched;
 		});
-	}, [filter, BB_alarmList]);
+	}, [filter, alarmList]);
 	useEffect(() => {
 		setTimeout(() => {
 			if (firstLoad) {
@@ -52,12 +52,10 @@ const AlarmList = ({ filter, BB_alarmList }: Props) => {
 			updateAlarmList();
 			setFirstLoad(true);
 		}, 500);
-	}, []);
-	if(!firstLoad) {
+	}, [alarmList])
+	if (!firstLoad) {
 		return (<AssignmentListWrapper>
-			<div>
-				<div>로딩중입니다.</div>
-			</div>
+			<div>로딩중입니다.</div>
 		</AssignmentListWrapper>)
 	}
 	if (filteredBB_alarmList.length == 0) {
@@ -76,7 +74,7 @@ const AlarmList = ({ filter, BB_alarmList }: Props) => {
 				})
 			).map(([key, value]) => {
 				return (
-					<div>
+					<div key = {key}>
 						<AlarmCard alarm={value} />
 					</div>
 				);

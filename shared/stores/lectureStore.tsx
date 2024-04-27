@@ -49,7 +49,7 @@ const store = (set, get) => ({
     addTodo: (todo: Todo) => set(state => ({ todoList: [...state.todoList, todo] })),
     addDeletedTodo: (todo: Todo) => set(state => ({ deletedTodoList: [...state.deletedTodoList, todo] })),
     resetDeletedTodo: () => set({ deletedTodoList: [] }),
-    setAlarmList: (alarms: BB_alarm[]) => set({ bb_alarmList: alarms }),
+    setAlarmList: (alarms: BB_alarm[]) => set({ alarmList: alarms }),
 });
 
 // Define your store with or without devtools

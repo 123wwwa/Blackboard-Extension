@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { AlarmFilter } from "~components/hexaButton/alarm/alramFilter";
 import useLectureStore from "~shared/stores/lectureStore";
 import Popover from "~components/common/Popover";
@@ -60,12 +60,12 @@ type Props = {
 };
 const AlarmFooter = ({ setFilter, filter }: Props) => {
 	const {lectureObject, alarmList} = useLectureStore();
-	const lectureNames = Array.from(new Set(Object.entries(lectureObject).map(
-		([_, lecture]) => lecture.name
-	)));
+	const lectureNames = useMemo(() => {
+		return Array.from(new Set(Object.entries(lectureObject).map(([_, lecture]) => lecture.name)));
+	}, [lectureObject]); 
 	useEffect(() => {
 		setFilter((prev) => ({ ...prev, lecture: lectureNames }));
-	}, []);
+	}, [lectureNames]);
 	const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 	const [showSubjects, setShowSubjects] = useState<boolean>(false);
 	const [showAnnouncements, setShowAnnouncements] = useState<boolean>(false);
@@ -87,7 +87,7 @@ const AlarmFooter = ({ setFilter, filter }: Props) => {
 		setFilter((prev) => ({ ...filter, type: [...new Set([...filter.type, type])] }));
 	}
 	return (
-		<div css={styles.Wrapper}>
+		<footer css={styles.Wrapper}>
 			<Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
 				<Popover.Target>
 					<div
@@ -112,7 +112,10 @@ const AlarmFooter = ({ setFilter, filter }: Props) => {
 				<Popover.Content css={css({ minWidth: "135px" })}>
 					{lectureNames.map((lecture) => {
 						const isChecked = filter.lecture.includes(lecture);
-						return(<Popover.Item css={css({ fontSize: "12px", background: isChecked?"#E9E9E9":"#FFFFFF"})} onClick={setLectureFilter.bind(null, lecture)}
+						return(<Popover.Item 
+							css={css({ fontSize: "12px", background: isChecked?"#E9E9E9":"#FFFFFF"})} 
+							onClick={setLectureFilter.bind(null, lecture)}
+							key = {lecture}
 						>
 							{lecture}
 						</Popover.Item>
@@ -133,13 +136,16 @@ const AlarmFooter = ({ setFilter, filter }: Props) => {
 				<Popover.Content css={css({ minWidth: "125px" })}>
 					{alarmTypes.map((ann) => {
 						const isChecked = filter.type.includes(ann);
-						return(<Popover.Item css={css({ fontSize: "12px", background: isChecked?"#E9E9E9":"#FFFFFF" })} onClick={setTypeFilter.bind(null, ann)}
+						return(<Popover.Item 
+							css={css({ fontSize: "12px", background: isChecked?"#E9E9E9":"#FFFFFF" })} 
+							onClick={setTypeFilter.bind(null, ann)}
+							key = {ann}
 						>{ann}
 						</Popover.Item>)
 					})}
 				</Popover.Content>
 			</Popover>
-		</div>
+		</footer>
 	);
 }
 

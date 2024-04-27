@@ -57,8 +57,10 @@ function TodoList({ todoList }: Props) {
 	}, []);
 	return (
 		<TodoListWrapper>
-			{alignWithList?.map((todo) => {
-				return <TodoCard item={todo} time={time} />;
+			{alignWithList?.map((todo, index) => {
+				return (<div key={index}>
+					<TodoCard item={todo} time={time} />
+				</div>);
 			})}
 		</TodoListWrapper>
 	);

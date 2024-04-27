@@ -46,7 +46,7 @@ const RenderTableDay = () => {
                 {[...Array(12)].map((x, j) => {
                     return (
                         <LectureGrid
-                            key={j}
+                            key={`day-${x}-hour-${j}`} 
                             width="20px"
                             height={tableHeight.toString() + "px"}
                             color={gridBgColor}
@@ -58,15 +58,16 @@ const RenderTableDay = () => {
             </div>
             {[...Array(dayList.length)].map((x, i) => {
                 return (
-                    <div>
-                        {shapedLectureList[i].map((item: any) => {
+                    <div key={`day${i}`}>
+                        {shapedLectureList[i].map((item: any, index: number) => {
                             return (
+                                <div key={item.id+""+index}>
                                 <LectureCard
-                                    key={item.id}
                                     item={item}
                                     tableHeight={tableHeight}
                                     tableWidth={tableWidth}
                                 ></LectureCard>
+                                </div>
                             );
                         })}
                         <LectureGrid
@@ -80,7 +81,7 @@ const RenderTableDay = () => {
                         {[...Array(12)].map((x, j) => {
                             return (
                                 <LectureGrid
-                                    key={j}
+                                    key={`day-${i}-hour-${j}`}
                                     width={tableWidth.toString() + "px"}
                                     height={tableHeight.toString() + "px"}
                                     color={gridBgColor}

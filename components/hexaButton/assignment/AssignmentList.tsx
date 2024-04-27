@@ -8,7 +8,7 @@ import useLectureStore from "~shared/stores/lectureStore";
 import { setCheckedFiles } from "~shared/stores/userStateStore";
 import { loadLectureList } from "~features/events/lectureListUtils";
 
-const ListContainer = styled.article`
+const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -22,14 +22,24 @@ const ListContainer = styled.article`
   }
 `;
 
-const RootContainer = styled.div`
+const RootContainer = styled.article`
   display: flex;
   flex-direction: column;
   padding: 5px 14px;
   width: 100%;
   height: 330px;
 `;
-
+const GoBackArea = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  &:hover {
+    background-color: "#F5F5F5";
+  }
+`;
 const MemoizedAssignmentCard = memo(AssignmentCard);
 const MemoizedDownloadCard = memo(DownloadCard);
 
@@ -41,10 +51,9 @@ function AssignmentList({ activeLectureId, setActiveLectureId }) {
     setCheckedFiles([]);
   }, [setActiveLectureId]);
 
-  useEffect(() => {
-    loadLectureList();
-  }, []);
-
+  // useEffect(() => {
+  //   loadLectureList();
+  // }, []);
   const sortedAssignments = useCallback(() => {
     if (activeLectureId && lectureObject[activeLectureId].assignment) {
       return [...lectureObject[activeLectureId].assignment].sort((a, b) => parseInt(b.Due_Date) - parseInt(a.Due_Date));
@@ -55,10 +64,10 @@ function AssignmentList({ activeLectureId, setActiveLectureId }) {
   return (
     <RootContainer>
       {activeLectureId && (
-        <header onClick={handleGoBack}>
-          <FontAwesomeIcon icon={faArrowLeft} />
+        <GoBackArea onClick={handleGoBack}>
+          <FontAwesomeIcon icon={faArrowLeft}/>
           {lectureObject[activeLectureId].name}
-        </header>
+        </GoBackArea>
       )}
       <ListContainer>
         {!activeLectureId ? (

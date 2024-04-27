@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useLectureStore from "~shared/stores/lectureStore";
 import { postTodoList, updateTodoList } from "~features/events/todoListUtils";
 import ImageButton, { styles as ImageButtonStyles }  from "~components/common/ImageButton";
-import AssignmentLayout from "./assignment/Assignment/AssignmentLayout";
+import AssignmentLayout from "./assignment/AssignmentLayout";
 import AlarmLayout from "./alarm/AlarmLayout";
 import { loadLectureList, updateLectureList } from "~features/events/lectureListUtils";
 
@@ -129,7 +129,6 @@ function MainContainer({ show, setShow, position }: Props) {
 				return <TodoLayout />;
 		}
 	};
-
 	return (
 		<Container show={show} position={position}>
 			<header>
