@@ -5,7 +5,7 @@ import useLectureStore from "~shared/stores/lectureStore";
 import LectureGrid from "./LectureGrid";
 import LectureCard from "./LectureCard";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
-const RenderTableDay = () => {
+const RenderTable = () => {
     const { isLectureLoaded, shapedLectureList } = useLectureStore(state => state);
     const [tableHeight, setTableHeight] = useState<number>(40);
     const [tableWidth, setTableWidth] = useState<number>(70); // aspect ratio 16:9
@@ -104,7 +104,7 @@ const TimeTable = () => {
                 marginLeft: "5px",
             }}
         >
-            <RenderTableDay />
+            <RenderTable/>
         </div>
     );
 };
