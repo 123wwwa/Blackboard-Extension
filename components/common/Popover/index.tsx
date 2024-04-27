@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import * as RadixPopover from "@radix-ui/react-popover";
 import { css, keyframes } from "@emotion/react";
 import { type HTMLAttributes, type ReactNode, useEffect, useState } from "react";

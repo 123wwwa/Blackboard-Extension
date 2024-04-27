@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import React, { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
 import { css } from "@emotion/react";
 
@@ -137,6 +138,7 @@ function DragButton({ setShow, position, setPosition }: Props) {
       ref={buttonRef}
       css={styles.Wrapper}
       onClick={handleClick}
+      id="hexa-drag-button"
     >
       <img src={hexaLogo} css={styles.Img} alt="Hexa Logo" />
     </button>

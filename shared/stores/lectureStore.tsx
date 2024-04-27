@@ -1,10 +1,10 @@
 import create from 'zustand'
 import { devtools } from 'zustand/middleware'
-import type { Assignment, BB_alarm, lectureObject, ShapedLecture, Todo } from '~shared/types/blackboardTypes';
+import type { Assignment, BB_alarm, LectureObject, ShapedLecture, Todo } from '~shared/types/blackboardTypes';
 
 // Define your store without destructuring set and get directly
 export interface StoreState {
-    lectureObject: lectureObject;
+    lectureObject: LectureObject;
     shapedLectureList: ShapedLecture[][];
     isLectureLoaded: boolean;
     todoList: Todo[];
@@ -12,7 +12,7 @@ export interface StoreState {
     alarmList: BB_alarm[];
 }
 export interface StoreActions {
-    setLectureObject: (lectureObject: lectureObject) => void;
+    setLectureObject: (lectureObject: LectureObject) => void;
     setShapedLectureList: (shapedLectureList: ShapedLecture[][]) => void;
     setLectureAssignment: (lectureID: string, assignment: Assignment) => void;
     setTodoList: (todoList: Todo[]) => void;
@@ -29,7 +29,7 @@ const store = (set, get) => ({
     todoList: [],
     deletedTodoList: [],
     alarmList: [],
-    setLectureObject: (lectureObject: lectureObject) => set({ lectureObject: lectureObject }),
+    setLectureObject: (lectureObject: LectureObject) => set({ lectureObject: lectureObject }),
     setShapedLectureList: (shapedLectureList: ShapedLecture[][]) => set(state => ({ shapedLectureList, isLectureLoaded: true })),
     setLectureAssignment: (lectureID: string, assignment: Assignment) => {
         const lecture = get().lectureObject[lectureID];

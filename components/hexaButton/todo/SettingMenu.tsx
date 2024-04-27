@@ -1,4 +1,4 @@
-
+/** @jsxImportSource @emotion/react */
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,7 +14,6 @@ import { sendToBackground } from "@plasmohq/messaging";
 import { updateSetting } from "~features/events/settingUtils";
 import Popover from "~components/common/Popover";
 import ActionIcon from "~components/common/ActionIcon";
-import { css } from "@emotion/react";
 import { styles } from "./TodoMenu";
 import ImageButton from "~components/common/ImageButton";
 
@@ -74,13 +73,13 @@ export const SettingMenu = () => {
             <Popover.Target>
                 <ActionIcon icon={faGear} />
             </Popover.Target>
-            <Popover.Content css={css(styles.SettingMenu)}>
+            <Popover.Content css={styles.SettingMenu}>
                 <p>구글 캘린더 설정</p>
                 <Popover.Divider />
                 <Popover.Item
                     leftIcon={<FontAwesomeIcon icon={faUserCircle} opacity="0.4" />}
                 >
-                    <span css={css(styles.SettingMenuItemLabel)}>{userEmail}</span>
+                    <span css={styles.SettingMenuItemLabel}>{userEmail}</span>
                 </Popover.Item>
                 <Popover.Item
                     leftIcon={<FontAwesomeIcon icon={faPowerOff} opacity="0.4" />}
@@ -126,7 +125,7 @@ export const SettingMenu = () => {
                 <Popover.Divider />
                 <div>
                     <ImageButton
-                        icon="public/icons/ChatGPT_logo.svg.png"
+                        icon="assets/icons/ChatGPT_logo.png"
                         title="Chatgpt API key"
                         labelProps={{ css: styles.ImageButtonLabel }}
                         imageProps={{ css: styles.ImageButtonImage }}
@@ -161,7 +160,7 @@ export const SettingMenu = () => {
                 </div>
                 {/* <Popover.Divider />
                 <ImageButton
-                    icon="public/icons/icon-mylab.png"
+                    icon="assets/icons/icon-mylab.png"
                     title="Mylab 일정 연동"
                     labelProps={{ css: styles.ImageButtonLabel }}
                     imageProps={{ css: styles.ImageButtonImage }}

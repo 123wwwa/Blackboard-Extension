@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -129,7 +130,7 @@ const AlarmFooter = ({ setFilter, filter }: Props) => {
 						<p>타입 선택</p>
 					</div>
 				</Popover.Target>
-				<Popover.Content css={[css({ minWidth: "125px" })]}>
+				<Popover.Content css={css({ minWidth: "125px" })}>
 					{alarmTypes.map((ann) => {
 						const isChecked = filter.type.includes(ann);
 						return(<Popover.Item css={css({ fontSize: "12px", background: isChecked?"#E9E9E9":"#FFFFFF" })} onClick={setTypeFilter.bind(null, ann)}

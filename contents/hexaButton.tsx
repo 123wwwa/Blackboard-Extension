@@ -5,26 +5,26 @@ import GlobalStyle, { theme } from "~contents/hexaButton/global";
 import HexaButton from "~components/hexaButton/HexaButton";
 import type { PlasmoCSConfig } from "plasmo";
 import { ThemeProvider } from "@emotion/react";
+import ErrorBoundary from "~shared/ErrorBoundary";
 export const config: PlasmoCSConfig = {
-    matches: ["https://blackboard.unist.ac.kr/*"],
-    run_at: "document_start",
+	matches: ["https://blackboard.unist.ac.kr/*"],
 }
-waitForElement("body").then(() => {
-	console.log("body loaded");
+window.addEventListener("load", () => {
 	const rootEl = document.createElement("div");
 	rootEl.id = "root-container";
 	document.body.prepend(rootEl);
 	//const container = document.body as HTMLElement;
 	const root: any = createRoot(rootEl!);
-	
+
 
 	root.render(
 		<React.StrictMode>
-			
-			<ThemeProvider theme={theme}>
+			<ErrorBoundary>
+				<ThemeProvider theme={theme}>
 					<GlobalStyle />
-					<HexaButton/>
-			</ThemeProvider>
+					<HexaButton />
+				</ThemeProvider>
+			</ErrorBoundary>
 		</React.StrictMode>
 	);
 });

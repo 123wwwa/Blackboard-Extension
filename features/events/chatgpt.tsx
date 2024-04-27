@@ -1,6 +1,6 @@
-import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
+// import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import type { BB_alarm } from '~shared/types/blackboardTypes';
-GlobalWorkerOptions.workerSrc = window.chrome.runtime.getURL('assets/pdf.worker.mjs')
+// GlobalWorkerOptions.workerSrc = window.chrome.runtime.getURL('assets/pdf.worker.mjs')
 type AskGptOptions = {
     messages?: any[];
     max_tokens: number;
@@ -47,74 +47,74 @@ type PdfToText = {
     text: string;
     numPages: number;
 }
-export const pdfToTextList = async (url: string) => {
-    const loadingTask = getDocument(url);
-    const pdf = await loadingTask.promise;
-    let text = [];
+// export const pdfToTextList = async (url: string) => {
+//     const loadingTask = getDocument(url);
+//     const pdf = await loadingTask.promise;
+//     let text = [];
 
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const textContent = await page.getTextContent();
-        text.push(textContent.items.map((item:any) => item.str).join(" ").split("•"));
-    }
-    return {
-        text: text,
-        numPages: pdf.numPages
-    }
-}
-export const pdfToText = async (url: string) => {
-    const loadingTask = getDocument(url);
-    const pdf = await loadingTask.promise;
-    let text = "";
-    let num: number = 1;
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const textContent = await page.getTextContent();
-        text += num.toString() + "페이지\n";
-        text += textContent.items.map((item:any) => item.str).join(" ");
-        num += 1;
-    }
-    return {
-        text: text,
-        numPages: pdf.numPages
-    }
-}
-export const summarizePDF = async (url: string) => {
-    let req = await pdfToText(url);
-    let text = req.text;
-    let numPages = req.numPages;
-    let prompt = `아래 내용을 한국어로 요약하여 Markdown 형식으로 답변해주세요. 요약 시, 주요 포인트를 목록 형태로 제공하고, 각 섹션의 제목은 볼드체로 표시해주세요.`;
-    prompt += `예시 답변 형식:
-    **섹션 제목 1(일치하는 페이지 번호)**
-    - 주요 포인트 1
-    - 주요 포인트 2
-    **섹션 제목 2(일치하는 페이지 번호)**
-    - 주요 포인트 1
-    - 주요 포인트 2`
-    // prompt += "아래 탬플릿을 참고하여 markdown형식으로 작성해야만 한다.";
-    // prompt +=`####요약: {페이지당 50자 이내로 요약하라. 
-    // -1페이지:{50자이내} -2페이지:{50자이내} ..... -${numPages}페이지:{50자이내}}`;
-    // prompt += "####키워드: {강의 내용의 키워드 제공하라.}";
-    // prompt += `####핵심: {강의 내용의 핵심 문장 제공을 ${numPages*20}자 이내로 요약하라}`;
-    prompt += `${text}`;
-    let options: AskGptOptions = {
-        messages: [{"role": "user", "content":prompt}],
-        model: "gpt-4",
-        temperature: 0.7,
-        max_tokens: 1024,
-        n:1
-    }
-    let message = {
-        action: "askgpt",
-        options: options
-    }
-    let res = await window.chrome.runtime.sendMessage(message);
-    if (res.error) {
-        alert(res.error);
-        return "GPT 에러, 블랙보드 익스텐션 설정에서 api key를 확인해주세요";
-    }
-    return res.content;
-}
+//     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+//         const page = await pdf.getPage(pageNum);
+//         const textContent = await page.getTextContent();
+//         text.push(textContent.items.map((item:any) => item.str).join(" ").split("•"));
+//     }
+//     return {
+//         text: text,
+//         numPages: pdf.numPages
+//     }
+// }
+// export const pdfToText = async (url: string) => {
+//     const loadingTask = getDocument(url);
+//     const pdf = await loadingTask.promise;
+//     let text = "";
+//     let num: number = 1;
+//     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+//         const page = await pdf.getPage(pageNum);
+//         const textContent = await page.getTextContent();
+//         text += num.toString() + "페이지\n";
+//         text += textContent.items.map((item:any) => item.str).join(" ");
+//         num += 1;
+//     }
+//     return {
+//         text: text,
+//         numPages: pdf.numPages
+//     }
+// }
+// export const summarizePDF = async (url: string) => {
+//     let req = await pdfToText(url);
+//     let text = req.text;
+//     let numPages = req.numPages;
+//     let prompt = `아래 내용을 한국어로 요약하여 Markdown 형식으로 답변해주세요. 요약 시, 주요 포인트를 목록 형태로 제공하고, 각 섹션의 제목은 볼드체로 표시해주세요.`;
+//     prompt += `예시 답변 형식:
+//     **섹션 제목 1(일치하는 페이지 번호)**
+//     - 주요 포인트 1
+//     - 주요 포인트 2
+//     **섹션 제목 2(일치하는 페이지 번호)**
+//     - 주요 포인트 1
+//     - 주요 포인트 2`
+//     // prompt += "아래 탬플릿을 참고하여 markdown형식으로 작성해야만 한다.";
+//     // prompt +=`####요약: {페이지당 50자 이내로 요약하라. 
+//     // -1페이지:{50자이내} -2페이지:{50자이내} ..... -${numPages}페이지:{50자이내}}`;
+//     // prompt += "####키워드: {강의 내용의 키워드 제공하라.}";
+//     // prompt += `####핵심: {강의 내용의 핵심 문장 제공을 ${numPages*20}자 이내로 요약하라}`;
+//     prompt += `${text}`;
+//     let options: AskGptOptions = {
+//         messages: [{"role": "user", "content":prompt}],
+//         model: "gpt-4",
+//         temperature: 0.7,
+//         max_tokens: 1024,
+//         n:1
+//     }
+//     let message = {
+//         action: "askgpt",
+//         options: options
+//     }
+//     let res = await window.chrome.runtime.sendMessage(message);
+//     if (res.error) {
+//         alert(res.error);
+//         return "GPT 에러, 블랙보드 익스텐션 설정에서 api key를 확인해주세요";
+//     }
+//     return res.content;
+// }
 export const askPrompt = async (text: string) => {
     let options: AskGptOptions = {
         messages: [{"role": "user", "content":text}],

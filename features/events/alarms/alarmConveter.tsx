@@ -1,4 +1,4 @@
-import type { BB_alarm, Lecture, LectureList, RawAlarm } from "~shared/types/blackboardTypes"
+import type { BB_alarm, Lecture, LectureObject, RawAlarm } from "~shared/types/blackboardTypes"
 import { getChromeStorage } from "../../../shared/storage"
 import { eventTypeList } from "~shared/types/eventTypes"
 
@@ -27,7 +27,7 @@ const getTitle = (rawHtml: any, eventType: string) => {
     }
     return "";
 }
-const course_idToName = (course_id: string, lecturelist:LectureList) => {
+const courseIdToName = (course_id: string, lecturelist:LectureObject) => {
     let lecture_name = "";
     Object.entries(lecturelist).forEach(([key, value]) => {
         let lecture: Lecture = value;
@@ -38,7 +38,7 @@ const course_idToName = (course_id: string, lecturelist:LectureList) => {
     })
     return lecture_name;
 }
-const courseidToColor = (course_id: string, lecturelist: LectureList) => {
+const courseIdToColor = (course_id: string, lecturelist: LectureObject) => {
     let color = "";
     Object.entries(lecturelist).forEach(([key, value]) => {
         let lecture: Lecture = value;
@@ -52,12 +52,12 @@ const courseidToColor = (course_id: string, lecturelist: LectureList) => {
 export const convertBB_alarm = async(rawData: string) => {
     const json = JSON.parse(rawData);
     const rawBB_alarmList: RawAlarm[] = json.sv_streamEntries;
-    let lectureInfoStr = await getChromeStorage("lectureInfo", "{}");
-    let resLecturelist: LectureList = JSON.parse(lectureInfoStr);
+    let lectureInfoStr = await getChromeStorage("lectureInfo", {});
+    let resLecturelist: LectureObject = lectureInfoStr;
     let BB_alarmList: BB_alarm[] = [];
     rawBB_alarmList.forEach((rawAlarm: RawAlarm) => {
-        let course_name = course_idToName(rawAlarm.se_courseId, resLecturelist);
-        let color = courseidToColor(rawAlarm.se_courseId, resLecturelist);
+        let course_name = courseIdToName(rawAlarm.se_courseId, resLecturelist);
+        let color = courseIdToColor(rawAlarm.se_courseId, resLecturelist);
         const bb_alarm: BB_alarm = {
             detail: rawAlarm.se_details,
             type: switchEventType(rawAlarm.extraAttribs.event_type),

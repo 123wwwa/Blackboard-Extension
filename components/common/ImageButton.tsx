@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { type ClassAttributes, type HTMLAttributes } from "react";
 

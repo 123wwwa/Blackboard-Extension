@@ -15,7 +15,7 @@ function HexaButton() {
 	const [position, setPosition] = useState({ x: bodyWidth - 100, y: bodyHeight - 60 });
 	// get position from chrome storage and set to position state
 	useEffect(() => {
-        getChromeStorage("position", { x: bodyWidth - 100, y: bodyHeight - 60 }).then((result) => (result) => {
+        getChromeStorage("position", position).then((result) => {
 			if (result.position) {
 				if (result.position.x > window.innerWidth - 100 || result.position.y > window.innerHeight - 60) {
 					setPosition({ x: window.innerWidth - 100, y: window.innerHeight - 60 });

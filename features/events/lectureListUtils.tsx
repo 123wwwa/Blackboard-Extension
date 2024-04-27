@@ -1,6 +1,6 @@
 import { setLectureObject, setShapedLectureList } from "~shared/stores/lectureStore";
 import { getChromeStorage, setChromeStorage } from "../../shared/storage";
-import type { Assignment, AssignmentList, Lecture, ShapedLecture, lectureObject } from "~shared/types/blackboardTypes";
+import type { Assignment, AssignmentList, Lecture, ShapedLecture, LectureObject } from "~shared/types/blackboardTypes";
 let colorlist: string[] = ["#f2e8e8", "#ffe9e9", "#eff9cc", "#dcf2e9", "#dee8f6", "#fff8cc", "#ffedda", "#dceef2", "#ddd6fe", "#e0e7ff", "#f0abfc", "#7dd3fc"];
 export const updateLectureList = async () => { // 강의 리스트를 업데이트
     let storedMemberShip = localStorage.getItem("memberships");
@@ -17,15 +17,14 @@ export const updateLectureList = async () => { // 강의 리스트를 업데이�
     await setChromeStorage("lectureInfo", lectureObject);
 };
 export const loadLectureList = async () => { // 스토리지에 저장된 강의 리스트를 불러옴
-    let lectureInfoStr = await getChromeStorage("lectureInfo", {});
-    let lectureObject: lectureObject  = JSON.parse(lectureInfoStr);
+    let lectureObject: LectureObject = await getChromeStorage("lectureInfo", {});
     const shapedLectureList = await convertShapedLectureList(lectureObject);
     lectureObject = await updateFileInfo(lectureObject);
     setLectureObject(lectureObject);
     setShapedLectureList(shapedLectureList);
 };
 
-const convertShapedLectureList = (lectureList: lectureObject) => { // 강의 리스트를 시간표로 변환
+const convertShapedLectureList = (lectureList: LectureObject) => { // 강의 리스트를 시간표로 변환
     let l: ShapedLecture[][] = [[], [], [], [], [], []]; // 0: 월, 1: 화, 2: 수, 3: 목, 4: 금, 5: 토
     let i = 0;
     let key: string;
@@ -52,7 +51,7 @@ const convertShapedLectureList = (lectureList: lectureObject) => { // 강의 리
     }
     return l;
 }
-const updateFileInfo = async (lectureList: lectureObject) => { // 로컬 스토리지에 저장된 과제 정보를 불러와서 강의 리스트에 추가
+const updateFileInfo = async (lectureList: LectureObject) => { // 로컬 스토리지에 저장된 과제 정보를 불러와서 강의 리스트에 추가
     // 로컬 스토리지에 저장된 과제 정보를 불러와서 강의 리스트에 추가
     let assignmentList: AssignmentList = JSON.parse(localStorage.getItem("fileInfo") || "{}");
     //check if fileinfo is empty
@@ -71,8 +70,8 @@ const updateFileInfo = async (lectureList: lectureObject) => { // 로컬 스토�
     });
     return lectureList;
 }
-const convertMemberShip = async (alarmList: any): Promise<lectureObject> => { // 멤버십 정보를 강의 리스트로 변환
-    let lectureList: lectureObject = {};
+const convertMemberShip = async (alarmList: any): Promise<LectureObject> => { // 멤버십 정보를 강의 리스트로 변환
+    let lectureList: LectureObject = {};
     for (let i = 0; i < alarmList.length; i++) {
         const course = alarmList[i].course;
         let lecture: Lecture = {

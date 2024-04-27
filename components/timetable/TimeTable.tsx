@@ -6,7 +6,7 @@ import LectureGrid from "./LectureGrid";
 import LectureCard from "./LectureCard";
 import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 const RenderTableDay = () => {
-    const {isLectureLoaded, shapedLectureList} = useLectureStore(state => state);
+    const { isLectureLoaded, shapedLectureList } = useLectureStore(state => state);
     const [tableHeight, setTableHeight] = useState<number>(40);
     const [tableWidth, setTableWidth] = useState<number>(70); // aspect ratio 16:9
     const HeadHeight = 30;
@@ -16,8 +16,8 @@ const RenderTableDay = () => {
         setTableWidth(((vh_7 / 13) * 16) / 9);
     }, []);
     useEffect(() => {
-        if (window.location.href.includes("ultra"))  updateLectureList(); 
-        else  loadLectureList();
+        if (window.location.href.includes("ultra")) updateLectureList();
+        else loadLectureList();
     }, []);
     const dayList = ["월", "화", "수", "목", "금", "토"];
     const [gridBgColor, setGridBgColor] = useState(
@@ -27,8 +27,7 @@ const RenderTableDay = () => {
         return <div>Loading...</div>
     }
     return (
-        <div
-            style={{
+        <div style={{
                 display: "flex",
                 flexDirection: "row",
             }}
@@ -36,7 +35,6 @@ const RenderTableDay = () => {
         >
             <div>
                 <LectureGrid
-
                     width="20px"
                     height={HeadHeight.toString() + "px"}
                     color={gridBgColor}
@@ -48,7 +46,7 @@ const RenderTableDay = () => {
                 {[...Array(12)].map((x, j) => {
                     return (
                         <LectureGrid
-                            key = {j}
+                            key={j}
                             width="20px"
                             height={tableHeight.toString() + "px"}
                             color={gridBgColor}
@@ -72,17 +70,17 @@ const RenderTableDay = () => {
                             );
                         })}
                         <LectureGrid
-                            key = {i}
+                            key={i}
                             width={tableWidth.toString() + "px"}
                             height={HeadHeight.toString() + "px"}
                             color={gridBgColor}
                         >
                             {dayList[i]}
                         </LectureGrid>
-                        {[...Array(12)].map((x,j) => {
+                        {[...Array(12)].map((x, j) => {
                             return (
                                 <LectureGrid
-                                    key = {j}
+                                    key={j}
                                     width={tableWidth.toString() + "px"}
                                     height={tableHeight.toString() + "px"}
                                     color={gridBgColor}
@@ -105,7 +103,7 @@ const TimeTable = () => {
                 marginLeft: "5px",
             }}
         >
-                <RenderTableDay />
+            <RenderTableDay />
         </div>
     );
 };

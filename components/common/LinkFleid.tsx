@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import React, { type HTMLAttributes, type InputHTMLAttributes, type ReactNode, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";

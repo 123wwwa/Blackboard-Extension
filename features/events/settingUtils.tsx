@@ -7,15 +7,14 @@ export const reloadSetting = async () => {
     // check if settings is empty
     if (Object.keys(settings).length === 0 && settings.constructor === Object){
         setChromeStorage("settings", defaultSetting);
-        settings = JSON.stringify(defaultSetting);
+        settings = defaultSetting;
     } else {
         updateSettings(settings);
     }
-    settings = JSON.parse(settings);
+    settings = settings;
 }
 export const updateSetting = async ( key: string, value: any) => {
     let settings = await getChromeStorage("settings", {});
-    settings = JSON.parse(settings);
     settings[key] = value;
     setChromeStorage("settings", settings);
     updateSettings(settings);

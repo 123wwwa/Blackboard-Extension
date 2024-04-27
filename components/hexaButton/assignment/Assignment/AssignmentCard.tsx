@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import JSZip from "jszip";
+import { memo, useCallback } from "react";
 import { DueDateText } from "~components/hexaButton/todo/TodoCard";
 import type { Lecture } from "~shared/types/blackboardTypes";
 
@@ -69,37 +70,28 @@ type Props = {
 	onSelect: () => void;
 };
 
-function AssignmentCard({ item, onSelect }: Props) {
-	const urlToBlob = async (url: string) => {
-		let blob = await fetch(url).then((r) => r.blob());
-		return blob;
-	};
-	const downloadAllasZip = () => {
+const AssignmentCard = memo(({ item, onSelect }: { item: Lecture, onSelect: () => void }) => {
+	const downloadAllasZip = useCallback(() => {
 		if (!item.assignment || item.assignment.length === 0) {
 			return;
 		}
 		const zip = new JSZip();
-		item.assignment.forEach((assignment) => {
-			if (assignment.fileUrl) {
-				assignment.fileUrl.forEach((fileUrl) => {
-					zip.file(fileUrl.fileName, urlToBlob(fileUrl.fileURL));
-				});
-			}
-			if (assignment.Assignment_Files) {
-				assignment.Assignment_Files.forEach((file) => {
-					zip.file(file.fileName, urlToBlob(file.fileURL));
-				});
-			}
+		const filesPromises = item.assignment.flatMap(assignment =>
+			[...(assignment.fileUrl || []), ...(assignment.Assignment_Files || [])].map(file =>
+				fetch(file.fileURL).then(r => r.blob()).then(blob => zip.file(file.fileName, blob))
+			)
+		);
+		Promise.all(filesPromises).then(() => {
+			zip.generateAsync({ type: "blob" }).then(content => {
+				const a = document.createElement("a");
+				const url = URL.createObjectURL(content);
+				a.href = url;
+				a.download = `${item.name}.zip`;
+				a.click();
+				URL.revokeObjectURL(url);
+			});
 		});
-		zip.generateAsync({ type: "blob" }).then((content) => {
-			const a = document.createElement("a");
-			const url = URL.createObjectURL(content);
-			a.href = url;
-			a.download = `${item.name}.zip`;
-			a.click();
-			URL.revokeObjectURL(url);
-		});
-	};
+	}, [item]);
 	return (
 		<Container color={item.color} onClick={onSelect}>
 			<Content>
@@ -118,6 +110,6 @@ function AssignmentCard({ item, onSelect }: Props) {
 			</DownloadWrapper>
 		</Container>
 	);
-}
+});
 
 export default AssignmentCard;

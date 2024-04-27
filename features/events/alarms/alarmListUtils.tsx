@@ -5,7 +5,7 @@ import { convertBB_alarm } from "./alarmConveter";
 export const updateAlarmList = async () => {
     // check if last fetch is within 5 minutes
     let lastAlarmFetch = await getChromeStorage("lastAlarmFetch", 0);
-    if (Date.now() - parseInt(lastAlarmFetch) < 300000) {
+    if (Date.now() - lastAlarmFetch < 300000) {
         return;
     }
     const url = "https://blackboard.unist.ac.kr/webapps/streamViewer/streamViewer";
@@ -32,11 +32,15 @@ export const updateAlarmList = async () => {
         credentials: "include",
     });
     if (!fetchdata.ok) {
+        let BB_alarms = await getChromeStorage("BB_alarms", []);
+        setAlarmList(BB_alarms);
         return;
     }
 
     let alarmListStr = await fetchdata.text();
     if (!alarmListStr) {
+        let BB_alarms = await getChromeStorage("BB_alarms", []);
+        setAlarmList(BB_alarms);
         return;
     }
     let rawAlarmList = JSON.parse(alarmListStr).sv_streamEntries;
@@ -49,5 +53,6 @@ export const updateAlarmList = async () => {
     let BB_alarms = await convertBB_alarm(alarmListStr);
     setAlarmList(BB_alarms)
     await setChromeStorage("BB_alarms", BB_alarms);
+    console.log(BB_alarms);
     await setChromeStorage("lastAlarmFetch", Date.now().toString());
 };

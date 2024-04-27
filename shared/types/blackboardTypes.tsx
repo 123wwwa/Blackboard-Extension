@@ -72,7 +72,7 @@ export interface Lecture {
 	timeplace3?: Timeplace;
 	assignment: Assignment[];
 }
-export interface lectureObject {
+export interface LectureObject {
 	[key: string]: Lecture;
 }
 export interface ShapedLecture {

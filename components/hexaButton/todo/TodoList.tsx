@@ -55,7 +55,6 @@ function TodoList({ todoList }: Props) {
 			clearInterval(timer);
 		};
 	}, []);
-
 	return (
 		<TodoListWrapper>
 			{alignWithList?.map((todo) => {

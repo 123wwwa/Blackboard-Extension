@@ -5,17 +5,16 @@ import TimeTable from "~components/timetable/TimeTable";
 import { observeUrlChange, waitForElement } from "~shared/observer"
 
 export const config: PlasmoCSConfig = {
-    matches: ["https://blackboard.unist.ac.kr/*"],
-    run_at: "document_start",
+    matches: ["https://blackboard.unist.ac.kr/ultra/*"],
 }
 const renderTable = (containerSelector: string) => {
     const container = document.querySelector(containerSelector);
     if (container) {
         const root = createRoot(container);
         root.render(
-            <React.StrictMode>
-                <TimeTable />
-            </React.StrictMode>
+                <div>
+                    <TimeTable />
+                </div>
         );
     } else {
         console.log('React 컨테이너를 찾을 수 없습니다.');

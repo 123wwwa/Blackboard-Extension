@@ -5,8 +5,7 @@ import useLectureStore from "~shared/stores/lectureStore";
 
 function TodoLayout() {
 	const [color, setColor] = useState("#E5E5E5");
-	const {todoList} = useLectureStore();
-
+	const {todoList} = useLectureStore(state => state);
 	return (
 		<>
 			<TodoList todoList={todoList} />

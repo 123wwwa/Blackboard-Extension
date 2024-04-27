@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { type ButtonHTMLAttributes, forwardRef, useRef } from "react";
 import styled from "@emotion/styled";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

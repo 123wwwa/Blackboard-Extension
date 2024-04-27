@@ -9,6 +9,7 @@ import { postTodoList, updateTodoList } from "~features/events/todoListUtils";
 import ImageButton, { styles as ImageButtonStyles }  from "~components/common/ImageButton";
 import AssignmentLayout from "./assignment/Assignment/AssignmentLayout";
 import AlarmLayout from "./alarm/AlarmLayout";
+import { loadLectureList, updateLectureList } from "~features/events/lectureListUtils";
 
 type Props = {
 	show: boolean;
@@ -106,7 +107,9 @@ function MainContainer({ show, setShow, position }: Props) {
 		postTodoList(todoList);
 	};
 	useEffect(() => {
-		updateTodoList();
+		updateLectureList().then(() => {
+			updateTodoList();
+		});
 		chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			if (request.action === "calendarUpdateDone") {
 				setIsUpdated(true);
@@ -134,7 +137,7 @@ function MainContainer({ show, setShow, position }: Props) {
 					{isUpdated ? (
 						<ImageButton
 							title="구글 연동"
-							icon={"public/icons/icon-google-calendar.png"}
+							icon={"assets/icons/icon-google-calendar.png"}
 							onClick={postTodoLists}
 						/>
 					) : (

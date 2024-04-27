@@ -1,6 +1,6 @@
 import { addDeletedTodo, addTodo, setTodoList } from "~shared/stores/lectureStore";
 import { getChromeStorage, getChromeStorageList, setChromeStorage, setChromeStorageList } from "../../shared/storage";
-import type { Lecture, Todo } from "~shared/types/blackboardTypes";
+import type { Lecture, Todo, LectureObject } from "~shared/types/blackboardTypes";
 import { sendToBackground } from "@plasmohq/messaging"
 export const loadTodoList = async () => { // 스토리지에 저장된 과제 리스트를 불러옴
     let todoList: Todo[] = await getChromeStorageList("todoList");
@@ -37,7 +37,7 @@ export const updateTodoList = async () => { // 과제 리스트를 업데이트
         loadTodoList();
         return;
     }
-    let lectureList: Lecture[] = await getChromeStorage("lectureInfo", {});
+    let lectureObject:LectureObject= await getChromeStorage("lectureInfo", {});
     let deletedTodoList: Todo[] = await getChromeStorageList("deletedTodoList");
     // todoList에 이미 있는 과제는 제거
     for (let key in deletedTodoList) {
@@ -54,7 +54,7 @@ export const updateTodoList = async () => { // 과제 리스트를 업데이트
         }
         let lectureColor: string = "";
         let korLectureName: string = "";
-        Object.entries(lectureList).forEach(([key2, value]) => { // 강의 리스트를 돌면서 강의 이름과 색상을 가져옴
+        Object.entries(lectureObject).forEach(([key2, value]) => { // 강의 리스트를 돌면서 강의 이름과 색상을 가져옴
             let lecture: Lecture = value;
             if (lecture.calendarId == fetchData[key]["calendarId"]) {
                 lectureColor = lecture.color;
@@ -118,8 +118,8 @@ export const deleteTodo = async (todo: Todo) => {
     setChromeStorageList("todoList", newTodoList);
     setTodoList(newTodoList);
 };
-const isTodoEqual = (todo1: Todo, todo2: Todo) => {  // 이름과 날짜 그리고 링크가 같은 경우 중복된 과제로 판단
-    return todo1.content == todo2.content && todo1.date == todo2.date && todo1.linkcode == todo2.linkcode;
+const isTodoEqual = (todo1: Todo, todo2: Todo) => {  // 이름과 날짜 또는 링크가 같은 경우 중복된 과제로 판단
+    return (todo1.content == todo2.content && todo1.date == todo2.date) || todo1.linkcode == todo2.linkcode;
 }
 export const addTodoItem = async (todo: Todo) => {
     // check if duplicated

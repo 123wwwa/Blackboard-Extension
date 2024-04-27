@@ -9,17 +9,15 @@
     "./**/*.ts",
     "./**/*.tsx",
     "**/*.tsx",
-    "contents/timetable/main.tsx",
+    "contents/timetable/timetable.tsx",
   ],
   "compilerOptions": {
     "paths": {
       "~*": [
         "./*"
       ],
-      "types": [
-        "@emotion/react/types/css-prop"
-      ],
-      "jsxImportSource": ["@emotion/react"]
+      "types": ["@emotion/react/types/css-prop"],
+		  "jsxImportSource": ["@emotion/react"]
     },
     "baseUrl": "."
   }

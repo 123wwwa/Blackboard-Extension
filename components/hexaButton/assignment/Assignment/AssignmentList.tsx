@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import AssignmentCard from "./AssignmentCard";
-import { useEffect} from "react";
+import React, { useEffect, useCallback, memo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import DownloadCard from "./DownloadCard";
@@ -9,97 +9,74 @@ import { setCheckedFiles } from "~shared/stores/userStateStore";
 import { loadLectureList } from "~features/events/lectureListUtils";
 
 const ListContainer = styled.article`
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	overflow: scroll;
-	overflow-x: hidden;
-	&::-webkit-slider-thumb {
-		background: #6c757d;
-		border-radius: 8px;
-	}
-	&::-webkit-scrollbar {
-		width: 7px;
-		height: 10px;
-		background-color: white;
-		border-radius: 8px;
-	}
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: scroll;
+  overflow-x: hidden;
+  &::-webkit-scrollbar {
+    width: 7px;
+    height: 10px;
+    background-color: white;
+    border-radius: 8px;
+  }
 `;
 
 const RootContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	padding: 5px 14px;
-	width: 100%;
-	height: 330px;
-
-	& > header {
-		display: flex;
-		justify-content: flex-start;
-		align-items: center;
-		gap: 10px;
-		font-weight: 700;
-		margin-bottom: 20px;
-		margin-left: 4px;
-		border-radius: 10px;
-		padding: 8px;
-		width: fit-content;
-		cursor: pointer;
-
-		&:hover {
-			background-color: #e9e9e9;
-		}
-	}
+  display: flex;
+  flex-direction: column;
+  padding: 5px 14px;
+  width: 100%;
+  height: 330px;
 `;
 
-type Props = {
-	activeLectureId: string | null;
-	setActiveLectureId: React.Dispatch<React.SetStateAction<string | null>>;
-};
+const MemoizedAssignmentCard = memo(AssignmentCard);
+const MemoizedDownloadCard = memo(DownloadCard);
 
-function AssignmentList({ activeLectureId, setActiveLectureId }: Props) {
-	const { lectureObject }= useLectureStore();
-	const handleGoBack = () => {
-		setActiveLectureId(null);
-		setCheckedFiles([]);
-	};
-	useEffect(() => {
-		loadLectureList();
-	}, []);
-	return (
-		<RootContainer>
-			{activeLectureId && (
-				<header onClick={handleGoBack}>
-					<FontAwesomeIcon icon={faArrowLeft} />
-					{lectureObject[activeLectureId].name}
-				</header>
-			)}
-			<ListContainer>
-				{!activeLectureId ? (
-					Object.entries(lectureObject).map(([key, value]) => {
-						if (value.isLecture) {
-							return (
-								<AssignmentCard
-									item={value}
-									onSelect={() => setActiveLectureId(key)}
-								/>
-							);
-						}
-					})
-				) : (
-					<>
-						{lectureObject[activeLectureId].assignment ? <>
-							{lectureObject[activeLectureId].assignment.slice().sort((a, b) => {
-								return new Date(b.Due_Date).getTime() - new Date(a.Due_Date).getTime();
-							}).map((item) => {
-								return <DownloadCard item={item} />;
-							})}
-						</> : <></>}
-					</>
-				)}
-			</ListContainer>
-		</RootContainer>
-	);
+function AssignmentList({ activeLectureId, setActiveLectureId }) {
+  const { lectureObject } = useLectureStore();
+
+  const handleGoBack = useCallback(() => {
+    setActiveLectureId(null);
+    setCheckedFiles([]);
+  }, [setActiveLectureId]);
+
+  useEffect(() => {
+    loadLectureList();
+  }, []);
+
+  const sortedAssignments = useCallback(() => {
+    if (activeLectureId && lectureObject[activeLectureId].assignment) {
+      return [...lectureObject[activeLectureId].assignment].sort((a, b) => parseInt(b.Due_Date) - parseInt(a.Due_Date));
+    }
+    return [];
+  }, [activeLectureId, lectureObject]);
+
+  return (
+    <RootContainer>
+      {activeLectureId && (
+        <header onClick={handleGoBack}>
+          <FontAwesomeIcon icon={faArrowLeft} />
+          {lectureObject[activeLectureId].name}
+        </header>
+      )}
+      <ListContainer>
+        {!activeLectureId ? (
+          Object.entries(lectureObject).map(([key, value]) =>
+            value.isLecture ? (
+              <MemoizedAssignmentCard
+                key={key}
+                item={value}
+                onSelect={() => setActiveLectureId(key)}
+              />
+            ) : null
+          )
+        ) : (
+          sortedAssignments().map((item) => <MemoizedDownloadCard key={item.content_id} item={item} />)
+        )}
+      </ListContainer>
+    </RootContainer>
+  );
 }
 
 export default AssignmentList;
