@@ -9,8 +9,8 @@ import { postTodoList, updateTodoList } from "~features/events/todoListUtils";
 import ImageButton, { styles as ImageButtonStyles }  from "~components/common/ImageButton";
 import AssignmentLayout from "./assignment/AssignmentLayout";
 import AlarmLayout from "./alarm/AlarmLayout";
-import { loadLectureList, updateLectureList } from "~features/events/lectureListUtils";
-
+import { updateLectureList } from "~features/events/lectureListUtils";
+import { usePort } from "@plasmohq/messaging/hook"
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -96,6 +96,8 @@ function MainContainer({ show, setShow, position }: Props) {
 	const [tab, setTab] = useState<(typeof TodoTabs)[number]>("과제");
 	const { todoList } = useLectureStore(state => state);
 	const [isUpdated, setIsUpdated] = useState(true);
+	// @ts-ignore
+	const calendarPort = usePort("calendar");
 	const postTodoLists = () => {
 		let isChrome =
 			/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
@@ -104,7 +106,9 @@ function MainContainer({ show, setShow, position }: Props) {
 			return;
 		}
 		setIsUpdated(false);
-		postTodoList(todoList);
+		calendarPort.send({
+			todoList: todoList,
+		})
 	};
 	useEffect(() => {
 		updateLectureList().then(() => {

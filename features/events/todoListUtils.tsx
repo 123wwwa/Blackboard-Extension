@@ -135,11 +135,12 @@ export const addTodoItem = async (todo: Todo) => {
     setChromeStorageList("todoList", todoList);
 };
 export const postTodoList = async (todoList: Todo[]) => {
-    await sendToBackground({
+    const res = await sendToBackground({
         // @ts-ignore
-        name: "updateTodoList", // ignore ts error
+        name: "calendar", // ignore ts error
         body: {
             todoList: todoList
         }
     });
+    return res;
 }
