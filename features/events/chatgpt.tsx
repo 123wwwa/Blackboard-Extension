@@ -1,9 +1,9 @@
-import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
+import { pdfjs } from "react-pdf"
 import type { BB_alarm } from '~shared/types/blackboardTypes';
 import type { AskGptOptions } from '~shared/types/handlerTypes';
 import { sendToBackground } from "@plasmohq/messaging"
 import { type RequestBody, type ResponseBody } from '~background/messages/gpt';
-GlobalWorkerOptions.workerSrc = window.chrome.runtime.getURL('assets/pdf.worker.mjs')
+import { pdfToPageText } from "./pdfExtractor";
 
 export const extractTodo = async (alarm: BB_alarm) => {
     let text = alarm.detail;
@@ -29,6 +29,7 @@ export const extractTodo = async (alarm: BB_alarm) => {
             options: options
         }
     }
+    // @ts-ignore
     const res = await sendToBackground<RequestBody, ResponseBody>(message);
     if (res.error) {
         alert(res.error);
@@ -41,44 +42,8 @@ export const extractTodo = async (alarm: BB_alarm) => {
     todo = JSON.parse(todo);
     return todo;
 };
-type PdfToText = {
-    text: string;
-    numPages: number;
-}
-export const pdfToTextList = async (url: string) => {
-    const loadingTask = getDocument(url);
-    const pdf = await loadingTask.promise;
-    let text = [];
-
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const textContent = await page.getTextContent();
-        text.push(textContent.items.map((item:any) => item.str).join(" ").split("•"));
-    }
-    return {
-        text: text,
-        numPages: pdf.numPages
-    }
-}
-export const pdfToText = async (url: string) => {
-    const loadingTask = getDocument(url);
-    const pdf = await loadingTask.promise;
-    let text = "";
-    let num: number = 1;
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const textContent = await page.getTextContent();
-        text += num.toString() + "페이지\n";
-        text += textContent.items.map((item:any) => item.str).join(" ");
-        num += 1;
-    }
-    return {
-        text: text,
-        numPages: pdf.numPages
-    }
-}
 export const summarizePDF = async (url: string) => {
-    let req = await pdfToText(url);
+    let req = await pdfToPageText(url);
     let text = req.text;
     let numPages = req.numPages;
     let prompt = `아래 내용을 한국어로 요약하여 Markdown 형식으로 답변해주세요. 요약 시, 주요 포인트를 목록 형태로 제공하고, 각 섹션의 제목은 볼드체로 표시해주세요.`;
@@ -108,6 +73,7 @@ export const summarizePDF = async (url: string) => {
             options: options
         }
     }
+    // @ts-ignore
     let res = await sendToBackground<RequestBody, ResponseBody>(message);
     if (res.error) {
         alert(res.error);
@@ -128,6 +94,7 @@ export const askPrompt = async (text: string) => {
             options: options
         }
     }
+    // @ts-ignore
     let req = await sendToBackground<RequestBody, ResponseBody>(message);
     if (req.error) {
         alert(req.error);

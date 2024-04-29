@@ -1,4 +1,5 @@
 import { sendToBackground } from "@plasmohq/messaging";
+import { type RequestBody, type ResponseBody } from "~background/messages/email";
 import { getChromeStorage, setChromeStorage } from "~shared/storage";
 import { defaultSetting, setIsLogin, setUserEmail, updateSettings } from "~shared/stores/settingStore";
 
@@ -20,9 +21,10 @@ export const updateSetting = async ( key: string, value: any) => {
     updateSettings(settings);
 }
 export const reloadUserEmail = async () => {
-    const response = await sendToBackground({
-        // @ts-ignore
-        name: "getUserEmail",
+    const response = await sendToBackground<RequestBody,ResponseBody>({
+        //@ts-ignore
+        name: "email",
+        body: {}
     })
     if (response){
         setUserEmail(response);

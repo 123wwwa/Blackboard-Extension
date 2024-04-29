@@ -10,23 +10,24 @@ import {
 import { faBell } from "@fortawesome/free-regular-svg-icons";
 import * as Switch from "@radix-ui/react-switch";
 import { useSettingStore } from "~shared/stores/settingStore";
-import { sendToBackground } from "@plasmohq/messaging";
 import { updateSetting } from "~features/events/settingUtils";
 import Popover from "~components/common/Popover";
 import ActionIcon from "~components/common/ActionIcon";
 import { styles } from "./TodoMenu";
 import ImageButton from "~components/common/ImageButton";
+import { usePort } from "@plasmohq/messaging/hook";
 
 
 
 export const SettingMenu = () => {
     const [showSettingMenu, setShowSettingMenu] = useState<boolean>(false);
     const {userEmail,isAlarmSet,alarmTime, isAutoSave, apiKey, isPreviousVersion, usePreviousViewer}= useSettingStore();
+    const logoutPort = usePort("logout");
+    
     const logoutOauth = () => {
-        sendToBackground({
-            // @ts-ignore
-            name: "logout",
-        })
+        logoutPort.send(
+            {}
+        )
     }
     const onAlarmChange = (e: boolean) => {
        updateSetting("isAlarmSet", e);
@@ -104,7 +105,7 @@ export const SettingMenu = () => {
                                 <input onChange={onChangeAlarmTime} css={styles.TextInput} value={alarmTime} />
                                 <span css={styles.SettingMenuItemLabel}>분전</span>
                             </label>
-                        </div>
+                        </div> 
                     </Popover.Item>
                 </div>
                 <Popover.Item

@@ -9,7 +9,7 @@ export type ResponseBody = {
     isUpdated: boolean;
 }
 
-const handler: PlasmoMessaging.PortHandler<RequestBody, ResponseBody> = async (req, res) => {
+const handler: PlasmoMessaging.MessageHandler<RequestBody, ResponseBody> = async (req, res) => {
     const reqTodoList = req.body.todoList;
     let token = await authorize();
     const calendarEvents = await getEvents(token);

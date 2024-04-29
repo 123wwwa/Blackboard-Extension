@@ -32,6 +32,9 @@
     "react-color": "^2.19.3",
     "react-datepicker": "^6.9.0",
     "react-dom": "18.2.0",
+    "react-markdown": "^9.0.1",
+    "react-pdf": "^7.7.1",
+    "react-pdftotext": "^1.2.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
@@ -42,15 +45,20 @@
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
+    "path-browserify": "^1.0.0",
     "prettier": "3.2.4",
-    "typescript": "5.3.3"
+    "process": "^0.11.10",
+    "typescript": "5.3.3",
+    "url": "^0.11.0"
   },
   "manifest": {
     "host_permissions": [
       "https://*/*"
     ],
     "permissions": [
-      "scripting"
+      "scripting",
+      "identity",
+      "identity.email"
     ],
     "web_accessible_resources": [
       {
@@ -65,6 +73,15 @@
           "<all_urls>"
         ]
       }
-    ]
+    ],
+    "oauth2": {
+      "client_id": "342264675239-crqs9j8rl0nk4eth2um683vkjmcb6hu2.apps.googleusercontent.com",
+      "scopes": [
+        "https://www.googleapis.com/auth/calendar",
+        "https://www.googleapis.com/auth/calendar.readonly",
+        "https://www.googleapis.com/auth/calendar.events",
+        "https://www.googleapis.com/auth/userinfo.email"
+      ]
+    }
   }
 }

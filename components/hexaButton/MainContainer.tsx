@@ -1,3 +1,4 @@
+ /** @jsxImportSource @emotion/react */
 import TodoMenu from "./todo/TodoMenu";
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
@@ -10,7 +11,6 @@ import ImageButton, { styles as ImageButtonStyles }  from "~components/common/Im
 import AssignmentLayout from "./assignment/AssignmentLayout";
 import AlarmLayout from "./alarm/AlarmLayout";
 import { updateLectureList } from "~features/events/lectureListUtils";
-import { usePort } from "@plasmohq/messaging/hook"
 type Props = {
 	show: boolean;
 	setShow: React.Dispatch<React.SetStateAction<boolean>>;
@@ -96,9 +96,7 @@ function MainContainer({ show, setShow, position }: Props) {
 	const [tab, setTab] = useState<(typeof TodoTabs)[number]>("과제");
 	const { todoList } = useLectureStore(state => state);
 	const [isUpdated, setIsUpdated] = useState(true);
-	// @ts-ignore
-	const calendarPort = usePort("calendar");
-	const postTodoLists = () => {
+	const postTodoLists = async () => {
 		let isChrome =
 			/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 		if (!isChrome) {
@@ -106,18 +104,14 @@ function MainContainer({ show, setShow, position }: Props) {
 			return;
 		}
 		setIsUpdated(false);
-		calendarPort.send({
-			todoList: todoList,
-		})
+		const res = await postTodoList(todoList);
+		if (res) {
+			setIsUpdated(true);
+		}
 	};
 	useEffect(() => {
 		updateLectureList().then(() => {
 			updateTodoList();
-		});
-		chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-			if (request.action === "calendarUpdateDone") {
-				setIsUpdated(true);
-			}
 		});
 	}, []);
 
