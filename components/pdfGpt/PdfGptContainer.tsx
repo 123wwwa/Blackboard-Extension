@@ -8,10 +8,11 @@ import ContentLayout from "./content/ContentLayout";
 import SummaryLayout from "./summary/SummaryLayout";
 import SaveLayout from "./save/SaveLayout";
 import { summarizePDF } from "~features/events/chatgpt";
-import { pdfToTextList } from "~features/events/pdfExtractor";
 
 
 type Props = {
+    pdfContent: string[][];
+    numPages: number;
     pdfUrl: string;
     pdfTitle: string;
 }
@@ -88,10 +89,8 @@ export const ContentTabs = styled.div`
         }
     }
 `;
-const PdfGptContainer = ({ pdfUrl, pdfTitle }: Props) => {
+const PdfGptContainer = ({ pdfContent, numPages, pdfUrl, pdfTitle }: Props) => {
     const [iframeHeight, setIframeHeight] = useState<number>(700);
-    const [pdfContent, setPdfContent] = useState<string[][]>([[]]);
-    const [numPages, setNumPages] = useState<number>(0);
     const getInitialShowContainer = () => {
         const saved = localStorage.getItem('showContainer');
         return saved ? JSON.parse(saved) : true;
@@ -103,10 +102,6 @@ const PdfGptContainer = ({ pdfUrl, pdfTitle }: Props) => {
     const [showContainer, setShowContainer] = useState<boolean>(getInitialShowContainer());
     useEffect(() => {
         localStorage.setItem('showContainer', JSON.stringify(showContainer));
-        pdfToTextList(pdfUrl).then((res) => {
-            setPdfContent(res.text);
-            setNumPages(res.numPages);
-        });
     }, [showContainer]);
     const [tab, setTab] = useState<(typeof PdfTabs)[number]>("내용");
     const [summary, setSummary] = useState<string>("");

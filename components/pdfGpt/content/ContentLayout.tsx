@@ -50,7 +50,7 @@ const PdfContainer = styled.div`
         }
     }
 `
-const ContentLayout = ({ pdfContent, numPages }: Props) => {
+export const ContentLayout = ({ pdfContent, numPages }: Props) => {
     const calcPdfLetterCount = (pdfContent: string[][]) => {
         let letterCount = 0;
         pdfContent.forEach((page) => {
@@ -99,4 +99,3 @@ const ContentLayout = ({ pdfContent, numPages }: Props) => {
         </PdfContainer>
     );
 }
-export default ContentLayout;
