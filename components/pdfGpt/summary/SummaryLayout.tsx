@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import ReactMarkdown from 'react-markdown';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faDownload, faFloppyDisk, faRotateRight, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { summarizePDF } from "~features/events/chatgpt";
@@ -93,7 +92,9 @@ const SummaryLayout = ({ pdfTitle, pdfContent, summary, setSummary }: Props) => 
                 </button>
             </ButtonWrapper>
             <div className="summary-content">
-                <div className="summary-container">{summary}</div>
+                <div className="summary-container">
+                    {summary}
+                </div>
             </div>
         </SummaryTab>
     )

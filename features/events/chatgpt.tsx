@@ -60,7 +60,7 @@ export const summarizePDF = async (req) => {
     prompt += `${text}`;
     let options: AskGptOptions = {
         messages: [{"role": "user", "content":prompt}],
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         temperature: 0.7,
         max_tokens: 1024,
         n:1
@@ -96,7 +96,8 @@ export const askPrompt = async (text: string) => {
     let req = await sendToBackground<RequestBody, ResponseBody>(message);
     if (req.error) {
         alert(req.error);
-        return;
+        console.error(req.error);
+        return req.error;
     }
     let res = req.content;
     // trim the result

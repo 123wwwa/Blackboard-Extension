@@ -15,7 +15,6 @@ window.addEventListener("load", () => {
 	document.body.prepend(rootEl);
 	//const container = document.body as HTMLElement;
 	const root: any = createRoot(rootEl!);
-
 	root.render(
 		<React.StrictMode>
 			<ErrorBoundary>
