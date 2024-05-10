@@ -1,5 +1,5 @@
-import create from 'zustand'
-import { devtools } from 'zustand/middleware'
+import create from 'zustand';
+import { devtools } from 'zustand/middleware';
 import type { Assignment, BB_alarm, LectureObject, ShapedLecture, Todo } from '~shared/types/blackboardTypes';
 
 // Define your store without destructuring set and get directly

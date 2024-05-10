@@ -1,7 +1,8 @@
-import pdfToText  from "react-pdftotext";
 import { pdfjs } from "react-pdf";
+import pdfToText  from "react-pdftotext";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
-export const pdfToTexts = async (url: string) => {
+const pdfToTexts = async (url: string) => { // 이 함수는 아무곳에서도 사용되지 않지만 pdfToText함수를 Import 경우 에러가 발생하지 않음..
+    // 원인을 모르겠다
     const file = await fetch(url)
         .then(res => res.blob())
         .catch(error => console.error(error))

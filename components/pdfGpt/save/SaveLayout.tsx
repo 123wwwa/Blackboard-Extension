@@ -1,9 +1,9 @@
+import type { PdfContent } from "../PdfGptContainer";
 
 type Props = {
-    pdfContent: string[][];
-    numPages: number;
+    pdfContent: PdfContent;
 }
-const SaveLayout = ({ pdfContent, numPages }: Props) => {
+const SaveLayout = ({ pdfContent}: Props) => {
     return(
         <div>
             

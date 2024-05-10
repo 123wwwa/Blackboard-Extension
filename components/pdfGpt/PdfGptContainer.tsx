@@ -8,11 +8,10 @@ import ContentLayout from "./content/ContentLayout";
 import SummaryLayout from "./summary/SummaryLayout";
 import SaveLayout from "./save/SaveLayout";
 import { summarizePDF } from "~features/events/chatgpt";
+import { pdfToTextList } from "~features/events/pdfExtractor";
 
 
 type Props = {
-    pdfContent: string[][];
-    numPages: number;
     pdfUrl: string;
     pdfTitle: string;
 }
@@ -89,8 +88,13 @@ export const ContentTabs = styled.div`
         }
     }
 `;
-const PdfGptContainer = ({ pdfContent, numPages, pdfUrl, pdfTitle }: Props) => {
+export type PdfContent = {
+    text: string[];
+    numPages: number;
+}
+const PdfGptContainer = ({ pdfUrl, pdfTitle }: Props) => {
     const [iframeHeight, setIframeHeight] = useState<number>(700);
+    const [pdfContent, setPdfContent] = useState<PdfContent>({ text: [], numPages: 0 });
     const getInitialShowContainer = () => {
         const saved = localStorage.getItem('showContainer');
         return saved ? JSON.parse(saved) : true;
@@ -98,6 +102,9 @@ const PdfGptContainer = ({ pdfContent, numPages, pdfUrl, pdfTitle }: Props) => {
     useEffect(() => {
         const iframe = document.querySelector('iframe[src*="bbcswebdav"]') as HTMLIFrameElement;
         setIframeHeight(iframe.clientHeight);
+        pdfToTextList(pdfUrl).then((res) => {
+            setPdfContent(res);
+        });
     }, []);
     const [showContainer, setShowContainer] = useState<boolean>(getInitialShowContainer());
     useEffect(() => {
@@ -108,13 +115,13 @@ const PdfGptContainer = ({ pdfContent, numPages, pdfUrl, pdfTitle }: Props) => {
     const TabListComponent = (tab: any) => {
         switch (tab.tab) {
             case "내용":
-                return <ContentLayout pdfContent={pdfContent} numPages={numPages} />;
+                return <ContentLayout pdfContent={pdfContent} />;
             case "요약":
-                return <SummaryLayout pdfUrl={pdfUrl} summary={summary} setSummary={setSummary} pdfTitle={pdfTitle} />;
-            case "저장":
-                return <SaveLayout pdfContent={pdfContent} numPages={numPages} />;
-            default:
                 return null;
+            case "저장":
+                return <SaveLayout pdfContent={pdfContent} />;
+            default:
+                return <SummaryLayout pdfContent={pdfContent} pdfTitle={pdfTitle} summary={summary} setSummary={setSummary} />;
         }
     };
     const ContentTabIcon = (tab: any) => {
@@ -130,7 +137,7 @@ const PdfGptContainer = ({ pdfContent, numPages, pdfUrl, pdfTitle }: Props) => {
     const onClickSetTab = (tabName: any) => {
         setTab(tabName);
         if (tabName === "요약" && summary === "") {
-            summarizePDF(pdfUrl).then((res) => {
+            summarizePDF(pdfContent).then((res) => {
                 setSummary(res);
             });
         }

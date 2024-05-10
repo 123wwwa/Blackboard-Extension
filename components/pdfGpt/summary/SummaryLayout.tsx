@@ -3,8 +3,9 @@ import ReactMarkdown from 'react-markdown';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy, faDownload, faFloppyDisk, faRotateRight, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { summarizePDF } from "~features/events/chatgpt";
+import type { PdfContent } from "../PdfGptContainer";
 type Props = {
-    pdfUrl: string;
+    pdfContent: PdfContent;
     pdfTitle : string;
     summary: string;
     setSummary: React.Dispatch<React.SetStateAction<string>>;
@@ -59,13 +60,13 @@ export const SummaryTab = styled.div`
         }
     }
 `;
-const SummaryLayout = ({ pdfTitle, pdfUrl, summary, setSummary }: Props) => {
+const SummaryLayout = ({ pdfTitle, pdfContent, summary, setSummary }: Props) => {
     if (summary === "") {
         return <SummaryTab>요약 중<FontAwesomeIcon icon={faSpinner} spin /></SummaryTab>
     }
     const reloadSummary = async () => {
         setSummary("");
-        let res = await summarizePDF(pdfUrl);
+        let res = await summarizePDF(pdfContent);
         setSummary(res);
     }
     const copySummary = () => {
@@ -92,7 +93,7 @@ const SummaryLayout = ({ pdfTitle, pdfUrl, summary, setSummary }: Props) => {
                 </button>
             </ButtonWrapper>
             <div className="summary-content">
-                <ReactMarkdown className="summary-container">{summary}</ReactMarkdown>
+                <div className="summary-container">{summary}</div>
             </div>
         </SummaryTab>
     )

@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import type { PdfContent } from "../PdfGptContainer";
 
 type Props = {
-    pdfContent: string[][];
-    numPages: number;
+    pdfContent: PdfContent;
 }
 const PdfContainer = styled.div`
     width: 100%;
@@ -50,23 +50,20 @@ const PdfContainer = styled.div`
         }
     }
 `
-export const ContentLayout = ({ pdfContent, numPages }: Props) => {
-    const calcPdfLetterCount = (pdfContent: string[][]) => {
+const ContentLayout = ({ pdfContent }: Props) => {
+    const calcPdfLetterCount = (pdfContent: string[]) => {
         let letterCount = 0;
+        if(pdfContent.length === 0) return 0;
         pdfContent.forEach((page) => {
-            page.forEach((content) => {
-                letterCount += content.length;
-            });
+            letterCount += page.length;
         });
         return letterCount;
     }
     const onClickCopy = () => {
         let text: string = "";
-        Object.entries(pdfContent).map(([key, value]) => {
+        Object.entries(pdfContent.text).map(([key, value]) => {
             text += `페이지${parseInt(key) + 1}\n`;
-            value.map((content) => {
-                text += `${content}\n`;
-            });
+            text += `${key}\n`;
         });
         navigator.clipboard.writeText(text);
     }
@@ -75,21 +72,17 @@ export const ContentLayout = ({ pdfContent, numPages }: Props) => {
             <div className="btn-wrapper" onClick={onClickCopy}>
                 <button className="copy-btn">
                     <FontAwesomeIcon icon={faCopy} />
-                    <div className="letter-count">{calcPdfLetterCount(pdfContent)}자</div>
+                    <div className="letter-count">{calcPdfLetterCount(pdfContent.text)}자</div>
                 </button>
             </div>
             <div className="pdf-content">
                 <div className="flex-wrapper">
-                    {Object.entries(pdfContent).map(([key, value]) => {
+                    {Object.entries(pdfContent.text).map(([key, value]) => {
                         return (
                             <div>
                                 <div className="page-wrapper">페이지{parseInt(key) + 1}</div>
                                 <div className="content-wrapper">
-                                    {value.map((content) => {
-                                        return (
-                                            <div>{content}</div>
-                                        );
-                                    })}
+                                    <div>{value}</div>
                                 </div>
                             </div>
                         );
@@ -99,3 +92,4 @@ export const ContentLayout = ({ pdfContent, numPages }: Props) => {
         </PdfContainer>
     );
 }
+export default ContentLayout;

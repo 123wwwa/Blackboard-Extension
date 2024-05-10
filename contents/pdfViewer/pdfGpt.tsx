@@ -2,7 +2,7 @@ import type { PlasmoCSConfig } from "plasmo";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import PdfGptContainer from "~components/pdfGpt/PdfGptContainer";
-import { pdfToPageText, pdfToTextList, pdfToTexts } from "~features/events/pdfExtractor";
+import { pdfToPageText } from "~features/events/pdfExtractor";
 import ErrorBoundary from "~shared/ErrorBoundary";
 import { observeUrlChange, waitForElement } from "~shared/observer";
 
@@ -38,15 +38,13 @@ observeUrlChange(async (url) => {
         if (!iframe) return;
         let iframeUrl = iframe.src.split("?")[0];
         target.prepend(rootElement);
-        const pdfText = await pdfToPageText(iframeUrl);
-        console.log(pdfText);
         const itemRoot = createRoot(rootElement!);
-        // itemRoot.render(
-        //     <React.StrictMode>
-        //         <ErrorBoundary>
-        //             <PdfGptContainer pdfUrl={iframeUrl} pdfTitle={pageTitleText} />
-        //         </ErrorBoundary>
-        //     </React.StrictMode>
-        // )
+        itemRoot.render(
+            <React.StrictMode>
+                <ErrorBoundary>
+                    <PdfGptContainer pdfUrl={iframeUrl} pdfTitle={pageTitleText} />
+                </ErrorBoundary>
+            </React.StrictMode>
+        )
     }
 }, document);

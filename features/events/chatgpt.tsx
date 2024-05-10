@@ -1,4 +1,3 @@
-import { pdfjs } from "react-pdf"
 import type { BB_alarm } from '~shared/types/blackboardTypes';
 import type { AskGptOptions } from '~shared/types/handlerTypes';
 import { sendToBackground } from "@plasmohq/messaging"
@@ -42,10 +41,9 @@ export const extractTodo = async (alarm: BB_alarm) => {
     todo = JSON.parse(todo);
     return todo;
 };
-export const summarizePDF = async (url: string) => {
-    let req = await pdfToPageText(url);
-    let text = req.text;
-    let numPages = req.numPages;
+export const summarizePDF = async (req) => {
+    const text = req.text;
+    const numPages = req.numPages;
     let prompt = `아래 내용을 한국어로 요약하여 Markdown 형식으로 답변해주세요. 요약 시, 주요 포인트를 목록 형태로 제공하고, 각 섹션의 제목은 볼드체로 표시해주세요.`;
     prompt += `예시 답변 형식:
     **섹션 제목 1(일치하는 페이지 번호)**
