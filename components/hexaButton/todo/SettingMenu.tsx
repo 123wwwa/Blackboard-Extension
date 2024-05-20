@@ -40,6 +40,7 @@ export const SettingMenu = () => {
         updateSetting("alarmTime", convertedTime);
     }
     const onChangeApiKey = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.value);
         updateSetting("apiKey", e.target.value);
     }
     const onChangeAutoSave = (e: boolean) => {

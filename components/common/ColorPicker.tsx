@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 import { SketchPicker } from "react-color";
 import { faPalette } from "@fortawesome/free-solid-svg-icons";
 import ActionIcon from "./ActionIcon";
+import useLectureStore from "~shared/stores/lectureStore";
 interface Props {
     color: string;
     setColor: React.Dispatch<React.SetStateAction<string>>;
@@ -19,6 +20,7 @@ interface State {
     };
 }
 const SketchColorPicker = (props: Props) => {
+    const { lectureObject } = useLectureStore();
     interface Color {
         r: string;
         g: string;
@@ -60,6 +62,19 @@ const SketchColorPicker = (props: Props) => {
             };
         }
     }, [displayColorPicker]);
+    const colorlist = ["#f2e8e8", "#ffe9e9", "#eff9cc", "#dcf2e9", "#dee8f6", "#fff8cc", "#ffedda", "#dceef2", "#ddd6fe", "#e0e7ff", "#f0abfc", "#7dd3fc"];
+    let colorObject = colorlist.map(color => {
+        // LectureObject에서 해당 색상을 찾아보기
+        const foundLecture = Object.values(lectureObject).find(lecture => lecture.color === color);
+        if (foundLecture) {
+          return { color, title: foundLecture.name, isMatch: true };
+        } else {
+          return { color, title: color, isMatch: false };
+        }
+    });
+    colorObject = colorObject.sort((a, b) => {
+        return (b.isMatch === a.isMatch) ? 0 : b.isMatch ? 1 : -1;
+    });
     const styles = {
         color: css({
             width: "28px",
@@ -96,6 +111,7 @@ const SketchColorPicker = (props: Props) => {
                     <SketchPicker
                         color={props.color}
                         onChange={handleChange}
+                        presetColors={colorObject}
                     />
                 </div>
             ) : null}

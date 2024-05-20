@@ -117,7 +117,7 @@ const PdfGptContainer = ({ pdfUrl, pdfTitle }: Props) => {
             case "내용":
                 return <ContentLayout pdfContent={pdfContent} />;
             case "요약":
-                return null;
+                return <SummaryLayout pdfContent={pdfContent} pdfTitle={pdfTitle} summary={summary} setSummary={setSummary} />;
             case "저장":
                 return <SaveLayout pdfContent={pdfContent} />;
             default:

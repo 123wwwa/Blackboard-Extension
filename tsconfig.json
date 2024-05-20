@@ -9,7 +9,7 @@
     "./**/*.ts",
     "./**/*.tsx",
     "**/*.tsx",
-    "contents/timetable/timetable.tsx",
+    "contents/timetable/index.tsxle.tsx",
   ],
   "compilerOptions": {
     "paths": {

@@ -9,7 +9,7 @@ export type ResponseBody = {
     error?: string
 }
 const handler: PlasmoMessaging.MessageHandler<RequestBody, ResponseBody> = async (req, res) => {
-    const apiKey = await (getChromeStorage("settings")).apiKey;
+    const apiKey = (await getChromeStorage("settings")).apiKey;
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
