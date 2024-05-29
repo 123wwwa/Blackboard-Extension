@@ -119,19 +119,22 @@ export const deleteTodo = async (todo: Todo) => {
     setTodoList(newTodoList);
 };
 const isTodoEqual = (todo1: Todo, todo2: Todo) => {  // 이름과 날짜 또는 링크가 같은 경우 중복된 과제로 판단
-    return (todo1.content == todo2.content && todo1.date == todo2.date) || todo1.linkcode == todo2.linkcode;
+    return (todo1.content == todo2.content && todo1.date == todo2.date) || (todo1.linkcode && todo1.linkcode == todo2.linkcode);
 }
 export const addTodoItem = async (todo: Todo) => {
     // check if duplicated
     let todoList: Todo[] = await getChromeStorageList("todoList");
+    console.log(todoList);
     for (let key in todoList) {
         let newTodo: Todo = todoList[key];
         if (isTodoEqual(todo, newTodo)) {
+            console.log("duplicated todo Item");
             return;
         }
     }
     addTodo(todo);
     todoList.push(todo);
+    console.log(todoList);
     setChromeStorageList("todoList", todoList);
 };
 export const postTodoList = async (todoList: Todo[]) => {

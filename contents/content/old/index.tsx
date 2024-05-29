@@ -48,7 +48,7 @@ waitForElement("#pageTitleDiv").then(() => {
     // loop in listContainer
     for (let i = 0; i < listContainer.children.length; i++) {
         const item = listContainer.children[i] as HTMLElement;
-        let links = item.querySelectorAll('a[href*="/bbcswebdav"]') as NodeListOf<HTMLAnchorElement>;
+        let links = item.querySelectorAll('a[href*="/bbcswebdav/pid-"]') as NodeListOf<HTMLAnchorElement>;
         //loop in links
         for (let j = 0; j < links.length; j++) {
             const link = links[j];
@@ -56,22 +56,24 @@ waitForElement("#pageTitleDiv").then(() => {
             link.setAttribute("onclick", onclickStr);
             //link.setAttribute("href", "javascript:;");
         }
-        //remove firstchild
-        item?.children[0].remove();
-        const div = document.createElement("div");
-        div.style.width = "50px";
-        div.style.height = "50px";
-        div.style.position = "absolute";
-        div.style.display = "flex";
-        div.style.justifyContent = "center";
-        item.prepend(div!);
-        const divRoot = createRoot(div!);
-        const id = item.id.split(":")[1];
-        divRoot.render(
-            <React.StrictMode>
-                <input type="checkbox" className='downloadCheckBox' id={"item:" + id} onChange={(e)=>checkIsAllChecked(e)} />
-            </React.StrictMode>
-        )
+        if (links.length != 0) {
+            //remove firstchild
+            item?.children[0].remove();
+            const div = document.createElement("div");
+            div.style.width = "50px";
+            div.style.height = "50px";
+            div.style.position = "absolute";
+            div.style.display = "flex";
+            div.style.justifyContent = "center";
+            item.prepend(div!);
+            const divRoot = createRoot(div!);
+            const id = item.id.split(":")[1];
+            divRoot.render(
+                <React.StrictMode>
+                    <input type="checkbox" className='downloadCheckBox' id={"item:" + id} onChange={(e) => checkIsAllChecked(e)} />
+                </React.StrictMode>
+            )
+        }
     }
     const container = document.querySelector("#pageTitleDiv") as HTMLElement;
     //edit style of container to flex

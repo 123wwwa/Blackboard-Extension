@@ -86,6 +86,7 @@ function TodoFooter({ color, setColor }: Props) {
 			linkcode: link,
 			userCreated: true,
 		};
+		console.log(todo);
 		addTodoItem(todo);
 		setTitle("");
 		setColor("#F5F5F5");
