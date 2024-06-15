@@ -9,7 +9,7 @@
     "./**/*.ts",
     "./**/*.tsx",
     "**/*.tsx",
-    "contents/timetable/index.tsxle.tsx",
+    "contents/timetable/index.tsxle.tsx", "shared/ErrorBoundary.tsㅌ",
   ],
   "compilerOptions": {
     "paths": {

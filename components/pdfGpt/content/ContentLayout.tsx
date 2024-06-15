@@ -63,7 +63,7 @@ const ContentLayout = ({ pdfContent }: Props) => {
         let text: string = "";
         Object.entries(pdfContent.text).map(([key, value]) => {
             text += `페이지${parseInt(key) + 1}\n`;
-            text += `${key}\n`;
+            text += `${value}\n`;
         });
         navigator.clipboard.writeText(text);
     }

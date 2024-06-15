@@ -5,7 +5,7 @@ import { convertBB_alarm } from "./alarmConveter";
 export const updateAlarmList = async () => {
     // check if last fetch is within 5 minutes
     let lastAlarmFetch = await getChromeStorage("lastAlarmFetch", 0);
-    if (Date.now() - lastAlarmFetch < 300000) {
+    if (Date.now() - lastAlarmFetch < 100000) {
         // let BB_alarms = await getChromeStorageList("BB_alarms");
         // setAlarmList(BB_alarms);
         return;
@@ -49,6 +49,7 @@ export const updateAlarmList = async () => {
         return;
     }
     let BB_alarms = await convertBB_alarm(alarmListStr);
+    console.log(BB_alarms);
     setAlarmList(BB_alarms)
     await setChromeStorageList("BB_alarms", BB_alarms);
     await setChromeStorage("lastAlarmFetch", Date.now().toString());
