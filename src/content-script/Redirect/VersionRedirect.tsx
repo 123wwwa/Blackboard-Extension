@@ -73,11 +73,11 @@ const handleBBVersionRedirect = async (url: string) => {
     }
 };
 
-observeUrlChange(async (url) => {
+observeUrlChange(async (url) => { // 이전 뷰어 사용 여부에 따라 URL 리디렉션 처리
     handleBBVersionRedirect(url);
     let settings = await getChromeStorage("settings", "{}");
     settings = JSON.parse(settings);
-    const urlPattern = /https:\/\/blackboard\.unist\.ac\.kr\/ultra\/courses\/(_\d+_\d+)\/outline\/file\/(_\d+_\d+)/;
+    const urlPattern = /^https:\/\/blackboard\.unist\.ac\.kr\/ultra\/courses\/(_\d+_\d+)\/(?:outline\/)?file\/(_\d+_\d+)(?:[/?#]|$)/;
 
     if (urlPattern.test(url) && settings.usePreviousViewer) {
         // waitForElm 함수가 프로미스를 반환한다고 가정
@@ -87,7 +87,7 @@ observeUrlChange(async (url) => {
         let iframeUrl = iframe.src.split("?")[0];
         
         // open in a new tab
-        const closeBtn = document.querySelector('button[analytics-id="bb-close.course.content.file"]') as HTMLButtonElement;
+        const closeBtn = document.querySelector('button[data-analytics-id="course.content.file.exit"]') as HTMLButtonElement;
 
         if (closeBtn) closeBtn.click(); // closeBtn이 있으면 클릭 이벤트 발생
 
