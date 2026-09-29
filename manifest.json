@@ -84,11 +84,12 @@
     },
     {
       "matches": [
-        "https://blackboard.unist.ac.kr/ultra/institution-page"
+        "https://blackboard.unist.ac.kr/ultra/institution-page*"
       ],
       "js": [
         "src/content-script/Injector/IntercepMembership/InterceptMembership.js"
-      ]
+      ],
+      "run_at": "document_start"
     },
     {
       "matches": [

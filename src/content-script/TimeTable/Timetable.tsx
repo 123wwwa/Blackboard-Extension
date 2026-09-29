@@ -31,12 +31,21 @@ const RenderTableDay = () => {
         setTableWidth(((vh_7 / 13) * 16) / 9);
     }, []);
     useEffect(() => {
-        dispatch(reloadBB_alarms as any);
-        if (window.location.href.includes("ultra")) {
+        const loadLectures = () => {
+            dispatch(reloadBB_alarms as any);
+            if (window.location.href.includes("ultra")) {
+                dispatch(getMemberShip as any);
+            } else {
+                dispatch(getLectureList as any);
+            }
+        };
+        loadLectures();
+        const onMemberships = (event: MessageEvent) => {
+            if (event.data?.source !== "bb-extension" || event.data?.type !== "memberships-updated") return;
             dispatch(getMemberShip as any);
-        } else {
-            dispatch(getLectureList as any);
-        }
+        };
+        window.addEventListener("message", onMemberships);
+        return () => window.removeEventListener("message", onMemberships);
     }, [dispatch]);
     const shuffleColor = () => {
         dispatch(getMemberShip as any);
@@ -81,16 +90,7 @@ const RenderTableDay = () => {
             </div>
             {[...Array(dayList.length)].map((x, i) => {
                 return (
-                    <div>
-                        {shapedLectureList[i].map((item: any) => {
-                            return (
-                                <LectureCard
-                                    item={item}
-                                    tableHeight={tableHeight}
-                                    tableWidth={tableWidth}
-                                ></LectureCard>
-                            );
-                        })}
+                    <div style={{ position: "relative" }}>
                         <LectureGrid
                             width={tableWidth.toString() + "px"}
                             height={HeadHeight.toString() + "px"}
@@ -105,6 +105,16 @@ const RenderTableDay = () => {
                                     height={tableHeight.toString() + "px"}
                                     color={gridBgColor}
                                 ></LectureGrid>
+                            );
+                        })}
+                        {shapedLectureList[i]?.map((item: any, idx: number) => {
+                            return (
+                                <LectureCard
+                                    key={`${item?.name ?? "lecture"}-${item?.timeplace?.start ?? idx}-${idx}`}
+                                    item={item}
+                                    tableHeight={tableHeight}
+                                    tableWidth={tableWidth}
+                                ></LectureCard>
                             );
                         })}
                     </div>
