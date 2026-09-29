@@ -1,16 +1,15 @@
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
 
-const LectureContent = styled.div<{ marginTop?: string, height?: string, backgroundColor?: string }>`
-  z-index: 10;
+const LectureContent = styled.div<{ backgroundColor?: string }>`
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top:${props => props.marginTop};
+  height: 100%;
   background-color: ${props => props.backgroundColor};
-  height: ${props => props.height};
+  overflow: hidden;
   &:hover {
     filter: brightness(80%);
     cursor: pointer;
@@ -32,18 +31,6 @@ const LecturePlace = styled.span`
   font-weight: bold;
   font-size: 11px;
   `
-const LectureDiv2 = styled.div<{width:number}>`
-  position: absolute;
-  width: ${props => props.width}px;
-  border: 1px solid transparent;
-  
-  text-align: center;
-  display: flex;
-  box-sizing: border-box;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  `
 const HeadHeight = 30;
 type Props = {
     item: any;
@@ -52,26 +39,35 @@ type Props = {
 }
 
 export const LectureCard = ({item, tableHeight, tableWidth}: Props) => {
-    const marginTop: number = (item["timeplace"].start - (9 * 12)) / 12 * (tableHeight) + (HeadHeight); // minus 9 hour to start from 9 
-    const height: number = (item["timeplace"].end - item["timeplace"].start) / 12 * (tableHeight);
-    const place = item["timeplace"].place;
-    const link = item["link"];
+    const start = Number(item?.timeplace?.start);
+    const end = Number(item?.timeplace?.end);
+    const top = (start - (9 * 12)) / 12 * tableHeight + HeadHeight;
+    const height = (end - start) / 12 * tableHeight;
+    if (!Number.isFinite(top) || !Number.isFinite(height) || height <= 0) return null;
+    const place = item.timeplace.place;
+    const link = item.link;
     return (
-        <LectureDiv2 width={tableWidth}>
+        <div
+            style={{
+                position: "absolute",
+                top,
+                left: 0,
+                width: tableWidth,
+                height,
+                zIndex: 5,
+                boxSizing: "border-box",
+            }}
+        >
             <LectureContent
-                marginTop={marginTop.toString() + "px"}
-                height={height.toString() + "px"}
-                backgroundColor={item["color"]}
-
+                backgroundColor={item.color || "#fff8cc"}
                 onClick={() => {
-                    window.open(link, "_blank");
+                    if (link) window.open(link, "_blank");
                 }}>
                 <LectureTextArea>
-                    <LectureName>{item["name"]}</LectureName>
+                    <LectureName>{item.name}</LectureName>
                     <LecturePlace>{place}</LecturePlace>
                 </LectureTextArea>
             </LectureContent>
-        </LectureDiv2>
-
+        </div>
     )
 }

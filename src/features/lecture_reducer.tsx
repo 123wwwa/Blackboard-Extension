@@ -109,13 +109,23 @@ export const {
     deleteSelectedFiles,
 } = lectureSlice.actions;
 export const getMemberShip = async (dispatch: AppDispatch) => {
-    let storedMemberShip = localStorage.getItem("memberships");
+    const storedMemberShip = localStorage.getItem("memberships");
     if (!storedMemberShip) {
-        storedMemberShip = await getChromeStorage("lectureInfo", "[]");
+        const saved = await getChromeStorage("lectureInfo", "");
+        if (saved && saved !== "[]" && saved !== "{}") {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed && !Array.isArray(parsed) && Object.keys(parsed).length > 0) {
+                    await getLectureList(dispatch);
+                }
+            } catch {
+                // ignore malformed cache and wait for a fresh membership payload
+            }
+        }
         return;
     }
-    storedMemberShip = JSON.parse(storedMemberShip);
-    let lectureList = await convertMemberShip(storedMemberShip);
+    const memberships = JSON.parse(storedMemberShip);
+    let lectureList = await convertMemberShip(memberships);
     lectureList = await updateFileInfo(lectureList);
     dispatch(setLectureList(lectureList));
     getShapedLectureList(dispatch, lectureList);
@@ -138,54 +148,91 @@ function shuffle<T>(array: T[]): T[] {
 
     return array;
 };
-const convertMemberShip = async (alarmList: any): Promise<LectureList> => {
-    let lectureList: LectureList = {};
-    for (let i = 0; i < alarmList.length; i++) {
-        const course = alarmList[i].course;
-        let lecture: Lecture = {
-            id: course.id,
-            name: "",
-            engName: course.displayName,
-            link: course.externalAccessUrl,
-            isLecture: true,
-            color: "",
-            assignment: [],
-            time: "",
-            professor: "",
-            calendarId: course.courseId,
-        };
-        const lectureKey = course.displayId.split("_")[1]
-        if (course.effectiveAvailability) {
-            lectureList[lectureKey] = lecture;
+const courseTokens = (value: unknown): string[] => {
+    if (typeof value !== "string" || !value.trim()) return [];
+    const parts = value.split(/[^A-Za-z0-9가-힣]+/).filter(Boolean);
+    const tokens = [value.trim(), ...parts];
+    for (let i = 0; i < parts.length - 1; i++) {
+        tokens.push(parts[i] + parts[i + 1]);
+    }
+    return tokens;
+};
+const findLectureKey = (course: any, jsonData: Record<string, any>): string | null => {
+    const fields = [course?.displayId, course?.courseId, course?.name, course?.displayName, course?.externalId];
+    let best: string | null = null;
+    const resolveKey = (token: string) => jsonData[token] ? token : (jsonData[token.toUpperCase()] ? token.toUpperCase() : null);
+    for (const field of fields) {
+        for (const token of courseTokens(field)) {
+            const key = resolveKey(token);
+            if (key && (!best || key.length > best.length)) {
+                best = key;
+            }
         }
     }
+    if (best) return best;
+    const blob = fields.filter((field) => typeof field === "string").join(" ");
+    for (const key of Object.keys(jsonData)) {
+        const name = jsonData[key]?.name;
+        const hangul = typeof name === "string" && /[가-힣]/.test(name);
+        if (typeof name !== "string" || (hangul ? name.length < 2 : name.length < 4) || !blob.includes(name)) continue;
+        if (!best || name.length > (jsonData[best]?.name?.length ?? 0)) {
+            best = key;
+        }
+    }
+    return best;
+};
+const isEnrolledCourse = (course: any): boolean => {
+    const availability = course?.effectiveAvailability ?? course?.availability;
+    if (availability == null || availability === "") return true;
+    if (typeof availability === "boolean") return availability;
+    const available = typeof availability === "object" ? availability.available : availability;
+    if (available == null) return true;
+    if (available === true || available === "Yes" || available === "Term") return true;
+    if (available === false || available === "No" || available === "Disabled") return false;
+    return true;
+};
+const convertMemberShip = async (alarmList: any): Promise<LectureList> => {
     const response = await fetch(window.chrome.runtime.getURL('public/assets/lectureInfo.json'));
     const jsonData = await response.json();
-
+    const courses = Array.isArray(alarmList) ? alarmList : (alarmList?.results ?? []);
+    const lectureList: LectureList = {};
     let c = 0;
-    for (let key in lectureList) {
-        if (jsonData[key] === undefined) {
-            lectureList[key].isLecture = false;
-        } else {
+    for (let i = 0; i < courses.length; i++) {
+        const course = courses[i]?.course ?? courses[i];
+        if (!course || !isEnrolledCourse(course)) continue;
+        const matchedKey = findLectureKey(course, jsonData);
+        const storageKey = matchedKey ?? String(course.id ?? course.courseId ?? i);
+        if (lectureList[storageKey]) continue;
+        const info = matchedKey ? jsonData[matchedKey] : undefined;
+        const lecture: Lecture = {
+            id: course.id,
+            name: info?.name ?? "",
+            engName: course.displayName || course.name || "",
+            link: course.externalAccessUrl || "",
+            isLecture: Boolean(info),
+            color: "",
+            assignment: [],
+            time: info?.time ?? "",
+            professor: info?.professor ?? "",
+            calendarId: course.courseId,
+        };
+        if (info) {
             c++;
-            lectureList[key].name = jsonData[key].name;
-            lectureList[key].time = jsonData[key].time;
-            lectureList[key].professor = jsonData[key].professor;
-            lectureList[key].color = colorlist[c % colorlist.length];
-            if (jsonData[key].timeplace0) {
-                lectureList[key].timeplace0 = jsonData[key].timeplace0;
-            }
-            if (jsonData[key].timeplace1) {
-                lectureList[key].timeplace1 = jsonData[key].timeplace1;
-            }
-            if (jsonData[key].timeplace2) {
-                lectureList[key].timeplace2 = jsonData[key].timeplace2;
-            }
+            lecture.color = colorlist[c % colorlist.length];
+            if (info.timeplace0) lecture.timeplace0 = info.timeplace0;
+            if (info.timeplace1) lecture.timeplace1 = info.timeplace1;
+            if (info.timeplace2) lecture.timeplace2 = info.timeplace2;
         }
+        lectureList[storageKey] = lecture;
     }
-
+    const placed = Object.values(lectureList).filter((lecture) => lecture.timeplace0 || lecture.timeplace1 || lecture.timeplace2);
+    if (placed.length === 0 && courses.length > 0) {
+        console.warn("[시간표] 수강 목록을 시간표 데이터와 연결하지 못했습니다.", courses.slice(0, 3).map((item: any) => {
+            const course = item?.course ?? item;
+            return course?.displayId || course?.courseId || course?.displayName;
+        }));
+    }
     return lectureList;
-
 }
 const getShapedLectureList = (dispatch: AppDispatch, lectureList: LectureList) => {
     let l: ShapedLecture[][] = [[], [], [], [], [], []];
@@ -196,6 +243,8 @@ const getShapedLectureList = (dispatch: AppDispatch, lectureList: LectureList) =
         i += 1;
         for (let c = 0; c < 3; c++) {
             if (item["timeplace" + c]) {
+                const dayIndex = Number(item["timeplace" + c].day);
+                if (!Number.isInteger(dayIndex) || dayIndex < 0 || dayIndex >= l.length) continue;
                 let newItem: ShapedLecture = {
                     name: item["name"],
                     professor: item["professor"],
@@ -204,7 +253,7 @@ const getShapedLectureList = (dispatch: AppDispatch, lectureList: LectureList) =
                     color: item["color"],
                     timeplace: item["timeplace" + c],
                 };
-                l[item["timeplace" + c].day].push(newItem);
+                l[dayIndex].push(newItem);
             }
         }
     }

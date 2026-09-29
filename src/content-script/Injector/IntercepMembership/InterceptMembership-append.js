@@ -1,6 +1,31 @@
 (function (XHR) {
     "use strict";
 
+    function storeMemberships(result) {
+        if (!result || !result.length) return false;
+        localStorage.setItem("memberships", JSON.stringify(result));
+        window.postMessage({ source: "bb-extension", type: "memberships-updated" }, "*");
+        return true;
+    }
+
+    var originalFetch = window.fetch;
+    if (originalFetch) {
+        window.fetch = function () {
+            var args = arguments;
+            var input = args[0];
+            var urlStr = typeof input === "string" ? input : (input && input.url) || "";
+            var promise = originalFetch.apply(this, args);
+            if (urlStr.indexOf("memberships?") !== -1) {
+                promise.then(function (response) {
+                    return response.clone().json();
+                }).then(function (data) {
+                    storeMemberships(data && data.results);
+                }).catch(function () {});
+            }
+            return promise;
+        };
+    }
+
     var open = XHR.prototype.open;
     var send = XHR.prototype.send;
     window.jsonData = {};
@@ -9,16 +34,20 @@
         //console.log(this);
 
 
-        if (url.includes("memberships?")) {
+        if (typeof url === "string" && url.includes("memberships?")) {
             let interval = setInterval(() => {
+                if (this.readyState === 4) {
+                    clearInterval(interval);
+                }
                 let res = this.responseText;
-                
-                if (res) {
+                if (!res) return;
+                try {
                     let result = JSON.parse(res).results;
-                    if (result.length > 0) {
-                        localStorage.setItem("memberships", JSON.stringify(result));
+                    if (storeMemberships(result)) {
                         clearInterval(interval);
                     }
+                } catch (e) {
+                    // response is not ready or not JSON yet
                 }
             }, 100);
         }
